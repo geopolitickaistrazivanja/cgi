@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: eholux
+    env: python
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    startCommand: gunicorn eholux.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        sync: false
+      - key: DEBUG
+        value: False
+      # Note: DATABASE_URL is automatically set when you link a Render PostgreSQL database
+      # If using external PostgreSQL, uncomment and set these variables:
+      # - key: DB_NAME
+      #   sync: false
+      # - key: DB_USER
+      #   sync: false
+      # - key: DB_PASSWORD
+      #   sync: false
+      # - key: DB_HOST
+      #   sync: false
+      # - key: DB_PORT
+      #   value: 5432
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET_NAME
+        sync: false
+      - key: R2_ENDPOINT_URL
+        sync: false
+      - key: R2_CUSTOM_DOMAIN
+        value: media.akusticnipanelieholux.com
+      - key: SENDGRID_API_KEY
+        sync: false
+
+databases:
+  - name: eholux-db
+    databaseName: eholux
+    user: eholux
+

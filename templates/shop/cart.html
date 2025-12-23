@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Korpa - EhoLux{% endblock %}
+
+{% block content %}
+<div class="cart-page">
+    <div class="container">
+        <h1>Korpa</h1>
+        
+        {% if cart_items %}
+            <div class="cart-items">
+                {% for item in cart_items %}
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            {% if item.product.thumbnail %}
+                                <img src="{{ item.product.thumbnail.url }}" alt="{{ item.product.title }}">
+                            {% elif item.product.images.first %}
+                                <img src="{{ item.product.images.first.image.url }}" alt="{{ item.product.title }}">
+                            {% else %}
+                                <div class="product-placeholder">Nema slike</div>
+                            {% endif %}
+                        </div>
+                        <div class="cart-item-info">
+                            <h3><a href="{% url 'shop:product_detail' item.product.slug %}">{{ item.product.title }}</a></h3>
+                            <p class="cart-item-price">{{ item.product.current_price }} RSD</p>
+                        </div>
+                        <div class="cart-item-quantity">
+                            <form method="post" action="{% url 'shop:update_cart' item.product.id %}">
+                                {% csrf_token %}
+                                <input type="number" name="quantity" value="{{ item.quantity }}" min="0" {% if item.product.stock_type == 'limited' %}max="{{ item.product.stock_quantity }}"{% endif %}>
+                                <button type="submit">Ažuriraj</button>
+                            </form>
+                        </div>
+                        <div class="cart-item-total">
+                            <p>{{ item.total }} RSD</p>
+                        </div>
+                        <div class="cart-item-remove">
+                            <form method="post" action="{% url 'shop:remove_from_cart' item.product.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn-remove">Ukloni</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="cart-summary">
+                <h2>Ukupno: {{ cart_total }} RSD</h2>
+                <a href="#" class="btn btn-primary">Nastavi na plaćanje</a>
+            </div>
+        {% else %}
+            <p>Vaša korpa je prazna.</p>
+            <a href="{% url 'shop:shop' %}" class="btn btn-primary">Nastavi kupovinu</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

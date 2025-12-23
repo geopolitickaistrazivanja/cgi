@@ -1,0 +1,98 @@
+/* Django Admin Black and White Theme */
+#header {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+#header a:link,
+#header a:visited {
+    color: #ffffff !important;
+}
+
+#branding h1,
+#branding h1 a:link,
+#branding h1 a:visited {
+    color: #ffffff !important;
+}
+
+.module h2,
+.module caption,
+.inline-group h2 {
+    background-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+
+div.breadcrumbs {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+div.breadcrumbs a {
+    color: #ffffff !important;
+}
+
+#content-main {
+    background-color: #ffffff !important;
+}
+
+.object-tools a {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+}
+
+.object-tools a:hover {
+    background-color: #333333 !important;
+}
+
+.button,
+input[type=submit],
+input[type=button],
+.submit-row input {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #000000 !important;
+}
+
+.button:hover,
+input[type=submit]:hover,
+input[type=button]:hover {
+    background-color: #333333 !important;
+}
+
+.button.default,
+input[type=submit].default {
+    background-color: #1a1a1a !important;
+}
+
+.field-box {
+    border: 1px solid #e0e0e0 !important;
+}
+
+.errorlist {
+    color: #000000 !important;
+}
+
+.success {
+    background-color: #f0f0f0 !important;
+    border: 1px solid #000000 !important;
+}
+
+/* Responsive Admin */
+@media (max-width: 768px) {
+    #header {
+        padding: 10px !important;
+    }
+    
+    #branding h1 {
+        font-size: 18px !important;
+    }
+    
+    #content {
+        padding: 10px !important;
+    }
+    
+    .module {
+        margin-bottom: 20px !important;
+    }
+}
+

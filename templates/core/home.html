@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="home-hero">
+    <div class="container">
+        <h1>Dobrodošli u EhoLux</h1>
+        <p>Vaše akustično rešenje</p>
+        <a href="{% url 'shop:shop' %}" class="btn btn-primary">Pogledaj proizvode</a>
+    </div>
+</div>
+
+<section class="home-features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>Kvalitet</h3>
+                <p>Najkvalitetniji akustični paneli na tržištu</p>
+            </div>
+            <div class="feature-card">
+                <h3>Ugradnja</h3>
+                <p>Profesionalna ugradnja od strane naših stručnjaka</p>
+            </div>
+            <div class="feature-card">
+                <h3>Podrška</h3>
+                <p>Stalna podrška i savetovanje</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

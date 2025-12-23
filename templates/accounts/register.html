@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registracija - EhoLux{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="container">
+        <h1>Registracija</h1>
+        <form method="post" class="auth-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Korisničko ime</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="form-group">
+                <label for="password1">Lozinka</label>
+                <input type="password" id="password1" name="password1" required>
+            </div>
+            <div class="form-group">
+                <label for="password2">Potvrdite lozinku</label>
+                <input type="password" id="password2" name="password2" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Registruj se</button>
+            <p>Već imate nalog? <a href="{% url 'accounts:login' %}">Prijavite se</a></p>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

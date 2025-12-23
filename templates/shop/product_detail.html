@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ product.title }} - EhoLux{% endblock %}
+
+{% block content %}
+<div class="product-detail-page">
+    <div class="container">
+        <div class="product-detail">
+            <div class="product-images">
+                {% if product_images %}
+                    <div class="product-carousel">
+                    {% if product_images|length > 1 %}
+                        <button class="carousel-arrow carousel-prev" aria-label="Prethodna slika" id="carouselPrev">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 18l-6-6 6-6"/>
+                            </svg>
+                        </button>
+                        {% endif %}
+                        <div class="carousel-container">
+                            <div class="carousel-track" id="carouselTrack">
+                                {% for img in product_images %}
+                                    <div class="carousel-slide {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}">
+                                        <img src="{{ img.url }}" alt="{{ img.alt }}" class="carousel-image" data-index="{{ forloop.counter0 }}">
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% if product_images|length > 1 %}
+                            <button class="carousel-arrow carousel-next" aria-label="Sledeća slika" id="carouselNext">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9 18l6-6-6-6"/>
+                                </svg>
+                            </button>
+                        {% endif %}
+                    </div>
+                    {% if product_images|length > 1 %}
+                        <div class="carousel-thumbnails">
+                            {% for img in product_images %}
+                                <img src="{{ img.url }}" alt="{{ img.alt }}" class="carousel-thumbnail {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}" onclick="selectThumbnail({{ forloop.counter0 }})">
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="product-placeholder">Nema slike</div>
+                {% endif %}
+            </div>
+            
+            <!-- Full Screen Lightbox -->
+            <div class="lightbox" id="lightbox">
+                <button class="lightbox-close" aria-label="Zatvori" id="lightboxClose">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                </button>
+                <button class="lightbox-arrow lightbox-prev" aria-label="Prethodna slika" id="lightboxPrev">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+                <div class="lightbox-container">
+                    <img src="" alt="" id="lightboxImage" class="lightbox-image">
+                </div>
+                <button class="lightbox-arrow lightbox-next" aria-label="Sledeća slika" id="lightboxNext">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 18l6-6-6-6"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="product-info">
+                <h1>{{ product.title }}</h1>
+                <p class="product-sku">SKU: {{ product.sku }}</p>
+                
+                <div class="product-price">
+                    {% if product.sale_price %}
+                        <span class="old-price">{{ product.price }} RSD</span>
+                        <span class="sale-price">{{ product.sale_price }} RSD</span>
+                    {% else %}
+                        <span class="current-price">{{ product.price }} RSD</span>
+                    {% endif %}
+                </div>
+
+                <div class="product-description">
+                    <div class="full-description">{{ product.full_description|safe }}</div>
+                </div>
+
+                {% if product.attribute_values.all %}
+                    <div class="product-attributes">
+                        <h3>Specifikacije</h3>
+                        {% for attr_value in product.attribute_values.all %}
+                            <div class="attribute-item">
+                                <strong>{{ attr_value.attribute.name }}:</strong> {{ attr_value.value }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div class="product-stock">
+                    {% if product.is_in_stock %}
+                        {% if product.stock_type == 'limited' %}
+                            <p class="stock-info">Na stanju: {{ product.stock_quantity }} komada</p>
+                        {% else %}
+                            <p class="stock-info">Uvek na stanju</p>
+                        {% endif %}
+                    {% else %}
+                        <p class="stock-info out-of-stock">Nema na stanju</p>
+                    {% endif %}
+                </div>
+
+                {% if product.is_in_stock %}
+                    <form class="add-to-cart-form" data-product-id="{{ product.id }}">
+                        {% csrf_token %}
+                        <div class="quantity-selector">
+                            <label for="quantity">Količina:</label>
+                            <input type="number" id="quantity" name="quantity" value="1" min="1" {% if product.stock_type == 'limited' %}max="{{ product.stock_quantity }}"{% endif %}>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Dodaj u korpu</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if related_products %}
+            <section class="related-products">
+                <h2>Slični proizvodi</h2>
+                    <div class="products-grid">
+                    {% for product in related_products %}
+                        <div class="product-card">
+                            <a href="{% url 'shop:product_detail' product.slug %}">
+                                {% if product.thumbnail %}
+                                    <img src="{{ product.thumbnail.url }}" alt="{{ product.title }}">
+                                {% elif product.images.first %}
+                                    <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}">
+                                {% else %}
+                                    <div class="product-placeholder">Nema slike</div>
+                                {% endif %}
+                                <h3>{{ product.title }}</h3>
+                                <p class="product-price">
+                                    {% if product.sale_price %}
+                                        <span class="old-price">{{ product.price }} RSD</span>
+                                        <span class="sale-price">{{ product.sale_price }} RSD</span>
+                                    {% else %}
+                                        {{ product.price }} RSD
+                                    {% endif %}
+                                </p>
+                            </a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// Product images data for carousel
+const productImages = [
+    {% for img in product_images %}
+    {
+        url: '{{ img.url }}',
+        alt: '{{ img.alt|escapejs }}'
+    }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+];
+
+// Product Carousel and Lightbox functionality
+function initProductCarousel() {
+    let currentIndex = 0;
+    const slides = document.querySelectorAll('.carousel-slide');
+    const prevBtn = document.getElementById('carouselPrev');
+    const nextBtn = document.getElementById('carouselNext');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImage = document.getElementById('lightboxImage');
+    const lightboxClose = document.getElementById('lightboxClose');
+    const lightboxPrev = document.getElementById('lightboxPrev');
+    const lightboxNext = document.getElementById('lightboxNext');
+    
+    // Show slide at index
+    function showSlide(index) {
+        // Remove active class from all slides and thumbnails
+        slides.forEach(slide => slide.classList.remove('active'));
+        const thumbnails = document.querySelectorAll('.carousel-thumbnail');
+        thumbnails.forEach(thumbnail => thumbnail.classList.remove('active'));
+        
+        // Add active class to current slide and thumbnail
+        if (slides[index]) {
+            slides[index].classList.add('active');
+        }
+        if (thumbnails[index]) {
+            thumbnails[index].classList.add('active');
+        }
+        
+        currentIndex = index;
+    }
+    
+    // Select thumbnail function (called from onclick)
+    window.selectThumbnail = function(index) {
+        showSlide(index);
+    };
+    
+    // Next slide
+    function nextSlide() {
+        const nextIndex = (currentIndex + 1) % productImages.length;
+        showSlide(nextIndex);
+    }
+    
+    // Previous slide
+    function prevSlide() {
+        const prevIndex = (currentIndex - 1 + productImages.length) % productImages.length;
+        showSlide(prevIndex);
+    }
+    
+    // Open lightbox
+    function openLightbox(index) {
+        if (productImages[index]) {
+            lightboxImage.src = productImages[index].url;
+            lightboxImage.alt = productImages[index].alt;
+            currentIndex = index;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Show/hide arrows based on number of images
+            if (productImages.length > 1) {
+                if (lightboxPrev) lightboxPrev.style.display = 'flex';
+                if (lightboxNext) lightboxNext.style.display = 'flex';
+            } else {
+                if (lightboxPrev) lightboxPrev.style.display = 'none';
+                if (lightboxNext) lightboxNext.style.display = 'none';
+            }
+        }
+    }
+    
+    // Close lightbox
+    function closeLightbox() {
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    // Lightbox navigation
+    function lightboxNextFunc() {
+        const nextIndex = (currentIndex + 1) % productImages.length;
+        openLightbox(nextIndex);
+    }
+    
+    function lightboxPrevFunc() {
+        const prevIndex = (currentIndex - 1 + productImages.length) % productImages.length;
+        openLightbox(prevIndex);
+    }
+    
+    // Event listeners for carousel arrows
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            prevSlide();
+        });
+    }
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            nextSlide();
+        });
+    }
+    
+    
+    // Event listeners for image click (open lightbox)
+    slides.forEach((slide, index) => {
+        const img = slide.querySelector('.carousel-image');
+        if (img) {
+            img.addEventListener('click', () => {
+                openLightbox(index);
+            });
+        }
+    });
+    
+    // Lightbox controls
+    if (lightboxClose) {
+        lightboxClose.addEventListener('click', closeLightbox);
+    }
+    
+    if (lightboxPrev) {
+        lightboxPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lightboxPrevFunc();
+        });
+    }
+    
+    if (lightboxNext) {
+        lightboxNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lightboxNextFunc();
+        });
+    }
+    
+    // Close lightbox on background click
+    if (lightbox) {
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+    }
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (lightbox.classList.contains('active')) {
+            if (e.key === 'Escape') {
+                closeLightbox();
+            } else if (e.key === 'ArrowLeft') {
+                lightboxPrevFunc();
+            } else if (e.key === 'ArrowRight') {
+                lightboxNextFunc();
+            }
+        }
+    });
+    
+    // Touch/swipe support for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    const carouselContainer = document.querySelector('.carousel-container');
+    if (carouselContainer) {
+        carouselContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        carouselContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+    }
+    
+    const lightboxContainer = document.querySelector('.lightbox-container');
+    if (lightboxContainer) {
+        lightboxContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+        
+        lightboxContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (lightbox.classList.contains('active')) {
+                handleSwipe();
+            }
+        });
+    }
+    
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartX - touchEndX;
+        
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // Swipe left - next
+                if (lightbox.classList.contains('active')) {
+                    lightboxNextFunc();
+                } else {
+                    nextSlide();
+                }
+            } else {
+                // Swipe right - previous
+                if (lightbox.classList.contains('active')) {
+                    lightboxPrevFunc();
+                } else {
+                    prevSlide();
+                }
+            }
+        }
+    }
+}
+
+// Initialize carousel when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    if (productImages.length > 0) {
+        initProductCarousel();
+    }
+});
+</script>
+{% endblock %}
+

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Blogovi - EhoLux{% endblock %}
+
+{% block content %}
+<div class="blog-list-page">
+    <div class="container">
+        <h1>Blogovi</h1>
+        
+        <div class="blog-grid">
+            {% for post in posts %}
+                <article class="blog-card">
+                    <a href="{% url 'blog:blog_detail' post.slug %}">
+                        {% if post.thumbnail %}
+                            <img src="{{ post.thumbnail.url }}" alt="{{ post.title }}">
+                        {% else %}
+                            <div class="blog-placeholder">Nema slike</div>
+                        {% endif %}
+                        <div class="blog-card-content">
+                            <h2>{{ post.title }}</h2>
+                            {% if post.short_description %}
+                                <p>{{ post.short_description|truncatewords:30 }}</p>
+                            {% endif %}
+                            <span class="blog-date">{{ post.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </a>
+                </article>
+            {% empty %}
+                <p>Nema blog postova.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

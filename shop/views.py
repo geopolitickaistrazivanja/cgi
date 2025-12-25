@@ -83,11 +83,11 @@ def add_to_cart(request, product_id):
     # Validate pattern if product has patterns
     if product.patterns.exists():
         if not pattern_id:
-            return JsonResponse({'success': False, 'message': _('Molimo izaberite uzorak.')})
+            return JsonResponse({'success': False, 'message': _('Molimo izaberite dezen.')})
         try:
             pattern = product.patterns.get(id=pattern_id)
         except:
-            return JsonResponse({'success': False, 'message': _('Neispravan uzorak.')})
+            return JsonResponse({'success': False, 'message': _('Neispravan dezen.')})
     else:
         pattern_id = None
     
@@ -281,7 +281,7 @@ def checkout(request):
                 item_html += f'<p><strong>Dimenzije:</strong> {dimension.get_display()}</p>'
             if pattern:
                 pattern_image_url = f"{request_scheme}://{request_host}{pattern.image.url}"
-                item_html += f'<p><strong>Uzorak:</strong></p><img src="{pattern_image_url}" alt="Uzorak" style="max-width: 200px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;">'
+                item_html += f'<p><strong>Dezen:</strong></p><img src="{pattern_image_url}" alt="Dezen" style="max-width: 200px; border: 1px solid #ddd; border-radius: 4px; margin-top: 5px;">'
             item_html += "</div>"
             order_items_html.append(item_html)
         

@@ -20,7 +20,7 @@
                             <div class="product-placeholder">Nema slike</div>
                         {% endif %}
                         <h3>{{ product.title }}</h3>
-                        <p class="product-short-description">{{ product.short_description|truncatewords:20 }}</p>
+                        <div class="product-short-description">{{ product.short_description|striptags|safe }}</div>
                         <p class="product-price">
                             {% if product.price %}
                                 {{ product.price }} RSD

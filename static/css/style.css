@@ -23,6 +23,39 @@ body {
     padding-top: 0;
 }
 
+/* Global Link Styles - All links black */
+a {
+    color: var(--black) !important;
+    text-decoration: underline;
+}
+
+a:link,
+a:visited {
+    color: var(--black) !important;
+}
+
+a:hover,
+a:active {
+    color: var(--dark-gray) !important;
+}
+
+/* Exceptions for specific link types */
+.product-card a,
+.header-link,
+.phone-link,
+.footer-section a,
+.top-bar a {
+    text-decoration: none;
+}
+
+.product-card a:hover,
+.header-link:hover,
+.phone-link:hover,
+.footer-section a:hover,
+.top-bar a:hover {
+    text-decoration: none;
+}
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -731,6 +764,16 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.product-card a {
+    color: var(--black) !important;
+    text-decoration: none;
+    display: block;
+}
+
+.product-card a:hover {
+    color: var(--black) !important;
+}
+
 .product-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -739,7 +782,8 @@ body {
 .product-card img {
     width: 100%;
     height: 250px;
-    object-fit: cover;
+    object-fit: contain;
+    background-color: var(--light-gray);
 }
 
 .product-card h3 {
@@ -752,7 +796,10 @@ body {
     color: var(--text-light);
     font-size: 14px;
     line-height: 1.5;
-    min-height: 42px;
+    min-height: auto;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
 }
 
 .product-price {
@@ -1379,5 +1426,151 @@ body {
     .admin-interface {
         font-size: 14px;
     }
+}
+
+/* Pattern Select with Images */
+.pattern-select-wrapper {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.pattern-select-custom {
+    position: relative;
+    width: 100%;
+}
+
+.pattern-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: var(--white);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.pattern-select-trigger:hover {
+    border-color: var(--dark-gray);
+}
+
+.pattern-select-placeholder {
+    display: flex;
+    align-items: center;
+    color: var(--text-light);
+}
+
+.pattern-select-arrow {
+    color: var(--text-light);
+    transition: transform 0.3s ease;
+}
+
+.pattern-select-custom.open .pattern-select-arrow {
+    transform: rotate(180deg);
+}
+
+.pattern-select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--white);
+    border: 1px solid #ddd;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.pattern-select-custom.open .pattern-select-options {
+    display: block;
+}
+
+.pattern-select-option {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.pattern-select-option:last-child {
+    border-bottom: none;
+}
+
+.pattern-select-option:hover {
+    background-color: var(--light-gray);
+}
+
+.pattern-option-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 12px;
+    border: 1px solid #ddd;
+}
+
+.pattern-option-label {
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.pattern-preview {
+    margin-top: 10px;
+}
+
+.pattern-preview img {
+    max-width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Product Dimensions */
+.product-dimensions {
+    margin-bottom: 20px;
+}
+
+.product-dimensions h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: var(--text-dark);
+}
+
+.product-dimensions label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.product-dimensions select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: var(--white);
+}
+
+/* Product Patterns */
+.product-patterns {
+    margin-bottom: 20px;
+}
+
+.product-patterns h3 {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: var(--text-dark);
+}
+
+.product-patterns label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
 }
 

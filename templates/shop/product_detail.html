@@ -86,7 +86,7 @@
 
                 {% if product.dimensions.exists %}
                     <div class="product-dimensions">
-                        <h3>Dimenzije</h3>
+                        <h3>Dimenzije (Širina x Dubina x Visina)</h3>
                         <label for="dimension-select">Izaberite dimenzije:</label>
                         <select id="dimension-select" name="dimension_id" required>
                             <option value="">-- Izaberite dimenzije --</option>
@@ -99,15 +99,32 @@
 
                 {% if product.patterns.exists %}
                     <div class="product-patterns">
-                        <h3>Uzorci</h3>
-                        <label for="pattern-select">Izaberite uzorak:</label>
-                        <select id="pattern-select" name="pattern_id" required>
-                            <option value="">-- Izaberite uzorak --</option>
-                            {% for pattern in product.patterns.all %}
-                                <option value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">Uzorak {{ forloop.counter }}</option>
-                            {% endfor %}
-                        </select>
-                        <div style="margin-top: 10px;"><strong>Izabrani uzorak:</strong></div>
+                        <h3>Dezeni</h3>
+                        <label for="pattern-select">Izaberite dezen:</label>
+                        <div class="pattern-select-wrapper">
+                            <select id="pattern-select" name="pattern_id" required style="display: none;">
+                                <option value="">-- Izaberite dezen --</option>
+                                {% for pattern in product.patterns.all %}
+                                    <option value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">{{ forloop.counter }}</option>
+                                {% endfor %}
+                            </select>
+                            <div class="pattern-select-custom" id="pattern-select-custom">
+                                <div class="pattern-select-trigger">
+                                    <span class="pattern-select-placeholder">-- Izaberite dezen --</span>
+                                    <span class="pattern-select-arrow">▼</span>
+                                </div>
+                                <div class="pattern-select-options" id="pattern-select-options">
+                                    {% for pattern in product.patterns.all %}
+                                        <div class="pattern-select-option" data-value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">
+                                            <img src="{{ pattern.image.url }}" alt="Dezen {{ forloop.counter }}" class="pattern-option-image">
+                                            <span class="pattern-option-label">Dezen {{ forloop.counter }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="pattern-input" name="pattern_id" value="">
+                        <div style="margin-top: 10px;"><strong>Izabrani dezen:</strong></div>
                         <div class="pattern-preview" id="pattern-preview"></div>
                     </div>
                 {% endif %}
@@ -408,26 +425,86 @@ document.addEventListener('DOMContentLoaded', function() {
         dimensionInput.value = dimensionSelect.value;
     }
     
-    if (patternSelect && patternInput) {
+    // Custom pattern select with images
+    const patternSelectCustom = document.getElementById('pattern-select-custom');
+    const patternSelectOptions = document.getElementById('pattern-select-options');
+    const patternSelectTrigger = patternSelectCustom ? patternSelectCustom.querySelector('.pattern-select-trigger') : null;
+    const patternSelectPlaceholder = patternSelectCustom ? patternSelectCustom.querySelector('.pattern-select-placeholder') : null;
+    
+    if (patternSelectCustom && patternSelect && patternInput) {
+        let isOpen = false;
+        
+        // Toggle dropdown
+        if (patternSelectTrigger) {
+            patternSelectTrigger.addEventListener('click', function(e) {
+                e.stopPropagation();
+                isOpen = !isOpen;
+                patternSelectCustom.classList.toggle('open', isOpen);
+            });
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (patternSelectCustom && !patternSelectCustom.contains(e.target)) {
+                isOpen = false;
+                patternSelectCustom.classList.remove('open');
+            }
+        });
+        
+        // Handle option selection
+        if (patternSelectOptions) {
+            patternSelectOptions.querySelectorAll('.pattern-select-option').forEach(function(option) {
+                option.addEventListener('click', function() {
+                    const value = this.dataset.value;
+                    const image = this.dataset.image;
+                    const label = this.querySelector('.pattern-option-label').textContent;
+                    
+                    // Update hidden select and input
+                    patternSelect.value = value;
+                    patternInput.value = value;
+                    
+                    // Update trigger display
+                    if (patternSelectPlaceholder) {
+                        const selectedImage = this.querySelector('.pattern-option-image').cloneNode(true);
+                        selectedImage.style.width = '30px';
+                        selectedImage.style.height = '30px';
+                        selectedImage.style.marginRight = '8px';
+                        selectedImage.style.objectFit = 'cover';
+                        patternSelectPlaceholder.innerHTML = '';
+                        patternSelectPlaceholder.appendChild(selectedImage);
+                        patternSelectPlaceholder.appendChild(document.createTextNode(label));
+                    }
+                    
+                    // Show preview
+                    if (patternPreview) {
+                        patternPreview.innerHTML = `<img src="${image}" alt="${label}" style="max-width: 200px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">`;
+                    }
+                    
+                    // Close dropdown
+                    isOpen = false;
+                    patternSelectCustom.classList.remove('open');
+                    
+                    // Trigger change event on select
+                    patternSelect.dispatchEvent(new Event('change'));
+                });
+            });
+        }
+        
+        // Also handle direct select changes (for form submission)
         patternSelect.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             patternInput.value = this.value;
             
-            // Show pattern preview
-            if (patternPreview) {
-                if (this.value && selectedOption.dataset.image) {
+            if (this.value && selectedOption.dataset.image) {
+                if (patternPreview) {
                     patternPreview.innerHTML = `<img src="${selectedOption.dataset.image}" alt="${selectedOption.text}" style="max-width: 200px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">`;
-                } else {
+                }
+            } else {
+                if (patternPreview) {
                     patternPreview.innerHTML = '';
                 }
             }
         });
-        // Set initial value
-        patternInput.value = patternSelect.value;
-        // Trigger change to show preview if value exists
-        if (patternSelect.value) {
-            patternSelect.dispatchEvent(new Event('change'));
-        }
     }
     
     // Update form submission to include dimension and pattern
@@ -447,7 +524,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             if (patternSelect && !patternId) {
-                alert('Molimo izaberite uzorak.');
+                alert('Molimo izaberite dezen.');
                 patternSelect.focus();
                 return;
             }

@@ -69,7 +69,7 @@ class OrderItem(models.Model):
     price = models.DecimalField(_('Cena'), max_digits=10, decimal_places=2)
     # Selected dimension and pattern
     selected_dimension = models.ForeignKey('shop.ProductDimension', on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('Izabrane dimenzije'))
-    selected_pattern = models.ForeignKey('shop.ProductPattern', on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('Izabrani uzorak'))
+    selected_pattern = models.ForeignKey('shop.ProductPattern', on_delete=models.SET_NULL, null=True, blank=True, verbose_name=_('Izabrani dezen'))
 
     class Meta:
         verbose_name = _('Stavka porudžbine')

@@ -39,7 +39,7 @@ class OrderItemInline(admin.TabularInline):
             from django.utils.html import format_html
             return format_html('<img src="{}" style="max-width: 100px; border: 1px solid #ddd; border-radius: 4px;">', obj.selected_pattern.image.url)
         return "-"
-    get_pattern_display.short_description = _('Uzorak')
+    get_pattern_display.short_description = _('Dezen')
 
 
 @admin.register(Order)

@@ -35,8 +35,8 @@
                             {% endif %}
                             {% if item.pattern %}
                                 <div class="cart-item-pattern">
-                                    <strong>Uzorak:</strong>
-                                    <img src="{{ item.pattern.image.url }}" alt="Uzorak" style="max-width: 100px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                    <strong>Dezen:</strong>
+                                    <img src="{{ item.pattern.image.url }}" alt="Dezen" style="max-width: 100px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;">
                                 </div>
                             {% endif %}
                         </div>
@@ -56,9 +56,9 @@
                                 {% endif %}
                                 {% if item.product.patterns.exists %}
                                     <select name="pattern_id">
-                                        <option value="">-- Izaberite uzorak --</option>
+                                        <option value="">-- Izaberite dezen --</option>
                                         {% for pattern in item.product.patterns.all %}
-                                            <option value="{{ pattern.id }}" {% if item.pattern and item.pattern.id == pattern.id %}selected{% endif %}>Uzorak {{ forloop.counter }}</option>
+                                            <option value="{{ pattern.id }}" {% if item.pattern and item.pattern.id == pattern.id %}selected{% endif %}>Dezen {{ forloop.counter }}</option>
                                         {% endfor %}
                                     </select>
                                 {% else %}

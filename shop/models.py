@@ -47,16 +47,16 @@ class ProductDimension(models.Model):
 class ProductPattern(models.Model):
     """Pattern images for a product"""
     product = models.ForeignKey('Product', related_name='patterns', on_delete=models.CASCADE)
-    image = models.ImageField(_('Slika uzorka'), upload_to='products/patterns/')
+    image = models.ImageField(_('Slika dezena'), upload_to='products/patterns/')
     order = models.PositiveIntegerField(_('Redosled'), default=0)
 
     class Meta:
-        verbose_name = _('Uzorak proizvoda')
-        verbose_name_plural = _('Uzorci proizvoda')
+        verbose_name = _('Dezen proizvoda')
+        verbose_name_plural = _('Dezeni proizvoda')
         ordering = ['order', 'id']
 
     def __str__(self):
-        return f"{self.product.title} - Uzorak {self.order + 1}"
+        return f"{self.product.title} - Dezen {self.order + 1}"
 
 
 class Product(models.Model):

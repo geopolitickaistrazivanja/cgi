@@ -27,7 +27,7 @@ class ProductDimension(models.Model):
     """Dimensions for a product (length, width, height in centimeters)"""
     product = models.ForeignKey('Product', related_name='dimensions', on_delete=models.CASCADE)
     length = models.DecimalField(_('Dužina (cm)'), max_digits=10, decimal_places=2)
-    width = models.DecimalField(_('Širina (cm)'), max_digits=10, decimal_places=2)
+    width = models.DecimalField(_('Dubina (cm)'), max_digits=10, decimal_places=2)
     height = models.DecimalField(_('Visina (cm)'), max_digits=10, decimal_places=2)
     order = models.PositiveIntegerField(_('Redosled'), default=0)
 
@@ -73,8 +73,7 @@ class Product(models.Model):
     thumbnail = models.ImageField(_('Thumbnail'), upload_to='products/thumbnails/', blank=True, null=True)
     short_description = models.TextField(_('Kratak opis'), max_length=500)
     full_description = models.TextField(_('Pun opis'))
-    price = models.DecimalField(_('Cena'), max_digits=10, decimal_places=2)
-    sale_price = models.DecimalField(_('Cena na popustu'), max_digits=10, decimal_places=2, null=True, blank=True)
+    price = models.DecimalField(_('Cena'), max_digits=10, decimal_places=2, null=True, blank=True, help_text=_('Ostavite prazno za "Na upit"'))
     
     stock_type = models.CharField(_('Tip zaliha'), max_length=10, choices=STOCK_CHOICES, default='always')
     stock_quantity = models.PositiveIntegerField(_('Količina na stanju'), null=True, blank=True)
@@ -111,7 +110,14 @@ class Product(models.Model):
 
     @property
     def current_price(self):
-        return self.sale_price if self.sale_price else self.price
+        return self.price if self.price is not None else None
+    
+    @property
+    def price_display(self):
+        """Return price as string or 'Na upit'"""
+        if self.price is not None:
+            return f"{self.price} RSD"
+        return "Na upit"
 
     @property
     def is_in_stock(self):

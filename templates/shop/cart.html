@@ -23,7 +23,13 @@
                         </div>
                         <div class="cart-item-info">
                             <h3><a href="{% url 'shop:product_detail' item.product.slug %}">{{ item.product.title }}</a></h3>
-                            <p class="cart-item-price">{{ item.product.current_price }} RSD</p>
+                            <p class="cart-item-price">
+                                {% if item.product.price %}
+                                    {{ item.product.price }} RSD
+                                {% else %}
+                                    Na upit
+                                {% endif %}
+                            </p>
                             {% if item.dimension %}
                                 <p class="cart-item-dimension"><strong>Dimenzije:</strong> {{ item.dimension.get_display }}</p>
                             {% endif %}
@@ -62,7 +68,13 @@
                             </form>
                         </div>
                         <div class="cart-item-total">
-                            <p>{{ item.total }} RSD</p>
+                            <p>
+                                {% if item.total %}
+                                    {{ item.total }} RSD
+                                {% else %}
+                                    Na upit
+                                {% endif %}
+                            </p>
                         </div>
                         <div class="cart-item-remove">
                             <form method="post" action="{% url 'shop:remove_from_cart' item.product.id %}">
@@ -75,7 +87,14 @@
             </div>
             
             <div class="cart-summary">
-                <h2>Ukupno: {{ cart_total }} RSD</h2>
+                <h2>
+                    Ukupno: 
+                    {% if cart_total %}
+                        {{ cart_total }} RSD
+                    {% else %}
+                        Na upit
+                    {% endif %}
+                </h2>
                 <a href="{% url 'shop:checkout' %}" class="btn btn-primary">Nastavi na plaćanje</a>
             </div>
         {% else %}

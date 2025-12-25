@@ -33,7 +33,12 @@ def cart(request):
                         except ProductPattern.DoesNotExist:
                             pass
                     
-                    item_total = float(product.current_price) * quantity
+                    # Calculate total only if price exists
+                    item_total = None
+                    if product.current_price is not None:
+                        item_total = float(product.current_price) * quantity
+                        total += item_total
+                    
                     cart_items.append({
                         'product': product,
                         'quantity': quantity,
@@ -41,7 +46,6 @@ def cart(request):
                         'pattern': pattern,
                         'total': item_total,
                     })
-                    total += item_total
         except (Product.DoesNotExist, ValueError):
             continue
     

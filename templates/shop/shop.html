@@ -22,11 +22,10 @@
                         <h3>{{ product.title }}</h3>
                         <p class="product-short-description">{{ product.short_description|truncatewords:20 }}</p>
                         <p class="product-price">
-                            {% if product.sale_price %}
-                                <span class="old-price">{{ product.price }} RSD</span>
-                                <span class="sale-price">{{ product.sale_price }} RSD</span>
-                            {% else %}
+                            {% if product.price %}
                                 {{ product.price }} RSD
+                            {% else %}
+                                Na upit
                             {% endif %}
                         </p>
                     </a>

@@ -69,7 +69,42 @@ input[type=submit].default {
 }
 
 .errorlist {
-    color: #000000 !important;
+    color: #dc3545 !important;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0;
+}
+
+.errorlist li {
+    color: #dc3545 !important;
+    font-weight: bold;
+    padding: 8px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.errorlist li:before {
+    content: "⚠ ";
+    margin-right: 5px;
+}
+
+/* Highlight fields with errors */
+.form-row.has-error,
+.field-box.has-error,
+.inline-group.has-error {
+    background-color: #fff3cd !important;
+    border-left: 3px solid #ffc107 !important;
+    padding-left: 10px !important;
+    margin-bottom: 10px;
+}
+
+input.error,
+textarea.error,
+select.error {
+    border: 2px solid #dc3545 !important;
+    background-color: #fff3cd !important;
 }
 
 .success {

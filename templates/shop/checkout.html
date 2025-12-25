@@ -71,7 +71,13 @@
                                     <div><strong>Uzorak:</strong></div>
                                     <img src="{{ item.pattern.image.url }}" alt="Uzorak" style="max-width: 150px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;">
                                 {% endif %}
-                                <p class="checkout-item-price">{{ item.total }} RSD</p>
+                                <p class="checkout-item-price">
+                                    {% if item.total %}
+                                        {{ item.total }} RSD
+                                    {% else %}
+                                        Na upit
+                                    {% endif %}
+                                </p>
                             </div>
                         </div>
                     {% endfor %}

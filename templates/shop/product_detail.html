@@ -73,11 +73,10 @@
                 <p class="product-sku">SKU: {{ product.sku }}</p>
                 
                 <div class="product-price">
-                    {% if product.sale_price %}
-                        <span class="old-price">{{ product.price }} RSD</span>
-                        <span class="sale-price">{{ product.sale_price }} RSD</span>
-                    {% else %}
+                    {% if product.price %}
                         <span class="current-price">{{ product.price }} RSD</span>
+                    {% else %}
+                        <span class="current-price">Na upit</span>
                     {% endif %}
                 </div>
 
@@ -156,11 +155,10 @@
                                 {% endif %}
                                 <h3>{{ product.title }}</h3>
                                 <p class="product-price">
-                                    {% if product.sale_price %}
-                                        <span class="old-price">{{ product.price }} RSD</span>
-                                        <span class="sale-price">{{ product.sale_price }} RSD</span>
-                                    {% else %}
+                                    {% if product.price %}
                                         {{ product.price }} RSD
+                                    {% else %}
+                                        Na upit
                                     {% endif %}
                                 </p>
                             </a>

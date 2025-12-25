@@ -193,7 +193,7 @@ def search_products(request):
             'id': p.id,
             'title': p.title,
             'slug': p.slug,
-            'price': str(p.current_price),
+            'price': str(p.current_price) if p.current_price is not None else 'Na upit',
             'image': image_url,
         })
     
@@ -247,7 +247,7 @@ def checkout(request):
             address=address,
             city=city,
             postal_code=postal_code,
-            total_amount=cart_context['cart_total']
+            total_amount=cart_context['cart_total'] if cart_context['cart_total'] else 0
         )
         
         # Create order items with dimensions and patterns
@@ -259,11 +259,15 @@ def checkout(request):
             dimension = item.get('dimension')
             pattern = item.get('pattern')
             
+            # Handle price - can be None for "Na upit"
+            item_price = item['product'].current_price if item['product'].current_price is not None else 0
+            price_display = f"{item['product'].current_price} RSD" if item['product'].current_price is not None else "Na upit"
+            
             order_item = OrderItem.objects.create(
                 order=order,
                 product=item['product'],
                 quantity=item['quantity'],
-                price=item['product'].current_price,
+                price=item_price,
                 selected_dimension=dimension,
                 selected_pattern=pattern
             )
@@ -271,7 +275,7 @@ def checkout(request):
             # Build order item HTML for email
             item_html = f"""
             <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px;">
-                <h3 style="margin-top: 0;">{item['product'].title} x {item['quantity']} - {item['product'].current_price} RSD</h3>
+                <h3 style="margin-top: 0;">{item['product'].title} x {item['quantity']} - {price_display}</h3>
             """
             if dimension:
                 item_html += f'<p><strong>Dimenzije:</strong> {dimension.get_display()}</p>'
@@ -305,7 +309,7 @@ def checkout(request):
             {''.join(order_items_html)}
             
             <div style="margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
-                <h3 style="margin-top: 0;">Ukupan iznos: {order.total_amount} RSD</h3>
+                <h3 style="margin-top: 0;">Ukupan iznos: {order.total_amount if order.total_amount > 0 else "Na upit"} RSD</h3>
             </div>
         </body>
         </html>
@@ -323,7 +327,7 @@ Grad: {city}
 Poštanski broj: {postal_code}
 
 Broj porudžbine: #{order.id}
-Ukupan iznos: {order.total_amount} RSD
+Ukupan iznos: {order.total_amount if order.total_amount > 0 else "Na upit"} RSD
 """
         
         try:
@@ -354,7 +358,7 @@ Ukupan iznos: {order.total_amount} RSD
             {''.join(order_items_html)}
             
             <div style="margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
-                <h3 style="margin-top: 0;">Ukupan iznos: {order.total_amount} RSD</h3>
+                <h3 style="margin-top: 0;">Ukupan iznos: {order.total_amount if order.total_amount > 0 else "Na upit"} RSD</h3>
             </div>
             
             <p>Kontaktiraćemo vas uskoro u vezi sa isporukom.</p>
@@ -370,7 +374,7 @@ Poštovani/a {first_name} {last_name},
 Hvala vam na porudžbini!
 
 Broj porudžbine: #{order.id}
-Ukupan iznos: {order.total_amount} RSD
+Ukupan iznos: {order.total_amount if order.total_amount > 0 else "Na upit"} RSD
 
 Kontaktiraćemo vas uskoro u vezi sa isporukom.
 

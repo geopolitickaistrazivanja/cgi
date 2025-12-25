@@ -84,6 +84,12 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
             if img.image:
                 current_image_paths.add(img.image.name)
     
+    # Handle ProductPattern images
+    if hasattr(model_instance, 'patterns'):
+        for pattern in model_instance.patterns.all():
+            if pattern.image:
+                current_image_paths.add(pattern.image.name)
+    
     # Handle CKEditor images in descriptions
     # Check short_description and full_description fields
     for field_name in ['short_description', 'full_description']:
@@ -103,6 +109,12 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
             for img in old_instance.images.all():
                 if img.image:
                     old_image_paths.add(img.image.name)
+        
+        # Handle ProductPattern images from old instance
+        if hasattr(old_instance, 'patterns'):
+            for pattern in old_instance.patterns.all():
+                if pattern.image:
+                    old_image_paths.add(pattern.image.name)
         
         # Handle CKEditor images in old descriptions
         for field_name in ['short_description', 'full_description']:
@@ -176,6 +188,12 @@ def cleanup_all_instance_images(instance):
         for img in instance.images.all():
             if img.image:
                 image_paths.append(img.image.name)
+    
+    # Handle ProductPattern images
+    if hasattr(instance, 'patterns'):
+        for pattern in instance.patterns.all():
+            if pattern.image:
+                image_paths.append(pattern.image.name)
     
     # Handle CKEditor images in descriptions
     for field_name in ['short_description', 'full_description']:

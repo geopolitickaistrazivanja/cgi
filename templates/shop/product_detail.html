@@ -286,13 +286,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = '';
     }
     
-    // Lightbox navigation
-    function lightboxNext() {
+    // Lightbox navigation functions
+    function goToNextLightbox() {
         const nextIndex = (currentSlideIndex + 1) % productImages.length;
         openLightbox(nextIndex);
     }
     
-    function lightboxPrev() {
+    function goToPrevLightbox() {
         const prevIndex = (currentSlideIndex - 1 + productImages.length) % productImages.length;
         openLightbox(prevIndex);
     }
@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             e.stopPropagation();
             console.log('Lightbox prev clicked');
-            lightboxPrev();
+            goToPrevLightbox();
         }, false);
     }
     
@@ -369,7 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             e.stopPropagation();
             console.log('Lightbox next clicked');
-            lightboxNext();
+            goToNextLightbox();
         }, false);
     }
     
@@ -388,9 +388,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Escape') {
                 closeLightbox();
             } else if (e.key === 'ArrowLeft') {
-                lightboxPrev();
+                goToPrevLightbox();
             } else if (e.key === 'ArrowRight') {
-                lightboxNext();
+                goToNextLightbox();
             }
         }
     });

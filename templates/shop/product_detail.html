@@ -98,13 +98,22 @@
 
                 {% if product.patterns.exists %}
                     <div class="product-patterns">
-                        <h3>Dezeni</h3>
-                        <select id="pattern-select" name="pattern_id" required>
-                            <option value="" data-image="">-- Izaberite dezen --</option>
-                            {% for pattern in product.patterns.all %}
-                                <option value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">Dezen {{ forloop.counter }}</option>
-                            {% endfor %}
-                        </select>
+                        <div class="pattern-select-wrapper">
+                            <div class="pattern-select-custom" id="pattern-select-custom">
+                                <div class="pattern-select-trigger" id="pattern-select-trigger">
+                                    <span class="pattern-select-placeholder">-- Izaberite dezen --</span>
+                                    <span class="pattern-select-arrow">▼</span>
+                                </div>
+                                <div class="pattern-select-options" id="pattern-select-options">
+                                    {% for pattern in product.patterns.all %}
+                                        <div class="pattern-select-option" data-value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">
+                                            <img src="{{ pattern.image.url }}" alt="Dezen {{ forloop.counter }}" class="pattern-option-image">
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="pattern-select" name="pattern_id" value="" required>
                         <input type="hidden" id="pattern-input" name="pattern_id" value="">
                         <div style="margin-top: 10px;"><strong>Izabrani dezen:</strong></div>
                         <div class="pattern-preview" id="pattern-preview"></div>
@@ -383,43 +392,70 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================
-// PATTERN SELECTION (now using standard select like dimensions)
+// PATTERN SELECTION (custom dropdown with images)
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
+    const patternSelectCustom = document.getElementById('pattern-select-custom');
+    const patternSelectTrigger = document.getElementById('pattern-select-trigger');
+    const patternSelectOptions = document.getElementById('pattern-select-options');
     const patternSelect = document.getElementById('pattern-select');
     const patternInput = document.getElementById('pattern-input');
     const patternPreview = document.getElementById('pattern-preview');
+    const patternPlaceholder = patternSelectTrigger ? patternSelectTrigger.querySelector('.pattern-select-placeholder') : null;
     
-    if (patternSelect && patternInput) {
-        // Handle pattern selection change
-        patternSelect.onchange = function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const value = this.value;
-            const image = selectedOption ? selectedOption.dataset.image : '';
+    if (!patternSelectCustom || !patternSelectTrigger || !patternSelectOptions || !patternSelect || !patternInput) {
+        return;
+    }
+    
+    let selectedPatternImage = '';
+    
+    // Toggle dropdown
+    patternSelectTrigger.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        patternSelectCustom.classList.toggle('open');
+    });
+    
+    // Select option
+    const patternOptions = patternSelectOptions.querySelectorAll('.pattern-select-option');
+    patternOptions.forEach(function(option) {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             
-            // Update hidden input
+            const value = this.dataset.value;
+            const image = this.dataset.image;
+            
+            // Update hidden inputs
+            patternSelect.value = value;
             patternInput.value = value;
             
-            // Update preview
-            if (patternPreview) {
-                if (value && image) {
-                    patternPreview.innerHTML = '<img src="' + image + '" alt="Izabrani dezen" style="max-width: 200px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">';
-                } else {
-                    patternPreview.innerHTML = '';
-                }
+            // Update placeholder
+            if (patternPlaceholder) {
+                patternPlaceholder.textContent = 'Izabran dezen';
             }
-        };
-        
-        // Set initial value
-        patternInput.value = patternSelect.value;
-        
-        // Trigger initial change to show preview if something is selected
-        if (patternSelect.value) {
-            patternSelect.onchange();
+            
+            // Update preview
+            if (patternPreview && image) {
+                patternPreview.innerHTML = '<img src="' + image + '" alt="Izabrani dezen" style="max-width: 200px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">';
+            }
+            
+            // Store selected image
+            selectedPatternImage = image;
+            
+            // Close dropdown
+            patternSelectCustom.classList.remove('open');
+        });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!patternSelectCustom.contains(e.target)) {
+            patternSelectCustom.classList.remove('open');
         }
-    }
+    });
 });
 
 // ============================================
@@ -475,17 +511,30 @@ document.addEventListener('DOMContentLoaded', function() {
         const dimensionId = dimensionSelect ? (dimensionSelect.value || '') : '';
         const patternId = patternSelect ? (patternSelect.value || '') : '';
         
-        // Validate - only check if the select element exists AND has no value
+        // Validate and show visual feedback instead of alerts
+        let hasError = false;
+        let errorElement = null;
+        
         if (dimensionSelect && dimensionSelect.value === '') {
-            alert('Molimo izaberite dimenzije.');
-            dimensionSelect.focus();
-            return false;
+            hasError = true;
+            errorElement = dimensionSelect.closest('.product-dimensions');
+        } else if (patternSelect && patternSelect.value === '') {
+            hasError = true;
+            errorElement = document.getElementById('pattern-select-custom') ? document.getElementById('pattern-select-custom').closest('.product-patterns') : null;
         }
-        if (patternSelect && patternSelect.value === '') {
-            alert('Molimo izaberite dezen.');
-            if (patternSelectCustom) {
-                patternSelectCustom.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+        
+        if (hasError && errorElement) {
+            // Scroll to error element
+            errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Add blinking red border animation
+            errorElement.classList.add('field-error-highlight');
+            
+            // Remove animation after 3 seconds
+            setTimeout(function() {
+                errorElement.classList.remove('field-error-highlight');
+            }, 3000);
+            
             return false;
         }
         
@@ -546,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Show notification
                 showCartNotification(data.message);
             } else {
-                alert(data.message);
+                showCartNotification(data.message, 'error');
             }
         })
         .catch(function(error) {

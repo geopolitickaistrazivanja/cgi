@@ -131,7 +131,18 @@ def remove_from_cart(request, product_id):
         del cart[str(product_id)]
         request.session['cart'] = cart
         request.session.modified = True
-    return redirect('cart')
+    
+    # Return JSON for AJAX requests
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        from .context_processors import cart as cart_processor
+        cart_context = cart_processor(request)
+        return JsonResponse({
+            'success': True,
+            'cart_count': cart_context['cart_count'],
+            'cart_total': float(cart_context['cart_total']) if cart_context['cart_total'] else 0
+        })
+    
+    return redirect('shop:cart')
 
 
 @require_http_methods(["POST"])
@@ -167,6 +178,38 @@ def cart_view(request):
     from .context_processors import cart
     cart_context = cart(request)
     return render(request, 'shop/cart.html', cart_context)
+
+
+def cart_dropdown(request):
+    """Return cart items as JSON for dropdown"""
+    from .context_processors import cart
+    cart_context = cart(request)
+    
+    items = []
+    for item in cart_context['cart_items']:
+        image_url = ''
+        if item['product'].thumbnail:
+            image_url = item['product'].thumbnail.url
+        elif item['product'].images.first():
+            image_url = item['product'].images.first().image.url
+        
+        price_display = f"{item['product'].price} RSD" if item['product'].price else "Na upit"
+        
+        items.append({
+            'product_id': item['product'].id,
+            'title': item['product'].title,
+            'quantity': item['quantity'],
+            'price': price_display,
+            'image': request.build_absolute_uri(image_url) if image_url else ''
+        })
+    
+    total_display = f"{cart_context['cart_total']} RSD" if cart_context['cart_total'] else "Na upit"
+    
+    return JsonResponse({
+        'items': items,
+        'total': total_display,
+        'cart_count': cart_context['cart_count']
+    })
 
 
 def search_products(request):

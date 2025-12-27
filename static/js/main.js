@@ -211,3 +211,105 @@ setTimeout(() => {
     });
 }, 5000);
 
+// Cart Dropdown
+const cartIconBtn = document.getElementById('cartIconBtn');
+const cartDropdown = document.getElementById('cartDropdown');
+
+function loadCartDropdown() {
+    fetch('/prodavnica/korpa-dropdown/')
+        .then(response => response.json())
+        .then(data => {
+            const itemsContainer = document.getElementById('cartDropdownItems');
+            const totalElement = document.getElementById('cartDropdownTotal');
+            
+            if (data.items && data.items.length > 0) {
+                itemsContainer.innerHTML = data.items.map(item => `
+                    <div class="cart-dropdown-item">
+                        <img src="${item.image}" alt="${item.title}" class="cart-dropdown-item-image">
+                        <div class="cart-dropdown-item-info">
+                            <h4>${item.title}</h4>
+                            <p>Količina: ${item.quantity}</p>
+                            <p>${item.price}</p>
+                        </div>
+                        <button class="cart-dropdown-item-remove" data-product-id="${item.product_id}" onclick="removeFromCartDropdown(${item.product_id})">×</button>
+                    </div>
+                `).join('');
+                totalElement.textContent = data.total;
+            } else {
+                itemsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-light);">Korpa je prazna</div>';
+                totalElement.textContent = '0 RSD';
+            }
+        })
+        .catch(error => {
+            console.error('Error loading cart:', error);
+        });
+}
+
+if (cartIconBtn && cartDropdown) {
+    cartIconBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        cartDropdown.classList.toggle('active');
+        if (cartDropdown.classList.contains('active')) {
+            loadCartDropdown();
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!cartIconBtn.contains(e.target) && !cartDropdown.contains(e.target)) {
+            cartDropdown.classList.remove('active');
+        }
+    });
+}
+
+function removeFromCartDropdown(productId) {
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    
+    fetch(`/prodavnica/ukloni-iz-korpe/${productId}/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Update cart count
+            const cartCountElement = document.querySelector('.cart-count');
+            if (data.cart_count > 0) {
+                if (cartCountElement) {
+                    cartCountElement.textContent = data.cart_count;
+                } else {
+                    const cartIcon = document.querySelector('.cart-icon');
+                    if (cartIcon) {
+                        const countSpan = document.createElement('span');
+                        countSpan.className = 'cart-count';
+                        countSpan.textContent = data.cart_count;
+                        cartIcon.appendChild(countSpan);
+                    }
+                }
+            } else {
+                if (cartCountElement) {
+                    cartCountElement.remove();
+                }
+            }
+            
+            // Reload dropdown
+            loadCartDropdown();
+            
+            // Reload page if on cart page
+            if (window.location.pathname.includes('/korpa/')) {
+                window.location.reload();
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error removing item:', error);
+    });
+}
+
+// Make function globally available
+window.removeFromCartDropdown = removeFromCartDropdown;
+

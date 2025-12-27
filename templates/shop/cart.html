@@ -41,30 +41,13 @@
                             {% endif %}
                         </div>
                         <div class="cart-item-quantity">
-                            <form method="post" action="{% url 'shop:update_cart' item.product.id %}">
+                            <form method="post" action="{% url 'shop:update_cart' item.product.id %}" class="update-cart-form">
                                 {% csrf_token %}
-                                <input type="number" name="quantity" value="{{ item.quantity }}" min="0" {% if item.product.stock_type == 'limited' %}max="{{ item.product.stock_quantity }}"{% endif %}>
-                                {% if item.product.dimensions.exists %}
-                                    <select name="dimension_id">
-                                        <option value="">-- Izaberite dimenzije --</option>
-                                        {% for dimension in item.product.dimensions.all %}
-                                            <option value="{{ dimension.id }}" {% if item.dimension and item.dimension.id == dimension.id %}selected{% endif %}>{{ dimension.get_display }}</option>
-                                        {% endfor %}
-                                    </select>
-                                {% else %}
-                                    <input type="hidden" name="dimension_id" value="">
-                                {% endif %}
-                                {% if item.product.patterns.exists %}
-                                    <select name="pattern_id">
-                                        <option value="">-- Izaberite dezen --</option>
-                                        {% for pattern in item.product.patterns.all %}
-                                            <option value="{{ pattern.id }}" {% if item.pattern and item.pattern.id == pattern.id %}selected{% endif %}>Dezen {{ forloop.counter }}</option>
-                                        {% endfor %}
-                                    </select>
-                                {% else %}
-                                    <input type="hidden" name="pattern_id" value="">
-                                {% endif %}
-                                <button type="submit">Ažuriraj</button>
+                                <label for="quantity-{{ item.product.id }}">Količina:</label>
+                                <input type="number" id="quantity-{{ item.product.id }}" name="quantity" value="{{ item.quantity }}" min="0" {% if item.product.stock_type == 'limited' %}max="{{ item.product.stock_quantity }}"{% endif %}>
+                                <input type="hidden" name="dimension_id" value="{% if item.dimension %}{{ item.dimension.id }}{% endif %}">
+                                <input type="hidden" name="pattern_id" value="{% if item.pattern %}{{ item.pattern.id }}{% endif %}">
+                                <button type="submit" class="btn-update">Ažuriraj</button>
                             </form>
                         </div>
                         <div class="cart-item-total">

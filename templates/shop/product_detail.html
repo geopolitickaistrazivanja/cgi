@@ -545,8 +545,29 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Update cart count in header
+                    const cartCountElement = document.querySelector('.cart-count');
+                    if (cartCountElement) {
+                        cartCountElement.textContent = data.cart_count;
+                        if (data.cart_count > 0) {
+                            cartCountElement.style.display = 'flex';
+                        }
+                    } else if (data.cart_count > 0) {
+                        // Create cart count if it doesn't exist
+                        const cartIcon = document.querySelector('.cart-icon');
+                        if (cartIcon) {
+                            const countSpan = document.createElement('span');
+                            countSpan.className = 'cart-count';
+                            countSpan.textContent = data.cart_count;
+                            cartIcon.appendChild(countSpan);
+                        }
+                    }
+                    
+                    // Show notification
+                    showCartNotification(data.message);
+                } else {
                     alert(data.message);
-                    // Update cart count if needed
+                }
                     if (data.cart_count !== undefined) {
                         const cartCountEl = document.querySelector('.cart-count');
                         if (cartCountEl) {
@@ -559,9 +580,37 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Došlo je do greške. Molimo pokušajte ponovo.');
+                showCartNotification('Došlo je do greške. Molimo pokušajte ponovo.', 'error');
             });
         });
+    }
+    
+    // Cart notification function
+    function showCartNotification(message, type = 'success') {
+        // Remove existing notification if any
+        const existing = document.querySelector('.cart-notification');
+        if (existing) {
+            existing.remove();
+        }
+        
+        // Create notification
+        const notification = document.createElement('div');
+        notification.className = `cart-notification cart-notification-${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        // Show notification
+        setTimeout(() => {
+            notification.classList.add('show');
+        }, 10);
+        
+        // Hide and remove after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 300);
+        }, 3000);
     }
 });
 </script>

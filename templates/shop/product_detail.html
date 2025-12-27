@@ -233,60 +233,30 @@ function initProductCarousel() {
         showSlide(index);
     };
     
-    // Add click handlers to thumbnails
-    const thumbnails = document.querySelectorAll('.carousel-thumbnail');
-    thumbnails.forEach((thumbnail, index) => {
-        thumbnail.style.cursor = 'pointer';
-        thumbnail.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            showSlide(index);
-        });
-    });
     
     // Next slide
     function nextSlide() {
-        if (slides.length === 0) return;
-        const nextIndex = (currentIndex + 1) % slides.length;
+        const nextIndex = (currentIndex + 1) % productImages.length;
         showSlide(nextIndex);
     }
     
     // Previous slide
     function prevSlide() {
-        if (slides.length === 0) return;
-        const prevIndex = (currentIndex - 1 + slides.length) % slides.length;
+        const prevIndex = (currentIndex - 1 + productImages.length) % productImages.length;
         showSlide(prevIndex);
     }
     
     // Open lightbox
     function openLightbox(index) {
-        if (!lightbox || !lightboxImage) return;
-        
-        // Get image URL and alt from slide
-        let imageUrl = '';
-        let imageAlt = '';
-        
-        if (slides[index]) {
-            const img = slides[index].querySelector('.carousel-image');
-            if (img) {
-                imageUrl = img.src;
-                imageAlt = img.alt || '';
-            }
-        } else if (typeof productImages !== 'undefined' && productImages[index]) {
-            imageUrl = productImages[index].url;
-            imageAlt = productImages[index].alt;
-        }
-        
-        if (imageUrl) {
-            lightboxImage.src = imageUrl;
-            lightboxImage.alt = imageAlt;
+        if (productImages[index]) {
+            lightboxImage.src = productImages[index].url;
+            lightboxImage.alt = productImages[index].alt;
             currentIndex = index;
             lightbox.classList.add('active');
             document.body.style.overflow = 'hidden';
             
             // Show/hide arrows based on number of images
-            const imageCount = slides.length || (typeof productImages !== 'undefined' ? productImages.length : 0);
-            if (imageCount > 1) {
+            if (productImages.length > 1) {
                 if (lightboxPrev) lightboxPrev.style.display = 'flex';
                 if (lightboxNext) lightboxNext.style.display = 'flex';
             } else {
@@ -304,35 +274,27 @@ function initProductCarousel() {
     
     // Lightbox navigation
     function lightboxNextFunc() {
-        const imageCount = typeof productImages !== 'undefined' ? productImages.length : slides.length;
-        if (imageCount === 0) return;
-        const nextIndex = (currentIndex + 1) % imageCount;
+        const nextIndex = (currentIndex + 1) % productImages.length;
         openLightbox(nextIndex);
     }
     
     function lightboxPrevFunc() {
-        const imageCount = typeof productImages !== 'undefined' ? productImages.length : slides.length;
-        if (imageCount === 0) return;
-        const prevIndex = (currentIndex - 1 + imageCount) % imageCount;
+        const prevIndex = (currentIndex - 1 + productImages.length) % productImages.length;
         openLightbox(prevIndex);
     }
     
     // Event listeners for carousel arrows
     if (prevBtn) {
         prevBtn.addEventListener('click', (e) => {
-            e.preventDefault();
             e.stopPropagation();
             prevSlide();
-            return false;
         });
     }
     
     if (nextBtn) {
         nextBtn.addEventListener('click', (e) => {
-            e.preventDefault();
             e.stopPropagation();
             nextSlide();
-            return false;
         });
     }
     
@@ -341,10 +303,7 @@ function initProductCarousel() {
     slides.forEach((slide, index) => {
         const img = slide.querySelector('.carousel-image');
         if (img) {
-            img.style.cursor = 'pointer';
-            img.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+            img.addEventListener('click', () => {
                 openLightbox(index);
             });
         }
@@ -479,9 +438,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Toggle dropdown
         if (patternSelectTrigger) {
             patternSelectTrigger.addEventListener('click', function(e) {
+                e.preventDefault();
                 e.stopPropagation();
                 isOpen = !isOpen;
-                patternSelectCustom.classList.toggle('open', isOpen);
+                if (isOpen) {
+                    patternSelectCustom.classList.add('open');
+                } else {
+                    patternSelectCustom.classList.remove('open');
+                }
             });
         }
         

@@ -1473,6 +1473,7 @@ a:active {
 .pattern-select-custom {
     position: relative;
     width: 100%;
+    z-index: 2000;
 }
 
 .pattern-select-trigger {
@@ -1517,7 +1518,7 @@ a:active {
     border-radius: 0 0 5px 5px;
     max-height: 300px;
     overflow-y: auto;
-    z-index: 1000;
+    z-index: 2000;
     display: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

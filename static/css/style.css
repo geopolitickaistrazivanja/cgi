@@ -1514,6 +1514,19 @@ a:active {
         font-size: 14px;
         padding: 10px;
     }
+    
+    /* Mobile Cart Notification */
+    .cart-notification {
+        top: 80px;
+        right: 10px;
+        left: 10px;
+        max-width: calc(100% - 20px);
+        transform: translateY(-100px);
+    }
+    
+    .cart-notification.show {
+        transform: translateY(0);
+    }
 }
 
 /* Admin Customization */
@@ -1532,7 +1545,7 @@ a:active {
 .pattern-select-custom {
     position: relative;
     width: 100%;
-    z-index: 2000;
+    z-index: 999;
 }
 
 .pattern-select-trigger {
@@ -1579,7 +1592,7 @@ a:active {
     border-radius: 0 0 5px 5px;
     max-height: 300px;
     overflow-y: auto;
-    z-index: 2000;
+    z-index: 999;
     display: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -1640,24 +1653,29 @@ a:active {
     color: var(--text-dark);
 }
 
-.product-dimensions label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
 
-.product-dimensions select {
+.product-dimensions select,
+.product-patterns select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 16px;
     background-color: var(--white);
+    color: var(--text-dark);
+    cursor: pointer;
+}
+
+.product-dimensions select option:first-child,
+.product-patterns select option:first-child {
+    color: var(--text-light);
 }
 
 /* Product Patterns */
 .product-patterns {
     margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
 }
 
 .product-patterns h3 {
@@ -1682,7 +1700,7 @@ a:active {
     padding: 15px 25px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 10000;
+    z-index: 10001;
     opacity: 0;
     transform: translateX(400px);
     transition: opacity 0.3s ease, transform 0.3s ease;

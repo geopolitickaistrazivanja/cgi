@@ -87,7 +87,6 @@
                 {% if product.dimensions.exists %}
                     <div class="product-dimensions">
                         <h3>Dimenzije (Širina x Dubina x Visina)</h3>
-                        <label for="dimension-select">Izaberite dimenzije:</label>
                         <select id="dimension-select" name="dimension_id" required>
                             <option value="">-- Izaberite dimenzije --</option>
                             {% for dimension in product.dimensions.all %}
@@ -100,29 +99,12 @@
                 {% if product.patterns.exists %}
                     <div class="product-patterns">
                         <h3>Dezeni</h3>
-                        <label for="pattern-select">Izaberite dezen:</label>
-                        <div class="pattern-select-wrapper">
-                            <select id="pattern-select" name="pattern_id" required style="display: none;">
-                                <option value="">-- Izaberite dezen --</option>
-                                {% for pattern in product.patterns.all %}
-                                    <option value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">{{ forloop.counter }}</option>
-                                {% endfor %}
-                            </select>
-                            <div class="pattern-select-custom" id="pattern-select-custom">
-                                <div class="pattern-select-trigger">
-                                    <span class="pattern-select-placeholder">-- Izaberite dezen --</span>
-                                    <span class="pattern-select-arrow">▼</span>
-                                </div>
-                                <div class="pattern-select-options" id="pattern-select-options">
-                                    {% for pattern in product.patterns.all %}
-                                        <div class="pattern-select-option" data-value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">
-                                            <img src="{{ pattern.image.url }}" alt="Dezen {{ forloop.counter }}" class="pattern-option-image">
-                                            <span class="pattern-option-label">Dezen {{ forloop.counter }}</span>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
+                        <select id="pattern-select" name="pattern_id" required>
+                            <option value="" data-image="">-- Izaberite dezen --</option>
+                            {% for pattern in product.patterns.all %}
+                                <option value="{{ pattern.id }}" data-image="{{ pattern.image.url }}">Dezen {{ forloop.counter }}</option>
+                            {% endfor %}
+                        </select>
                         <input type="hidden" id="pattern-input" name="pattern_id" value="">
                         <div style="margin-top: 10px;"><strong>Izabrani dezen:</strong></div>
                         <div class="pattern-preview" id="pattern-preview"></div>
@@ -401,99 +383,43 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================
-// NEW PATTERN DROPDOWN IMPLEMENTATION
+// PATTERN SELECTION (now using standard select like dimensions)
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
-    const patternSelectCustom = document.getElementById('pattern-select-custom');
     const patternSelect = document.getElementById('pattern-select');
     const patternInput = document.getElementById('pattern-input');
     const patternPreview = document.getElementById('pattern-preview');
     
-    console.log('Pattern dropdown: patternSelectCustom:', patternSelectCustom ? 'Found' : 'NOT FOUND');
-    console.log('Pattern dropdown: patternSelect:', patternSelect ? 'Found' : 'NOT FOUND');
-    console.log('Pattern dropdown: patternInput:', patternInput ? 'Found' : 'NOT FOUND');
-    
-    if (!patternSelectCustom || !patternSelect || !patternInput) {
-        console.log('Pattern dropdown: Missing required elements, skipping');
-        return;
-    }
-    
-    const patternSelectTrigger = patternSelectCustom.querySelector('.pattern-select-trigger');
-    const patternSelectOptions = document.getElementById('pattern-select-options');
-    const patternSelectPlaceholder = patternSelectCustom.querySelector('.pattern-select-placeholder');
-    const patternOptions = patternSelectOptions ? patternSelectOptions.querySelectorAll('.pattern-select-option') : [];
-    
-    let isDropdownOpen = false;
-    
-    // Toggle dropdown
-    if (patternSelectTrigger) {
-        patternSelectTrigger.style.cursor = 'pointer';
-        patternSelectTrigger.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Pattern dropdown trigger clicked');
-            isDropdownOpen = !isDropdownOpen;
-            patternSelectCustom.classList.toggle('open', isDropdownOpen);
-            console.log('Dropdown is now', isDropdownOpen ? 'open' : 'closed');
-        }, false);
-    } else {
-        console.error('Pattern select trigger not found!');
-    }
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (isDropdownOpen && patternSelectCustom && !patternSelectCustom.contains(e.target)) {
-            console.log('Clicking outside - closing dropdown');
-            isDropdownOpen = false;
-            patternSelectCustom.classList.remove('open');
-        }
-    }, false);
-    
-    // Handle option selection
-    patternOptions.forEach(function(option) {
-        option.style.cursor = 'pointer';
-        option.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
+    if (patternSelect && patternInput) {
+        // Handle pattern selection change
+        patternSelect.onchange = function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const value = this.value;
+            const image = selectedOption ? selectedOption.dataset.image : '';
             
-            const value = this.dataset.value;
-            const image = this.dataset.image;
-            const label = this.querySelector('.pattern-option-label').textContent;
-            
-            console.log('Pattern option selected:', value, label);
-            
-            // Update values
-            patternSelect.value = value;
+            // Update hidden input
             patternInput.value = value;
-            
-            // Update placeholder
-            if (patternSelectPlaceholder) {
-                const selectedImage = this.querySelector('.pattern-option-image').cloneNode(true);
-                selectedImage.style.width = '30px';
-                selectedImage.style.height = '30px';
-                selectedImage.style.marginRight = '8px';
-                selectedImage.style.objectFit = 'cover';
-                patternSelectPlaceholder.innerHTML = '';
-                patternSelectPlaceholder.appendChild(selectedImage);
-                patternSelectPlaceholder.appendChild(document.createTextNode(label));
-            }
             
             // Update preview
             if (patternPreview) {
-                patternPreview.innerHTML = '<img src="' + image + '" alt="' + label + '" style="max-width: 200px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">';
+                if (value && image) {
+                    patternPreview.innerHTML = '<img src="' + image + '" alt="Izabrani dezen" style="max-width: 200px; margin-top: 10px; border: 1px solid #ddd; border-radius: 4px;">';
+                } else {
+                    patternPreview.innerHTML = '';
+                }
             }
-            
-            // Close dropdown
-            isDropdownOpen = false;
-            patternSelectCustom.classList.remove('open');
-        }, false);
-    });
-    
-    console.log('Pattern dropdown: Found', patternOptions.length, 'options');
-    
-    console.log('Pattern dropdown initialized');
+        };
+        
+        // Set initial value
+        patternInput.value = patternSelect.value;
+        
+        // Trigger initial change to show preview if something is selected
+        if (patternSelect.value) {
+            patternSelect.onchange();
+        }
+    }
 });
 
 // ============================================
@@ -539,23 +465,23 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Update hidden inputs from selects before validation
         if (dimensionSelect && dimensionInput) {
-            dimensionInput.value = dimensionSelect.value;
+            dimensionInput.value = dimensionSelect.value || '';
         }
         if (patternSelect && patternInput) {
-            patternInput.value = patternSelect.value;
+            patternInput.value = patternSelect.value || '';
         }
         
-        // Get values after updating
-        const dimensionId = dimensionInput ? dimensionInput.value : (dimensionSelect ? dimensionSelect.value : '');
-        const patternId = patternInput ? patternInput.value : (patternSelect ? patternSelect.value : '');
+        // Get values directly from selects (most reliable)
+        const dimensionId = dimensionSelect ? (dimensionSelect.value || '') : '';
+        const patternId = patternSelect ? (patternSelect.value || '') : '';
         
-        // Validate
-        if (dimensionSelect && !dimensionId) {
+        // Validate - only check if the select element exists AND has no value
+        if (dimensionSelect && dimensionSelect.value === '') {
             alert('Molimo izaberite dimenzije.');
             dimensionSelect.focus();
             return false;
         }
-        if (patternSelect && !patternId) {
+        if (patternSelect && patternSelect.value === '') {
             alert('Molimo izaberite dezen.');
             if (patternSelectCustom) {
                 patternSelectCustom.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -583,21 +509,38 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(function(data) {
             if (data.success) {
-                // Update cart count
-                const cartCountEl = document.querySelector('.cart-count');
-                if (cartCountEl) {
-                    cartCountEl.textContent = data.cart_count;
-                    if (data.cart_count > 0) {
-                        cartCountEl.style.display = 'flex';
+                // Update cart count for both desktop and mobile
+                const cartCountElements = document.querySelectorAll('.cart-count');
+                if (data.cart_count > 0) {
+                    if (cartCountElements.length > 0) {
+                        // Update all existing cart count elements
+                        cartCountElements.forEach(function(el) {
+                            el.textContent = data.cart_count;
+                            el.style.display = 'flex';
+                        });
+                    } else {
+                        // Create cart count for desktop if it doesn't exist
+                        const cartIconDesktop = document.querySelector('#cartIconBtn');
+                        if (cartIconDesktop && !cartIconDesktop.querySelector('.cart-count')) {
+                            const countSpan = document.createElement('span');
+                            countSpan.className = 'cart-count';
+                            countSpan.textContent = data.cart_count;
+                            cartIconDesktop.appendChild(countSpan);
+                        }
+                        // Create cart count for mobile if it doesn't exist
+                        const cartIconMobile = document.querySelector('#cartIconBtnMobile');
+                        if (cartIconMobile && !cartIconMobile.querySelector('.cart-count')) {
+                            const countSpan = document.createElement('span');
+                            countSpan.className = 'cart-count';
+                            countSpan.textContent = data.cart_count;
+                            cartIconMobile.appendChild(countSpan);
+                        }
                     }
-                } else if (data.cart_count > 0) {
-                    const cartIcon = document.querySelector('.cart-icon');
-                    if (cartIcon) {
-                        const countSpan = document.createElement('span');
-                        countSpan.className = 'cart-count';
-                        countSpan.textContent = data.cart_count;
-                        cartIcon.appendChild(countSpan);
-                    }
+                } else {
+                    // Remove all cart count elements if cart is empty
+                    cartCountElements.forEach(function(el) {
+                        el.remove();
+                    });
                 }
                 
                 // Show notification

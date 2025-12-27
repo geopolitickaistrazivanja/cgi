@@ -191,7 +191,7 @@
 // ============================================
 // NEW CAROUSEL IMPLEMENTATION
 // ============================================
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
     // Product images data
@@ -204,7 +204,12 @@
         {% endfor %}
     ];
     
-    if (productImages.length === 0) return;
+    if (productImages.length === 0) {
+        console.log('No product images found');
+        return;
+    }
+    
+    console.log('Carousel: Found', productImages.length, 'images');
     
     // Carousel variables
     let currentSlideIndex = 0;
@@ -213,12 +218,19 @@
     const prevBtn = document.getElementById('carouselPrev');
     const nextBtn = document.getElementById('carouselNext');
     
+    console.log('Carousel: Found', slides.length, 'slides');
+    console.log('Carousel: Found', thumbnails.length, 'thumbnails');
+    console.log('Carousel: Prev button:', prevBtn ? 'Found' : 'NOT FOUND');
+    console.log('Carousel: Next button:', nextBtn ? 'Found' : 'NOT FOUND');
+    
     // Lightbox variables
     const lightbox = document.getElementById('lightbox');
     const lightboxImage = document.getElementById('lightboxImage');
     const lightboxClose = document.getElementById('lightboxClose');
     const lightboxPrev = document.getElementById('lightboxPrev');
     const lightboxNext = document.getElementById('lightboxNext');
+    
+    console.log('Lightbox:', lightbox ? 'Found' : 'NOT FOUND');
     
     // Show specific slide
     function showSlide(index) {
@@ -287,73 +299,78 @@
     
     // Event listeners - Carousel arrows
     if (prevBtn) {
-        prevBtn.onclick = function(e) {
+        prevBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Prev button clicked');
             prevSlide();
-            return false;
-        };
+        }, false);
+    } else {
+        console.error('Prev button not found!');
     }
     
     if (nextBtn) {
-        nextBtn.onclick = function(e) {
+        nextBtn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Next button clicked');
             nextSlide();
-            return false;
-        };
+        }, false);
+    } else {
+        console.error('Next button not found!');
     }
     
     // Event listeners - Thumbnails
-    thumbnails.forEach((thumb, index) => {
-        thumb.onclick = function(e) {
+    thumbnails.forEach(function(thumb, index) {
+        thumb.style.cursor = 'pointer';
+        thumb.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Thumbnail', index, 'clicked');
             showSlide(index);
-            return false;
-        };
+        }, false);
     });
     
     // Event listeners - Image click to open lightbox
-    slides.forEach((slide, index) => {
+    slides.forEach(function(slide, index) {
         const img = slide.querySelector('.carousel-image');
         if (img) {
             img.style.cursor = 'pointer';
-            img.onclick = function(e) {
+            img.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
+                console.log('Image', index, 'clicked - opening lightbox');
                 openLightbox(index);
-                return false;
-            };
+            }, false);
         }
     });
     
     // Event listeners - Lightbox controls
     if (lightboxClose) {
-        lightboxClose.onclick = function(e) {
+        lightboxClose.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Lightbox close clicked');
             closeLightbox();
-            return false;
-        };
+        }, false);
     }
     
     if (lightboxPrev) {
-        lightboxPrev.onclick = function(e) {
+        lightboxPrev.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Lightbox prev clicked');
             lightboxPrev();
-            return false;
-        };
+        }, false);
     }
     
     if (lightboxNext) {
-        lightboxNext.onclick = function(e) {
+        lightboxNext.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Lightbox next clicked');
             lightboxNext();
-            return false;
-        };
+        }, false);
     }
     
     // Close lightbox on background click
@@ -380,12 +397,13 @@
     
     // Initialize first slide
     showSlide(0);
-})();
+    console.log('Carousel initialized');
+});
 
 // ============================================
 // NEW PATTERN DROPDOWN IMPLEMENTATION
 // ============================================
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
     const patternSelectCustom = document.getElementById('pattern-select-custom');
@@ -393,7 +411,14 @@
     const patternInput = document.getElementById('pattern-input');
     const patternPreview = document.getElementById('pattern-preview');
     
-    if (!patternSelectCustom || !patternSelect || !patternInput) return;
+    console.log('Pattern dropdown: patternSelectCustom:', patternSelectCustom ? 'Found' : 'NOT FOUND');
+    console.log('Pattern dropdown: patternSelect:', patternSelect ? 'Found' : 'NOT FOUND');
+    console.log('Pattern dropdown: patternInput:', patternInput ? 'Found' : 'NOT FOUND');
+    
+    if (!patternSelectCustom || !patternSelect || !patternInput) {
+        console.log('Pattern dropdown: Missing required elements, skipping');
+        return;
+    }
     
     const patternSelectTrigger = patternSelectCustom.querySelector('.pattern-select-trigger');
     const patternSelectOptions = document.getElementById('pattern-select-options');
@@ -404,31 +429,40 @@
     
     // Toggle dropdown
     if (patternSelectTrigger) {
-        patternSelectTrigger.onclick = function(e) {
+        patternSelectTrigger.style.cursor = 'pointer';
+        patternSelectTrigger.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
+            console.log('Pattern dropdown trigger clicked');
             isDropdownOpen = !isDropdownOpen;
             patternSelectCustom.classList.toggle('open', isDropdownOpen);
-        };
+            console.log('Dropdown is now', isDropdownOpen ? 'open' : 'closed');
+        }, false);
+    } else {
+        console.error('Pattern select trigger not found!');
     }
     
     // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
         if (isDropdownOpen && patternSelectCustom && !patternSelectCustom.contains(e.target)) {
+            console.log('Clicking outside - closing dropdown');
             isDropdownOpen = false;
             patternSelectCustom.classList.remove('open');
         }
-    });
+    }, false);
     
     // Handle option selection
     patternOptions.forEach(function(option) {
-        option.onclick = function(e) {
+        option.style.cursor = 'pointer';
+        option.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
             const value = this.dataset.value;
             const image = this.dataset.image;
             const label = this.querySelector('.pattern-option-label').textContent;
+            
+            console.log('Pattern option selected:', value, label);
             
             // Update values
             patternSelect.value = value;
@@ -454,14 +488,18 @@
             // Close dropdown
             isDropdownOpen = false;
             patternSelectCustom.classList.remove('open');
-        };
+        }, false);
     });
-})();
+    
+    console.log('Pattern dropdown: Found', patternOptions.length, 'options');
+    
+    console.log('Pattern dropdown initialized');
+});
 
 // ============================================
 // DIMENSION SELECTION
 // ============================================
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
     const dimensionSelect = document.getElementById('dimension-select');
@@ -474,16 +512,19 @@
         // Set initial value
         dimensionInput.value = dimensionSelect.value;
     }
-})();
+});
 
 // ============================================
 // ADD TO CART FORM
 // ============================================
-(function() {
+document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
     const addToCartForm = document.querySelector('.add-to-cart-form');
-    if (!addToCartForm) return;
+    if (!addToCartForm) {
+        console.log('Add to cart form not found');
+        return;
+    }
     
     const dimensionSelect = document.getElementById('dimension-select');
     const patternSelect = document.getElementById('pattern-select');
@@ -589,7 +630,9 @@
             }, 300);
         }, 3000);
     }
-})();
+    
+    console.log('Add to cart form initialized');
+});
 </script>
 {% endblock %}
 

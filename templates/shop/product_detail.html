@@ -87,12 +87,26 @@
                 {% if product.dimensions.exists %}
                     <div class="product-dimensions">
                         <h3>Dimenzije (Širina x Dubina x Visina)</h3>
-                        <select id="dimension-select" name="dimension_id" required>
-                            <option value="">-- Izaberite dimenzije --</option>
-                            {% for dimension in product.dimensions.all %}
-                                <option value="{{ dimension.id }}">{{ dimension.get_display }}</option>
-                            {% endfor %}
-                        </select>
+                        <div class="dimension-select-wrapper">
+                            <div class="dimension-select-custom" id="dimension-select-custom">
+                                <div class="dimension-select-trigger" id="dimension-select-trigger">
+                                    <span class="dimension-select-placeholder">-- Izaberite dimenzije --</span>
+                                    <span class="dimension-select-arrow">▼</span>
+                                </div>
+                                <div class="dimension-select-options" id="dimension-select-options">
+                                    <div class="dimension-select-option dimension-select-default" data-value="">
+                                        <span class="dimension-option-text">-- Izaberite dimenzije --</span>
+                                    </div>
+                                    {% for dimension in product.dimensions.all %}
+                                        <div class="dimension-select-option" data-value="{{ dimension.id }}">
+                                            <span class="dimension-option-text">{{ dimension.get_display }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="dimension-select" name="dimension_id" value="" required>
+                        <input type="hidden" id="dimension-input" name="dimension_id" value="">
                     </div>
                 {% endif %}
 
@@ -479,21 +493,63 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ============================================
-// DIMENSION SELECTION
+// DIMENSION SELECTION (custom dropdown like pattern)
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
     'use strict';
     
+    const dimensionSelectCustom = document.getElementById('dimension-select-custom');
+    const dimensionSelectTrigger = document.getElementById('dimension-select-trigger');
+    const dimensionSelectOptions = document.getElementById('dimension-select-options');
     const dimensionSelect = document.getElementById('dimension-select');
     const dimensionInput = document.getElementById('dimension-input');
+    const dimensionPlaceholder = dimensionSelectTrigger ? dimensionSelectTrigger.querySelector('.dimension-select-placeholder') : null;
     
-    if (dimensionSelect && dimensionInput) {
-        dimensionSelect.onchange = function() {
-            dimensionInput.value = this.value;
-        };
-        // Set initial value
-        dimensionInput.value = dimensionSelect.value;
+    if (!dimensionSelectCustom || !dimensionSelectTrigger || !dimensionSelectOptions || !dimensionSelect || !dimensionInput) {
+        return;
     }
+    
+    // Toggle dropdown
+    dimensionSelectTrigger.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dimensionSelectCustom.classList.toggle('open');
+    });
+    
+    // Select option
+    const dimensionOptions = dimensionSelectOptions.querySelectorAll('.dimension-select-option');
+    dimensionOptions.forEach(function(option) {
+        option.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const value = this.dataset.value;
+            
+            // Update hidden inputs
+            dimensionSelect.value = value;
+            dimensionInput.value = value;
+            
+            // Update placeholder
+            if (dimensionPlaceholder) {
+                if (value === '') {
+                    dimensionPlaceholder.textContent = '-- Izaberite dimenzije --';
+                } else {
+                    const selectedText = this.querySelector('.dimension-option-text').textContent;
+                    dimensionPlaceholder.textContent = selectedText;
+                }
+            }
+            
+            // Close dropdown
+            dimensionSelectCustom.classList.remove('open');
+        });
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!dimensionSelectCustom.contains(e.target)) {
+            dimensionSelectCustom.classList.remove('open');
+        }
+    });
 });
 
 // ============================================
@@ -527,18 +583,18 @@ document.addEventListener('DOMContentLoaded', function() {
             patternInput.value = patternSelect.value || '';
         }
         
-        // Get values directly from selects (most reliable)
-        const dimensionId = dimensionSelect ? (dimensionSelect.value || '') : '';
-        const patternId = patternSelect ? (patternSelect.value || '') : '';
+        // Get values directly from hidden inputs (most reliable)
+        const dimensionId = dimensionInput ? (dimensionInput.value || '') : '';
+        const patternId = patternInput ? (patternInput.value || '') : '';
         
         // Validate and show visual feedback instead of alerts
         let hasError = false;
         let errorElement = null;
         
-        if (dimensionSelect && dimensionSelect.value === '') {
+        if (dimensionInput && dimensionInput.value === '') {
             hasError = true;
-            errorElement = dimensionSelect.closest('.product-dimensions');
-        } else if (patternSelect && patternSelect.value === '') {
+            errorElement = document.getElementById('dimension-select-custom') ? document.getElementById('dimension-select-custom').closest('.product-dimensions') : null;
+        } else if (patternInput && patternInput.value === '') {
             hasError = true;
             errorElement = document.getElementById('pattern-select-custom') ? document.getElementById('pattern-select-custom').closest('.product-patterns') : null;
         }

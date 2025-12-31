@@ -75,6 +75,9 @@ def add_to_cart(request, product_id):
             return JsonResponse({'success': False, 'message': _('Molimo izaberite dimenzije.')})
         try:
             dimension = product.dimensions.get(id=dimension_id)
+            # Price is now mandatory - dimension must have a price
+            if not dimension.price:
+                return JsonResponse({'success': False, 'message': _('Izabrane dimenzije nemaju cenu. Molimo izaberite druge dimenzije.')})
         except:
             return JsonResponse({'success': False, 'message': _('Neispravne dimenzije.')})
     else:
@@ -193,7 +196,10 @@ def cart_dropdown(request):
         elif item['product'].images.first():
             image_url = item['product'].images.first().image.url
         
-        price_display = f"{item['product'].price} RSD" if item['product'].price else "Na upit"
+        # Get price from dimension (price is now mandatory)
+        price_display = "Izaberite opcije"
+        if item.get('dimension') and item['dimension'].price:
+            price_display = f"{item['dimension'].price} RSD"
         
         items.append({
             'product_id': item['product'].id,
@@ -203,7 +209,7 @@ def cart_dropdown(request):
             'image': request.build_absolute_uri(image_url) if image_url else ''
         })
     
-    total_display = f"{cart_context['cart_total']} RSD" if cart_context['cart_total'] else "Na upit"
+    total_display = f"{cart_context['cart_total']} RSD" if cart_context['cart_total'] else "0 RSD"
     
     return JsonResponse({
         'items': items,
@@ -302,9 +308,12 @@ def checkout(request):
             dimension = item.get('dimension')
             pattern = item.get('pattern')
             
-            # Handle price - can be None for "Na upit"
-            item_price = item['product'].current_price if item['product'].current_price is not None else 0
-            price_display = f"{item['product'].current_price} RSD" if item['product'].current_price is not None else "Na upit"
+            # Get price from dimension (price is now mandatory)
+            item_price = None
+            price_display = "Izaberite opcije"
+            if dimension and dimension.price:
+                item_price = dimension.price
+                price_display = f"{item_price} RSD"
             
             order_item = OrderItem.objects.create(
                 order=order,
@@ -352,7 +361,7 @@ def checkout(request):
             {''.join(order_items_html)}
             
             <div style="margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
-                <h3 style="margin-top: 0;">Ukupan iznos: {order.total_amount if order.total_amount > 0 else "Na upit"} RSD</h3>
+                <h3 style="margin-top: 0;">Ukupan iznos: {order.total_amount} RSD</h3>
             </div>
         </body>
         </html>
@@ -370,7 +379,7 @@ Grad: {city}
 Poštanski broj: {postal_code}
 
 Broj porudžbine: #{order.id}
-Ukupan iznos: {order.total_amount if order.total_amount > 0 else "Na upit"} RSD
+Ukupan iznos: {order.total_amount} RSD
 """
         
         try:
@@ -401,7 +410,7 @@ Ukupan iznos: {order.total_amount if order.total_amount > 0 else "Na upit"} RSD
             {''.join(order_items_html)}
             
             <div style="margin-top: 20px; padding: 15px; background-color: #f5f5f5; border-radius: 5px;">
-                <h3 style="margin-top: 0;">Ukupan iznos: {order.total_amount if order.total_amount > 0 else "Na upit"} RSD</h3>
+                <h3 style="margin-top: 0;">Ukupan iznos: {order.total_amount} RSD</h3>
             </div>
             
             <p>Kontaktiraćemo vas uskoro u vezi sa isporukom.</p>
@@ -417,7 +426,7 @@ Poštovani/a {first_name} {last_name},
 Hvala vam na porudžbini!
 
 Broj porudžbine: #{order.id}
-Ukupan iznos: {order.total_amount if order.total_amount > 0 else "Na upit"} RSD
+Ukupan iznos: {order.total_amount} RSD
 
 Kontaktiraćemo vas uskoro u vezi sa isporukom.
 

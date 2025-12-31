@@ -75,7 +75,7 @@
                                     {% if item.total %}
                                         {{ item.total }} RSD
                                     {% else %}
-                                        Na upit
+                                        Izaberite opcije
                                     {% endif %}
                                 </p>
                             </div>
@@ -83,7 +83,7 @@
                     {% endfor %}
                 </div>
                 <div class="checkout-total">
-                    <h3>Ukupno: {{ cart_total }} RSD</h3>
+                    <h3>Ukupno: {% if cart_total %}{{ cart_total }} RSD{% else %}0 RSD{% endif %}</h3>
                 </div>
             </div>
         </div>

@@ -24,10 +24,10 @@
                         <div class="cart-item-info">
                             <h3><a href="{% url 'shop:product_detail' item.product.slug %}">{{ item.product.title }}</a></h3>
                             <p class="cart-item-price">
-                                {% if item.product.price %}
-                                    {{ item.product.price }} RSD
+                                {% if item.dimension and item.dimension.price %}
+                                    {{ item.dimension.price }} RSD
                                 {% else %}
-                                    Na upit
+                                    Izaberite opcije
                                 {% endif %}
                             </p>
                             {% if item.dimension %}
@@ -55,7 +55,7 @@
                                 {% if item.total %}
                                     {{ item.total }} RSD
                                 {% else %}
-                                    Na upit
+                                    Izaberite opcije
                                 {% endif %}
                             </p>
                         </div>
@@ -75,7 +75,7 @@
                     {% if cart_total %}
                         {{ cart_total }} RSD
                     {% else %}
-                        Na upit
+                        0 RSD
                     {% endif %}
                 </h2>
                 <a href="{% url 'shop:checkout' %}" class="btn btn-primary">Nastavi na plaćanje</a>

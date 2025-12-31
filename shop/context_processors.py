@@ -33,10 +33,12 @@ def cart(request):
                         except ProductPattern.DoesNotExist:
                             pass
                     
-                    # Calculate total only if price exists
+                    # Calculate total from dimension price (price is now mandatory)
                     item_total = None
-                    if product.current_price is not None:
-                        item_total = float(product.current_price) * quantity
+                    item_price = None
+                    if dimension and dimension.price:
+                        item_price = float(dimension.price)
+                        item_total = item_price * quantity
                         total += item_total
                     
                     cart_items.append({
@@ -45,6 +47,7 @@ def cart(request):
                         'dimension': dimension,
                         'pattern': pattern,
                         'total': item_total,
+                        'price': item_price,
                     })
         except (Product.DoesNotExist, ValueError):
             continue

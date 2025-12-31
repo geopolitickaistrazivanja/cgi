@@ -72,12 +72,8 @@
                 <h1>{{ product.title }}</h1>
                 <p class="product-sku">SKU: {{ product.sku }}</p>
                 
-                <div class="product-price">
-                    {% if product.price %}
-                        <span class="current-price">{{ product.price }} RSD</span>
-                    {% else %}
-                        <span class="current-price">Na upit</span>
-                    {% endif %}
+                <div class="product-price" id="product-price-display">
+                    <span class="current-price" id="current-price-text">Izaberite opcije</span>
                 </div>
 
                 <div class="product-description">
@@ -180,13 +176,7 @@
                                     <div class="product-placeholder">Nema slike</div>
                                 {% endif %}
                                 <h3>{{ product.title }}</h3>
-                                <p class="product-price">
-                                    {% if product.price %}
-                                        {{ product.price }} RSD
-                                    {% else %}
-                                        Na upit
-                                    {% endif %}
-                                </p>
+                                <p class="product-price">Izaberite opcije</p>
                             </a>
                         </div>
                     {% endfor %}
@@ -545,11 +535,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update price display
             if (priceDisplay) {
                 if (value === '') {
-                    priceDisplay.textContent = 'Izaberite dimenzije';
+                    priceDisplay.textContent = 'Izaberite opcije';
                 } else if (price && price !== '') {
                     priceDisplay.textContent = price + ' RSD';
                 } else {
-                    priceDisplay.textContent = 'Na upit';
+                    priceDisplay.textContent = 'Izaberite opcije';
                 }
             }
             
@@ -605,7 +595,22 @@ document.addEventListener('DOMContentLoaded', function() {
         let hasError = false;
         let errorElement = null;
         
+        // Get selected dimension to check if it has a price
+        const dimensionSelectOptions = document.getElementById('dimension-select-options');
+        let selectedDimensionHasPrice = false;
+        
+        if (dimensionId) {
+            const selectedOption = dimensionSelectOptions ? dimensionSelectOptions.querySelector(`[data-value="${dimensionId}"]`) : null;
+            if (selectedOption) {
+                const dimensionPrice = selectedOption.dataset.price;
+                selectedDimensionHasPrice = dimensionPrice && dimensionPrice !== '';
+            }
+        }
+        
         if (dimensionInput && dimensionInput.value === '') {
+            hasError = true;
+            errorElement = document.getElementById('dimension-select-custom') ? document.getElementById('dimension-select-custom').closest('.product-dimensions') : null;
+        } else if (dimensionInput && dimensionInput.value !== '' && !selectedDimensionHasPrice) {
             hasError = true;
             errorElement = document.getElementById('dimension-select-custom') ? document.getElementById('dimension-select-custom').closest('.product-dimensions') : null;
         } else if (patternInput && patternInput.value === '') {

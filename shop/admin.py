@@ -64,13 +64,6 @@ class ProductAdminForm(forms.ModelForm):
             raise ValidationError(_('SKU je obavezan.'))
         return sku
     
-    def clean_price(self):
-        price = self.cleaned_data.get('price')
-        # Price can be None (for "Na upit") or a positive number
-        if price is not None and price <= 0:
-            raise ValidationError(_('Cena mora biti veća od 0 ili ostavite prazno za "Na upit".'))
-        return price
-    
     def clean_meta_title(self):
         meta_title = self.cleaned_data.get('meta_title')
         if not meta_title or not meta_title.strip():
@@ -96,7 +89,7 @@ class ProductAdminForm(forms.ModelForm):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     form = ProductAdminForm
-    list_display = ('title', 'sku', 'current_price', 'stock_status', 'is_active', 'created_at')
+    list_display = ('title', 'sku', 'stock_status', 'is_active', 'created_at')
     list_filter = ('stock_type', 'is_active', 'created_at')
     search_fields = ('title', 'sku', 'short_description')
     prepopulated_fields = {'slug': ('title',)}
@@ -113,10 +106,6 @@ class ProductAdmin(admin.ModelAdmin):
         }),
         (_('Opis'), {
             'fields': ('short_description', 'full_description')
-        }),
-        (_('Cena'), {
-            'fields': ('price',),
-            'description': _('Ostavite prazno za "Na upit"')
         }),
         (_('Zalihe'), {
             'fields': ('stock_type', 'stock_quantity', 'is_active')
@@ -138,9 +127,3 @@ class ProductAdmin(admin.ModelAdmin):
             return f"{obj.stock_quantity} komada"
         return _('Nema na stanju')
     stock_status.short_description = _('Status zaliha')
-
-    def current_price(self, obj):
-        if obj.price is not None:
-            return f"{obj.price} RSD"
-        return "Na upit"
-    current_price.short_description = _('Cena')

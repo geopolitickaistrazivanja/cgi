@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load shop_filters %}
 
 {% block title %}Plaćanje - EhoLux{% endblock %}
 
@@ -72,18 +73,14 @@
                                     <img src="{{ item.pattern.image.url }}" alt="Dezen" style="max-width: 150px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px;">
                                 {% endif %}
                                 <p class="checkout-item-price">
-                                    {% if item.total %}
-                                        {{ item.total }} RSD
-                                    {% else %}
-                                        Izaberite opcije
-                                    {% endif %}
+                                    {{ item.total|format_price }}
                                 </p>
                             </div>
                         </div>
                     {% endfor %}
                 </div>
                 <div class="checkout-total">
-                    <h3>Ukupno: {% if cart_total %}{{ cart_total }} RSD{% else %}0 RSD{% endif %}</h3>
+                    <h3>Ukupno: {{ cart_total|format_price }}</h3>
                 </div>
             </div>
         </div>

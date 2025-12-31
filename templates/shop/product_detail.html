@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load shop_filters %}
 
 {% block title %}{{ product.title }} - EhoLux{% endblock %}
 
@@ -532,12 +533,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            // Update price display
+            // Update price display with thousands separator
             if (priceDisplay) {
                 if (value === '') {
                     priceDisplay.textContent = 'Izaberite opcije';
                 } else if (price && price !== '') {
-                    priceDisplay.textContent = price + ' RSD';
+                    // Format price with thousands separator, no decimals
+                    const priceNum = parseInt(parseFloat(price));
+                    priceDisplay.textContent = priceNum.toLocaleString('sr-RS') + ' RSD';
                 } else {
                     priceDisplay.textContent = 'Izaberite opcije';
                 }

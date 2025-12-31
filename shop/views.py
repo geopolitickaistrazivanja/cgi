@@ -105,12 +105,15 @@ def add_to_cart(request, product_id):
             })
     
     # Store cart item with dimension and pattern
-    cart_key = str(product_id)
+    # Use composite key: product_id_dimension_id_pattern_id to allow multiple variations
+    cart_key = f"{product_id}_{dimension_id or 'none'}_{pattern_id or 'none'}"
+    
     if cart_key not in cart or not isinstance(cart[cart_key], dict):
         cart[cart_key] = {
             'quantity': 0,
             'dimension_id': dimension_id,
-            'pattern_id': pattern_id
+            'pattern_id': pattern_id,
+            'product_id': product_id  # Store product_id for reference
         }
     
     cart[cart_key]['quantity'] = cart[cart_key].get('quantity', 0) + quantity
@@ -123,17 +126,38 @@ def add_to_cart(request, product_id):
     return JsonResponse({
         'success': True,
         'message': _('Proizvod je dodat u korpu.'),
-        'cart_count': sum(item.get('quantity', item) if isinstance(item, dict) else item for item in cart.values())
+        'cart_count': len(cart)  # Count number of unique items
     })
 
 
 @require_http_methods(["POST"])
 def remove_from_cart(request, product_id):
     cart = request.session.get('cart', {})
-    if str(product_id) in cart:
-        del cart[str(product_id)]
-        request.session['cart'] = cart
-        request.session.modified = True
+    # Get cart_key from POST data if available (for composite keys)
+    cart_key = request.POST.get('cart_key', '')
+    
+    if cart_key and cart_key in cart:
+        # Remove specific cart item by composite key
+        del cart[cart_key]
+    else:
+        # Fallback: remove all cart items for this product (handle both old and new key formats)
+        keys_to_remove = []
+        for key in cart.keys():
+            if isinstance(key, str):
+                # New format: product_id_dimension_id_pattern_id
+                if key.startswith(f"{product_id}_"):
+                    keys_to_remove.append(key)
+                # Old format: just product_id
+                elif key == str(product_id):
+                    keys_to_remove.append(key)
+            elif key == product_id:
+                keys_to_remove.append(key)
+        
+        for key in keys_to_remove:
+            del cart[key]
+    
+    request.session['cart'] = cart
+    request.session.modified = True
     
     # Return JSON for AJAX requests
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -155,26 +179,32 @@ def update_cart(request, product_id):
     dimension_id = request.POST.get('dimension_id', '')
     pattern_id = request.POST.get('pattern_id', '')
     
+    # Use composite key to find the exact cart item
+    cart_key = f"{product_id}_{dimension_id or 'none'}_{pattern_id or 'none'}"
+    
     if quantity <= 0:
-        if str(product_id) in cart:
-            del cart[str(product_id)]
+        if cart_key in cart:
+            del cart[cart_key]
     else:
         product = get_object_or_404(Product, id=product_id, is_active=True)
         if product.stock_type == 'limited' and product.stock_quantity:
             if quantity > product.stock_quantity:
                 messages.error(request, _('Nema dovoljno proizvoda na stanju.'))
-                return redirect('cart')
+                return redirect('shop:cart')
         
-        cart_key = str(product_id)
-        cart[cart_key] = {
-            'quantity': quantity,
-            'dimension_id': dimension_id if dimension_id else None,
-            'pattern_id': pattern_id if pattern_id else None
-        }
+        if cart_key not in cart:
+            cart[cart_key] = {
+                'quantity': 0,
+                'dimension_id': dimension_id if dimension_id else None,
+                'pattern_id': pattern_id if pattern_id else None,
+                'product_id': product_id
+            }
+        
+        cart[cart_key]['quantity'] = quantity
     
     request.session['cart'] = cart
     request.session.modified = True
-    return redirect('cart')
+    return redirect('shop:cart')
 
 
 def cart_view(request):
@@ -196,10 +226,11 @@ def cart_dropdown(request):
         elif item['product'].images.first():
             image_url = item['product'].images.first().image.url
         
-        # Get price from dimension (price is now mandatory)
+        # Get price from dimension (price is now mandatory) - format with thousands separator
         price_display = "Izaberite opcije"
         if item.get('dimension') and item['dimension'].price:
-            price_display = f"{item['dimension'].price} RSD"
+            price_num = int(float(item['dimension'].price))
+            price_display = f"{price_num:,} RSD"
         
         items.append({
             'product_id': item['product'].id,
@@ -209,7 +240,8 @@ def cart_dropdown(request):
             'image': request.build_absolute_uri(image_url) if image_url else ''
         })
     
-    total_display = f"{cart_context['cart_total']} RSD" if cart_context['cart_total'] else "0 RSD"
+    total_num = int(cart_context['cart_total']) if cart_context['cart_total'] else 0
+    total_display = f"{total_num:,} RSD"
     
     return JsonResponse({
         'items': items,
@@ -308,12 +340,13 @@ def checkout(request):
             dimension = item.get('dimension')
             pattern = item.get('pattern')
             
-            # Get price from dimension (price is now mandatory)
+            # Get price from dimension (price is now mandatory) - format with thousands separator
             item_price = None
             price_display = "Izaberite opcije"
             if dimension and dimension.price:
                 item_price = dimension.price
-                price_display = f"{item_price} RSD"
+                price_num = int(float(item_price))
+                price_display = f"{price_num:,} RSD"
             
             order_item = OrderItem.objects.create(
                 order=order,

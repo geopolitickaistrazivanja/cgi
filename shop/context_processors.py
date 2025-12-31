@@ -5,8 +5,18 @@ def cart(request):
     total = 0
     
     from .models import Product, ProductDimension, ProductPattern
-    for product_id, cart_data in cart.items():
+    for cart_key, cart_data in cart.items():
         try:
+            # Handle both old format (product_id as key) and new format (composite key)
+            if isinstance(cart_data, dict) and 'product_id' in cart_data:
+                product_id = cart_data['product_id']
+            else:
+                # Old format: key is product_id
+                try:
+                    product_id = int(cart_key.split('_')[0])
+                except (ValueError, IndexError):
+                    product_id = int(cart_key)
+            
             product = Product.objects.get(id=product_id, is_active=True)
             if product.is_in_stock:
                 # Handle both old format (just quantity) and new format (dict)
@@ -48,6 +58,7 @@ def cart(request):
                         'pattern': pattern,
                         'total': item_total,
                         'price': item_price,
+                        'cart_key': cart_key,  # Store cart_key for remove functionality
                     })
         except (Product.DoesNotExist, ValueError):
             continue
@@ -55,6 +66,6 @@ def cart(request):
     return {
         'cart_items': cart_items,
         'cart_total': total,
-        'cart_count': sum(item.get('quantity', item) if isinstance(item, dict) else item for item in cart.values()),
+        'cart_count': len(cart),  # Count number of unique items (products with different dimensions/patterns)
     }
 

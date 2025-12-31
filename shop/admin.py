@@ -17,8 +17,22 @@ class ProductImageInline(admin.TabularInline):
 class ProductDimensionInline(admin.TabularInline):
     model = ProductDimension
     extra = 1
-    fields = ('length', 'width', 'height', 'price', 'order')
+    fields = ('length', 'width', 'height', 'price', 'order', 'get_price_display_admin')
+    readonly_fields = ('get_price_display_admin',)
     can_delete = True
+    
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'price':
+            # Format price input to show as integer (no decimals)
+            kwargs['widget'] = forms.NumberInput(attrs={'step': '1', 'min': '0'})
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
+    
+    def get_price_display_admin(self, obj):
+        """Display formatted price in admin"""
+        if obj and obj.pk and obj.price:
+            return f"{int(obj.price):,} RSD"
+        return "-"
+    get_price_display_admin.short_description = _('Cena (formatirano)')
 
 
 class ProductPatternInline(admin.TabularInline):

@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load shop_filters %}
 
 {% block title %}Korpa - EhoLux{% endblock %}
 
@@ -24,11 +25,7 @@
                         <div class="cart-item-info">
                             <h3><a href="{% url 'shop:product_detail' item.product.slug %}">{{ item.product.title }}</a></h3>
                             <p class="cart-item-price">
-                                {% if item.dimension and item.dimension.price %}
-                                    {{ item.dimension.price }} RSD
-                                {% else %}
-                                    Izaberite opcije
-                                {% endif %}
+                                {{ item.dimension.price|format_price }}
                             </p>
                             {% if item.dimension %}
                                 <p class="cart-item-dimension"><strong>Dimenzije:</strong> {{ item.dimension.get_display }}</p>
@@ -52,16 +49,13 @@
                         </div>
                         <div class="cart-item-total">
                             <p>
-                                {% if item.total %}
-                                    {{ item.total }} RSD
-                                {% else %}
-                                    Izaberite opcije
-                                {% endif %}
+                                {{ item.total|format_price }}
                             </p>
                         </div>
                         <div class="cart-item-remove">
                             <form method="post" action="{% url 'shop:remove_from_cart' item.product.id %}">
                                 {% csrf_token %}
+                                <input type="hidden" name="cart_key" value="{{ item.cart_key }}">
                                 <button type="submit" class="btn-remove">Ukloni</button>
                             </form>
                         </div>
@@ -71,12 +65,7 @@
             
             <div class="cart-summary">
                 <h2>
-                    Ukupno: 
-                    {% if cart_total %}
-                        {{ cart_total }} RSD
-                    {% else %}
-                        0 RSD
-                    {% endif %}
+                    Ukupno: {{ cart_total|format_price }}
                 </h2>
                 <a href="{% url 'shop:checkout' %}" class="btn btn-primary">Nastavi na plaćanje</a>
             </div>

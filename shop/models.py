@@ -43,6 +43,12 @@ class ProductDimension(models.Model):
     def get_display(self):
         """Return formatted dimensions string"""
         return f"{self.length} x {self.width} x {self.height} cm"
+    
+    def get_price_display(self):
+        """Return formatted price with thousands separator, no decimals"""
+        if self.price:
+            return f"{int(self.price):,} RSD"
+        return "Izaberite opcije"
 
 
 class ProductPattern(models.Model):

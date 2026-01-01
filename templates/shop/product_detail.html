@@ -839,6 +839,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Cleanup function
         highlightRect._cleanup = function() {
             // Fade out before removing
+            highlightRect.classList.add('fade-out');
             highlightRect.classList.remove('visible');
             setTimeout(function() {
                 updateEvents.forEach(function(eventType) {
@@ -851,13 +852,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 400); // Wait for fade out transition
         };
         
-        // Auto cleanup after animation completes (4 cycles * 1.2s = 4.8s + fade in/out)
+        // Auto cleanup after animation completes (3 cycles * 0.73s = 2.19s + fade in 0.2s + fade out 0.4s = 2.79s ≈ 2.8s)
         setTimeout(function() {
             if (highlightRect._cleanup) {
                 highlightRect._cleanup();
             }
             targetElement.classList.remove('field-error-highlight');
-        }, 5200); // 4.8s animation + 0.4s fade out
+        }, 2800); // 2.8s total duration
     }
     
     // Notification function

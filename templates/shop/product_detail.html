@@ -637,33 +637,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // Scroll to first error element
             errorElements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Add blinking red border animation to dropdown triggers only
+            // Remove any existing error messages
+            document.querySelectorAll('.field-error-message').forEach(function(msg) {
+                msg.remove();
+            });
+            
+            // Show message boxes pointing to dropdowns
             errorElements.forEach(function(errorElement) {
                 const dimensionTrigger = errorElement.querySelector('.dimension-select-trigger');
                 const patternTrigger = errorElement.querySelector('.pattern-select-trigger');
                 
                 if (dimensionTrigger) {
-                    dimensionTrigger.classList.add('field-error-highlight');
+                    showFieldErrorMessage(dimensionTrigger, 'Molimo izaberite dimenzije');
                 }
                 if (patternTrigger) {
-                    patternTrigger.classList.add('field-error-highlight');
+                    showFieldErrorMessage(patternTrigger, 'Molimo izaberite dezen');
                 }
             });
-            
-            // Remove animation after 3 seconds
-            setTimeout(function() {
-                errorElements.forEach(function(errorElement) {
-                    const dimensionTrigger = errorElement.querySelector('.dimension-select-trigger');
-                    const patternTrigger = errorElement.querySelector('.pattern-select-trigger');
-                    
-                    if (dimensionTrigger) {
-                        dimensionTrigger.classList.remove('field-error-highlight');
-                    }
-                    if (patternTrigger) {
-                        patternTrigger.classList.remove('field-error-highlight');
-                    }
-                });
-            }, 3000);
             
             return false;
         }
@@ -735,6 +725,63 @@ document.addEventListener('DOMContentLoaded', function() {
         
         return false;
     };
+    
+    // Field error message function
+    function showFieldErrorMessage(targetElement, message) {
+        // Create message box
+        const messageBox = document.createElement('div');
+        messageBox.className = 'field-error-message';
+        messageBox.textContent = message;
+        document.body.appendChild(messageBox);
+        
+        // Force a reflow to get accurate dimensions
+        messageBox.offsetHeight;
+        
+        // Calculate position above the target element (using fixed positioning)
+        const rect = targetElement.getBoundingClientRect();
+        
+        // Position message box above the element (centered)
+        const messageWidth = messageBox.offsetWidth;
+        const messageHeight = messageBox.offsetHeight;
+        const elementCenterX = rect.left + (rect.width / 2);
+        const elementTop = rect.top;
+        
+        let messageTop = elementTop - messageHeight - 15;
+        let messageLeft = elementCenterX - (messageWidth / 2);
+        
+        // Adjust if message box goes off screen horizontally
+        if (messageLeft < 10) {
+            messageLeft = 10;
+        }
+        if (messageLeft + messageWidth > window.innerWidth - 10) {
+            messageLeft = window.innerWidth - messageWidth - 10;
+        }
+        
+        // Adjust if message box goes off screen vertically (too close to top)
+        let pointsUp = false;
+        if (messageTop < 10) {
+            // Position below instead
+            messageTop = elementTop + rect.height + 15;
+            pointsUp = true;
+            messageBox.classList.add('points-up');
+        }
+        
+        messageBox.style.top = messageTop + 'px';
+        messageBox.style.left = messageLeft + 'px';
+        
+        // Show message
+        setTimeout(function() {
+            messageBox.classList.add('show');
+        }, 10);
+        
+        // Hide and remove after 3.5 seconds
+        setTimeout(function() {
+            messageBox.classList.remove('show');
+            setTimeout(function() {
+                messageBox.remove();
+            }, 300);
+        }, 3500);
+    }
     
     // Notification function
     function showCartNotification(message, type) {

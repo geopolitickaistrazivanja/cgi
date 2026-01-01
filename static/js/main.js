@@ -262,7 +262,11 @@ function loadCartDropdown(isMobile = false) {
             if (!itemsContainer || !totalElement) return;
             
             if (data.items && data.items.length > 0) {
-                itemsContainer.innerHTML = data.items.map(item => `
+                itemsContainer.innerHTML = data.items.map(item => {
+                    // Escape cart_key for use in onclick
+                    const cartKey = (item.cart_key || '').replace(/'/g, "\\'");
+                    const productId = item.product_id || 0;
+                    return `
                     <div class="cart-dropdown-item">
                         <img src="${item.image}" alt="${item.title}" class="cart-dropdown-item-image">
                         <div class="cart-dropdown-item-info">
@@ -270,9 +274,10 @@ function loadCartDropdown(isMobile = false) {
                             <p>Količina: ${item.quantity}</p>
                             <p>${item.price}</p>
                         </div>
-                        <button class="cart-dropdown-item-remove" data-product-id="${item.product_id}" data-cart-key="${item.cart_key || ''}" onclick="removeFromCartDropdown('${item.cart_key || ''}', ${item.product_id})">×</button>
+                        <button class="cart-dropdown-item-remove" data-product-id="${productId}" data-cart-key="${cartKey}" onclick="removeFromCartDropdown('${cartKey}', ${productId})">×</button>
                     </div>
-                `).join('');
+                `;
+                }).join('');
                 totalElement.textContent = data.total;
             } else {
                 itemsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-light);">Korpa je prazna</div>';
@@ -324,9 +329,35 @@ document.addEventListener('click', function(e) {
 
 function removeFromCartDropdown(cartKey, productId) {
     const formData = new FormData();
-    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    
+    // Get CSRF token from multiple possible sources
+    let csrfToken = null;
+    // Try to get from form input
+    const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+    if (csrfInput) {
+        csrfToken = csrfInput.value;
+    }
+    // Try to get from meta tag
+    if (!csrfToken) {
+        const csrfMeta = document.querySelector('meta[name=csrf-token]');
+        if (csrfMeta) {
+            csrfToken = csrfMeta.getAttribute('content');
+        }
+    }
+    // Try to get from cookie
+    if (!csrfToken) {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith('csrftoken=')) {
+                csrfToken = cookie.substring('csrftoken='.length);
+                break;
+            }
+        }
+    }
+    
     if (csrfToken) {
-        formData.append('csrfmiddlewaretoken', csrfToken.value);
+        formData.append('csrfmiddlewaretoken', csrfToken);
     }
     
     // Add cart_key if available

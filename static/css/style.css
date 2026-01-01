@@ -563,7 +563,7 @@ a:active {
     background-color: var(--white);
     border: none;
     font-size: 24px;
-    color: var(--dark-gray);
+    color: var(--dark-gray) !important;
     cursor: pointer;
     padding: 0;
     display: flex;
@@ -665,8 +665,27 @@ a:active {
     border: 1px solid #f5c6cb;
 }
 
-/* Buttons */
+/* Buttons - All buttons have white text by default (except navbar items and special buttons) */
+a.btn,
+a.btn-primary,
+button:not(.nav-item):not(.search-icon-btn):not(.cart-icon):not(.mobile-menu-btn):not(.offcanvas-close):not(.lightbox-close):not(.lightbox-arrow):not(.carousel-arrow):not(.search-close),
+input[type="submit"],
+input[type="button"],
 .btn {
+    color: var(--white) !important;
+}
+
+a.btn *,
+a.btn-primary *,
+button:not(.nav-item):not(.search-icon-btn):not(.cart-icon):not(.mobile-menu-btn):not(.offcanvas-close):not(.lightbox-close):not(.lightbox-arrow):not(.carousel-arrow):not(.search-close) *,
+input[type="submit"] *,
+input[type="button"] *,
+.btn * {
+    color: var(--white) !important;
+}
+
+.btn,
+a.btn {
     display: inline-block;
     padding: 12px 30px;
     background-color: #1a4370;
@@ -679,7 +698,8 @@ a:active {
     transition: background-color 0.3s ease;
 }
 
-.btn * {
+.btn *,
+a.btn * {
     color: var(--white) !important;
 }
 
@@ -694,12 +714,14 @@ a:active {
     }
 }
 
-.btn-primary {
+.btn-primary,
+a.btn-primary {
     background-color: #1a4370;
     color: var(--white) !important;
 }
 
-.btn-primary * {
+.btn-primary *,
+a.btn-primary * {
     color: var(--white) !important;
 }
 
@@ -1897,32 +1919,63 @@ a:active {
     color: var(--text-light);
 }
 
-/* Field error highlight animation */
-.field-error-highlight {
-    animation: fieldErrorBlink 0.6s ease-in-out 5;
-    border: 2px solid #dc3545 !important;
-    border-radius: 5px;
-    padding: 2px;
-    box-sizing: border-box;
+/* Field error message box */
+.field-error-message {
+    position: fixed;
+    background-color: #f5f5dc;
+    color: var(--text-dark);
+    padding: 12px 18px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none;
+    max-width: 90vw;
+    white-space: normal;
+    text-align: center;
+    border: 1px solid #ddd;
 }
 
-@keyframes fieldErrorBlink {
-    0%, 100% {
-        opacity: 1;
-        border-color: #dc3545;
-    }
-    50% {
-        opacity: 0.5;
-        border-color: rgba(220, 53, 69, 0.5);
-    }
+.field-error-message.show {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.dimension-select-trigger.field-error-highlight,
-.pattern-select-trigger.field-error-highlight {
-    animation: fieldErrorBlink 0.6s ease-in-out 5;
-    border-color: #dc3545 !important;
-    outline: 2px solid #dc3545 !important;
-    outline-offset: 0;
+/* Corner pointing down to the field */
+.field-error-message::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 20px;
+    height: 20px;
+    background-color: #f5f5dc;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Corner pointing up when message is below field */
+.field-error-message.points-up::after {
+    bottom: auto;
+    top: -10px;
+    border-right: none;
+    border-bottom: none;
+    border-left: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+}
+
+@media (max-width: 767px) {
+    .field-error-message {
+        font-size: 13px;
+        padding: 10px 15px;
+        max-width: calc(100vw - 20px);
+    }
 }
 
 /* Product Patterns */

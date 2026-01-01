@@ -314,5 +314,181 @@ document.addEventListener('DOMContentLoaded', function() {
             label.textContent = 'Po tipu';
         }
     });
+    
+    // Translate form field labels and help text
+    const fieldLabels = document.querySelectorAll('label, .field-label, .form-row label');
+    fieldLabels.forEach(function(label) {
+        const text = label.textContent.trim();
+        // Common field labels
+        if (text === 'Username') {
+            label.textContent = 'Korisničko ime';
+        } else if (text === 'Email address') {
+            label.textContent = 'Email adresa';
+        } else if (text === 'First name') {
+            label.textContent = 'Ime';
+        } else if (text === 'Last name') {
+            label.textContent = 'Prezime';
+        } else if (text === 'Password') {
+            label.textContent = 'Lozinka';
+        } else if (text === 'Password confirmation') {
+            label.textContent = 'Potvrda lozinke';
+        } else if (text === 'Is active') {
+            label.textContent = 'Je aktivan';
+        } else if (text === 'Is staff') {
+            label.textContent = 'Je osoblje';
+        } else if (text === 'Is superuser') {
+            label.textContent = 'Je superkorisnik';
+        } else if (text === 'Date joined') {
+            label.textContent = 'Datum registracije';
+        } else if (text === 'Last login') {
+            label.textContent = 'Poslednja prijava';
+        } else if (text === 'Groups') {
+            label.textContent = 'Grupe';
+        } else if (text === 'User permissions') {
+            label.textContent = 'Korisnička dozvola';
+        } else if (text === 'Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.') {
+            label.textContent = 'Obavezno. Maksimalno 150 karaktera. Samo slova, cifre i @/./+/-/_.';
+        }
+    });
+    
+    // Translate help text
+    const helpTexts = document.querySelectorAll('.help, .help-block, .field-help');
+    helpTexts.forEach(function(help) {
+        let text = help.textContent.trim();
+        if (text.includes('Required. 150 characters or fewer')) {
+            text = text.replace(/Required\. 150 characters or fewer\. Letters, digits and @\/\.\/\+\/-\/_ only\./g, 'Obavezno. Maksimalno 150 karaktera. Samo slova, cifre i @/./+/-/_.');
+            help.textContent = text;
+        }
+        if (text.includes('Enter the same password as before')) {
+            text = text.replace(/Enter the same password as before/g, 'Unesite istu lozinku kao pre');
+            help.textContent = text;
+        }
+    });
+    
+    // Translate inline form labels
+    const inlineLabels = document.querySelectorAll('.inline-group h2, .inline-related h3');
+    inlineLabels.forEach(function(label) {
+        const text = label.textContent.trim();
+        if (text.includes('Add another')) {
+            label.textContent = text.replace(/Add another/g, 'Dodaj novi');
+        } else if (text.includes('Delete')) {
+            label.textContent = text.replace(/Delete/g, 'Obriši');
+        }
+    });
+    
+    // Translate "Add" button in inline forms
+    const addInlineButtons = document.querySelectorAll('.add-row a, .add-row button');
+    addInlineButtons.forEach(function(button) {
+        if (button.textContent.trim() === 'Add another') {
+            button.textContent = 'Dodaj novi';
+        }
+    });
+    
+    // Translate "Remove" in inline forms
+    const removeInlineLinks = document.querySelectorAll('.delete a, .inline-deletelink');
+    removeInlineLinks.forEach(function(link) {
+        if (link.textContent.trim() === 'Delete') {
+            link.textContent = 'Obriši';
+        }
+    });
+    
+    // Translate "Today" and date picker text
+    const todayLinks = document.querySelectorAll('a[href*="today"]');
+    todayLinks.forEach(function(link) {
+        if (link.textContent.trim() === 'Today') {
+            link.textContent = 'Danas';
+        }
+    });
+    
+    // Translate form errors
+    const errorLists = document.querySelectorAll('.errorlist li');
+    errorLists.forEach(function(error) {
+        let text = error.textContent.trim();
+        if (text.includes('This field is required')) {
+            text = text.replace(/This field is required/g, 'Ovo polje je obavezno');
+            error.textContent = text;
+        } else if (text.includes('Enter a valid email address')) {
+            text = text.replace(/Enter a valid email address/g, 'Unesite validnu email adresu');
+            error.textContent = text;
+        } else if (text.includes('This value may contain only letters, numbers and @/./+/-/_ characters')) {
+            text = text.replace(/This value may contain only letters, numbers and @\/\.\/\+\/-\/_ characters/g, 'Ova vrednost može sadržati samo slova, cifre i @/./+/-/_ karaktere');
+            error.textContent = text;
+        }
+    });
+    
+    // Translate success messages
+    const successMessages = document.querySelectorAll('.success, .messagelist .success');
+    successMessages.forEach(function(msg) {
+        let text = msg.textContent.trim();
+        if (text.includes('was added successfully')) {
+            text = text.replace(/was added successfully/g, 'je uspešno dodat');
+            msg.textContent = text;
+        } else if (text.includes('was changed successfully')) {
+            text = text.replace(/was changed successfully/g, 'je uspešno izmenjen');
+            msg.textContent = text;
+        } else if (text.includes('was deleted successfully')) {
+            text = text.replace(/was deleted successfully/g, 'je uspešno obrisan');
+            msg.textContent = text;
+        }
+    });
+    
+    // Translate "Select" in select boxes
+    const selectOptions = document.querySelectorAll('select option');
+    selectOptions.forEach(function(option) {
+        if (option.textContent.trim() === '---------') {
+            // Already translated
+        } else if (option.textContent.trim() === 'Yes') {
+            option.textContent = 'Da';
+        } else if (option.textContent.trim() === 'No') {
+            option.textContent = 'Ne';
+        }
+    });
+    
+    // Translate "Actions" in changelist
+    const actionsHeaders = document.querySelectorAll('.actions h3, .actions label');
+    actionsHeaders.forEach(function(header) {
+        if (header.textContent.includes('Actions')) {
+            header.textContent = header.textContent.replace(/Actions/g, 'Akcije');
+        }
+    });
+    
+    // Translate "Filter" if it appears anywhere
+    const filterHeaders = document.querySelectorAll('h2:contains("Filter"), h3:contains("Filter")');
+    filterHeaders.forEach(function(header) {
+        if (header.textContent.includes('Filter')) {
+            header.textContent = header.textContent.replace(/Filter/g, 'Filter');
+        }
+    });
+    
+    // Use MutationObserver to catch dynamically added content
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) { // Element node
+                    // Re-run translations on new content
+                    const newHeadings = node.querySelectorAll ? node.querySelectorAll('h2, .module h2, .module caption') : [];
+                    newHeadings.forEach(function(heading) {
+                        const text = heading.textContent.trim();
+                        if (text === 'Users') {
+                            heading.textContent = 'Korisnici';
+                        } else if (text === 'Authentication and Authorization' || text === 'Authentication & Authorization') {
+                            heading.textContent = 'Autentifikacija i autorizacija';
+                        } else if (text === 'Accounts') {
+                            heading.textContent = 'Nalozi';
+                        } else if (text === 'Core') {
+                            heading.textContent = 'Osnovno';
+                        } else if (text === 'Shop') {
+                            heading.textContent = 'Prodavnica';
+                        }
+                    });
+                }
+            });
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 });
 

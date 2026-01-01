@@ -637,23 +637,38 @@ document.addEventListener('DOMContentLoaded', function() {
             // Scroll to first error element
             errorElements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
             
-            // Remove any existing error messages
-            document.querySelectorAll('.field-error-message').forEach(function(msg) {
-                msg.remove();
+            // Remove any existing error highlights
+            document.querySelectorAll('.field-error-highlight').forEach(function(el) {
+                el.classList.remove('field-error-highlight');
+                const highlightRect = el.querySelector('.error-highlight-rect');
+                if (highlightRect) {
+                    highlightRect.remove();
+                }
             });
             
-            // Show message boxes pointing to dropdowns
+            // Add red rectangles around dropdown triggers
             errorElements.forEach(function(errorElement) {
                 const dimensionTrigger = errorElement.querySelector('.dimension-select-trigger');
                 const patternTrigger = errorElement.querySelector('.pattern-select-trigger');
                 
                 if (dimensionTrigger) {
-                    showFieldErrorMessage(dimensionTrigger, 'Molimo izaberite dimenzije');
+                    addErrorHighlight(dimensionTrigger);
                 }
                 if (patternTrigger) {
-                    showFieldErrorMessage(patternTrigger, 'Molimo izaberite dezen');
+                    addErrorHighlight(patternTrigger);
                 }
             });
+            
+            // Remove highlights after 3 seconds
+            setTimeout(function() {
+                document.querySelectorAll('.field-error-highlight').forEach(function(el) {
+                    el.classList.remove('field-error-highlight');
+                    const highlightRect = el.querySelector('.error-highlight-rect');
+                    if (highlightRect) {
+                        highlightRect.remove();
+                    }
+                });
+            }, 3000);
             
             return false;
         }
@@ -726,61 +741,69 @@ document.addEventListener('DOMContentLoaded', function() {
         return false;
     };
     
-    // Field error message function
-    function showFieldErrorMessage(targetElement, message) {
-        // Create message box
-        const messageBox = document.createElement('div');
-        messageBox.className = 'field-error-message';
-        messageBox.textContent = message;
-        document.body.appendChild(messageBox);
+    // Add red rectangle highlight around element
+    function addErrorHighlight(targetElement) {
+        targetElement.classList.add('field-error-highlight');
         
-        // Force a reflow to get accurate dimensions
-        messageBox.offsetHeight;
+        // Create fixed positioned rectangle that follows the element
+        const highlightRect = document.createElement('div');
+        highlightRect.className = 'error-highlight-rect';
+        highlightRect.style.position = 'fixed';
+        highlightRect.style.pointerEvents = 'none';
+        highlightRect.style.zIndex = '10000';
+        highlightRect.style.border = '3px solid #dc3545';
+        highlightRect.style.borderRadius = '5px';
+        highlightRect.style.boxSizing = 'border-box';
+        highlightRect.style.animation = 'fieldErrorBlink 0.6s ease-in-out 5';
+        document.body.appendChild(highlightRect);
         
-        // Calculate position above the target element (using fixed positioning)
-        const rect = targetElement.getBoundingClientRect();
-        
-        // Position message box above the element (centered)
-        const messageWidth = messageBox.offsetWidth;
-        const messageHeight = messageBox.offsetHeight;
-        const elementCenterX = rect.left + (rect.width / 2);
-        const elementTop = rect.top;
-        
-        let messageTop = elementTop - messageHeight - 15;
-        let messageLeft = elementCenterX - (messageWidth / 2);
-        
-        // Adjust if message box goes off screen horizontally
-        if (messageLeft < 10) {
-            messageLeft = 10;
-        }
-        if (messageLeft + messageWidth > window.innerWidth - 10) {
-            messageLeft = window.innerWidth - messageWidth - 10;
+        // Function to update rectangle position (using viewport coordinates for fixed positioning)
+        function updatePosition() {
+            const rect = targetElement.getBoundingClientRect();
+            highlightRect.style.top = rect.top + 'px';
+            highlightRect.style.left = rect.left + 'px';
+            highlightRect.style.width = rect.width + 'px';
+            highlightRect.style.height = rect.height + 'px';
         }
         
-        // Adjust if message box goes off screen vertically (too close to top)
-        let pointsUp = false;
-        if (messageTop < 10) {
-            // Position below instead
-            messageTop = elementTop + rect.height + 15;
-            pointsUp = true;
-            messageBox.classList.add('points-up');
-        }
+        // Initial position
+        updatePosition();
         
-        messageBox.style.top = messageTop + 'px';
-        messageBox.style.left = messageLeft + 'px';
+        // Update position on scroll, resize, and zoom
+        const updateEvents = ['scroll', 'resize', 'orientationchange'];
+        const updateHandler = function() {
+            updatePosition();
+        };
         
-        // Show message
+        updateEvents.forEach(function(eventType) {
+            window.addEventListener(eventType, updateHandler, { passive: true });
+        });
+        
+        // Also update on touchmove for mobile zoom/pan
+        document.addEventListener('touchmove', updateHandler, { passive: true });
+        
+        // Store handler reference for cleanup
+        highlightRect._updateHandler = updateHandler;
+        highlightRect._updateEvents = updateEvents;
+        
+        // Cleanup function
+        highlightRect._cleanup = function() {
+            updateEvents.forEach(function(eventType) {
+                window.removeEventListener(eventType, updateHandler);
+            });
+            document.removeEventListener('touchmove', updateHandler);
+            if (highlightRect.parentNode) {
+                highlightRect.parentNode.removeChild(highlightRect);
+            }
+        };
+        
+        // Auto cleanup after 3 seconds
         setTimeout(function() {
-            messageBox.classList.add('show');
-        }, 10);
-        
-        // Hide and remove after 3.5 seconds
-        setTimeout(function() {
-            messageBox.classList.remove('show');
-            setTimeout(function() {
-                messageBox.remove();
-            }, 300);
-        }, 3500);
+            if (highlightRect._cleanup) {
+                highlightRect._cleanup();
+            }
+            targetElement.classList.remove('field-error-highlight');
+        }, 3000);
     }
     
     // Notification function

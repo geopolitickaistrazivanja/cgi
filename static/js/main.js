@@ -47,82 +47,115 @@ if (offcanvas) {
 }
 
 // Search Functionality
-const searchBtn = document.getElementById('searchBtn');
-const searchBtnMobile = document.getElementById('searchBtnMobile');
-const searchOverlay = document.getElementById('searchOverlay');
-const searchClose = document.getElementById('searchClose');
-const searchInput = document.getElementById('searchInput');
-const searchResults = document.getElementById('searchResults');
-
-function openSearch() {
-    searchOverlay.classList.add('active');
-    searchInput.focus();
-    document.body.style.overflow = 'hidden';
-}
-
-function closeSearch() {
-    searchOverlay.classList.remove('active');
-    searchInput.value = '';
-    searchResults.innerHTML = '';
-    document.body.style.overflow = '';
-}
-
-if (searchBtn) {
-    searchBtn.addEventListener('click', openSearch);
-}
-if (searchBtnMobile) {
-    searchBtnMobile.addEventListener('click', openSearch);
-}
-if (searchClose) {
-    searchClose.addEventListener('click', closeSearch);
-}
-
-// Close search on Escape key
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && searchOverlay.classList.contains('active')) {
-        closeSearch();
-    }
-});
-
-// Search with debounce
-let searchTimeout;
-searchInput.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
-    const query = e.target.value.trim();
+document.addEventListener('DOMContentLoaded', function() {
+    const searchBtn = document.getElementById('searchBtn');
+    const searchBtnMobile = document.getElementById('searchBtnMobile');
+    const searchOverlay = document.getElementById('searchOverlay');
+    const searchClose = document.getElementById('searchClose');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
     
-    if (query.length < 2) {
-        searchResults.innerHTML = '';
+    if (!searchOverlay || !searchInput || !searchResults) {
+        console.log('Search elements not found, skipping search initialization');
         return;
     }
     
-    searchTimeout = setTimeout(() => {
-        fetch(`/prodavnica/pretraga/?q=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                displaySearchResults(data.products);
-            })
-            .catch(error => {
-                console.error('Search error:', error);
-            });
-    }, 300);
-});
-
-function displaySearchResults(products) {
-    if (products.length === 0) {
-        searchResults.innerHTML = '<div class="search-result-item">Nema rezultata</div>';
-        return;
+    function openSearch() {
+        if (searchOverlay) {
+            searchOverlay.classList.add('active');
+            if (searchInput) {
+                searchInput.focus();
+            }
+            document.body.style.overflow = 'hidden';
+        }
     }
     
-    searchResults.innerHTML = products.map(product => `
-        <div class="search-result-item" onclick="window.location.href='/prodavnica/proizvod/${product.slug}/'">
-            ${product.image ? `<img src="${product.image}" alt="${product.title}">` : ''}
-            <div>
-                <h4>${product.title}</h4>
-                <p>${product.price} RSD</p>
+    function closeSearch() {
+        if (searchOverlay) {
+            searchOverlay.classList.remove('active');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            if (searchResults) {
+                searchResults.innerHTML = '';
+            }
+            document.body.style.overflow = '';
+        }
+    }
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', openSearch);
+    }
+    if (searchBtnMobile) {
+        searchBtnMobile.addEventListener('click', openSearch);
+    }
+    if (searchClose) {
+        searchClose.addEventListener('click', closeSearch);
+    }
+    
+    // Close search on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && searchOverlay && searchOverlay.classList.contains('active')) {
+            closeSearch();
+        }
+    });
+    
+    // Search with debounce
+    let searchTimeout;
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length < 2) {
+                if (searchResults) {
+                    searchResults.innerHTML = '';
+                }
+                return;
+            }
+            
+            searchTimeout = setTimeout(() => {
+                fetch(`/prodavnica/pretraga/?q=${encodeURIComponent(query)}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (searchResults) {
+                            displaySearchResults(data.products || []);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Search error:', error);
+                        if (searchResults) {
+                            searchResults.innerHTML = '<div class="search-result-item">Greška pri pretrazi</div>';
+                        }
+                    });
+            }, 300);
+        });
+    }
+    
+    function displaySearchResults(products) {
+        if (!searchResults) return;
+        
+        if (!products || products.length === 0) {
+            searchResults.innerHTML = '<div class="search-result-item">Nema rezultata</div>';
+            return;
+        }
+        
+        searchResults.innerHTML = products.map(product => `
+            <div class="search-result-item" onclick="window.location.href='/prodavnica/proizvod/${product.slug}/'">
+                ${product.image ? `<img src="${product.image}" alt="${product.title}">` : ''}
+                <div>
+                    <h4>${product.title}</h4>
+                    <p>${product.price || 'Izaberite opcije'}</p>
+                </div>
             </div>
-        </div>
-    `).join('');
-}
+        `).join('');
+    }
+});
 
 // Add to Cart
 document.querySelectorAll('.add-to-cart-form').forEach(form => {

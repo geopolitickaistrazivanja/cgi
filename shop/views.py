@@ -266,15 +266,16 @@ def search_products(request):
     for p in products:
         image_url = ''
         if p.thumbnail:
-            image_url = p.thumbnail.url
+            image_url = request.build_absolute_uri(p.thumbnail.url)
         elif p.images.first():
-            image_url = p.images.first().image.url
+            image_url = request.build_absolute_uri(p.images.first().image.url)
         
+        # Price is now per dimension, so show "Izaberite opcije"
         results.append({
             'id': p.id,
             'title': p.title,
             'slug': p.slug,
-            'price': str(p.current_price) if p.current_price is not None else 'Na upit',
+            'price': 'Izaberite opcije',
             'image': image_url,
         })
     

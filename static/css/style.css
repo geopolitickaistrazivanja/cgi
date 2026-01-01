@@ -668,7 +668,7 @@ a:active {
 /* Buttons - All buttons have white text by default (except navbar items and special buttons) */
 a.btn,
 a.btn-primary,
-button:not(.nav-item):not(.search-icon-btn):not(.cart-icon):not(.mobile-menu-btn):not(.offcanvas-close):not(.lightbox-close):not(.lightbox-arrow):not(.carousel-arrow):not(.search-close),
+button:not(.nav-item):not(.search-icon-btn):not(.cart-icon):not(.mobile-menu-btn):not(.offcanvas-close):not(.lightbox-close):not(.lightbox-arrow):not(.carousel-arrow):not(.search-close):not(.cart-dropdown-item-remove),
 input[type="submit"],
 input[type="button"],
 .btn {
@@ -677,7 +677,7 @@ input[type="button"],
 
 a.btn *,
 a.btn-primary *,
-button:not(.nav-item):not(.search-icon-btn):not(.cart-icon):not(.mobile-menu-btn):not(.offcanvas-close):not(.lightbox-close):not(.lightbox-arrow):not(.carousel-arrow):not(.search-close) *,
+button:not(.nav-item):not(.search-icon-btn):not(.cart-icon):not(.mobile-menu-btn):not(.offcanvas-close):not(.lightbox-close):not(.lightbox-arrow):not(.carousel-arrow):not(.search-close):not(.cart-dropdown-item-remove) *,
 input[type="submit"] *,
 input[type="button"] *,
 .btn * {
@@ -2117,18 +2117,14 @@ a.btn-primary * {
 }
 
 .cart-dropdown-item-remove {
-    background: none;
-    border: none;
+    background: none !important;
+    border: none !important;
     color: #dc3545 !important;
     cursor: pointer;
     padding: 5px;
     font-size: 18px;
     line-height: 1;
-    transition: color 0.2s ease;
-}
-
-.cart-dropdown-item-remove:hover {
-    color: #c82333 !important;
+    font-weight: bold;
 }
 
 .cart-dropdown-footer {

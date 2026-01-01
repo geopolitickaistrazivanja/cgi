@@ -8,3 +8,4 @@ urlpatterns = [
     path('<slug:slug>/', views.blog_detail, name='blog_detail'),
 ]
 
+

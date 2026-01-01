@@ -5,3 +5,4 @@ admin.site.site_header = _('EhoLux administracija')
 admin.site.site_title = _('EhoLux administracija')
 admin.site.index_title = _('EhoLux administracija')
 
+

@@ -12,3 +12,4 @@ def format_price(value):
     except (ValueError, TypeError):
         return "Izaberite opcije"
 
+

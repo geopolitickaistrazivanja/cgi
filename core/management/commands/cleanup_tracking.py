@@ -25,3 +25,4 @@ class Command(BaseCommand):
                 self.style.ERROR(f'Error cleaning up tracking records: {e}')
             )
 
+

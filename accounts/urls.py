@@ -11,3 +11,4 @@ urlpatterns = [
     path('nalog/', views.account, name='account'),
 ]
 
+

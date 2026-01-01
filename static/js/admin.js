@@ -44,6 +44,30 @@ document.addEventListener('DOMContentLoaded', function() {
         goButton.textContent = 'Izvrši';
     }
     
+    // Translate search form
+    const searchLabel = document.querySelector('#changelist-search label');
+    if (searchLabel && searchLabel.textContent.includes('Search')) {
+        // Label is usually just an image, so we check the placeholder
+    }
+    const searchInput = document.querySelector('#changelist-search input[type="text"]');
+    if (searchInput && !searchInput.placeholder) {
+        searchInput.placeholder = 'Pretraga';
+    }
+    const searchSubmit = document.querySelector('#changelist-search input[type="submit"]');
+    if (searchSubmit && searchSubmit.value === 'Search') {
+        searchSubmit.value = 'Pretraži';
+    }
+    
+    // Translate "Add" links
+    const addLinks = document.querySelectorAll('.object-tools .addlink');
+    addLinks.forEach(function(link) {
+        const text = link.textContent.trim();
+        if (text.startsWith('Add ')) {
+            const modelName = text.replace('Add ', '');
+            link.textContent = 'Dodaj ' + modelName;
+        }
+    });
+    
     // Translate app labels to Serbian
     const headings = document.querySelectorAll('h2, .module h2, .module caption');
     headings.forEach(function(heading) {

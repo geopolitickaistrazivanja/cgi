@@ -35,6 +35,232 @@ div.breadcrumbs a {
     background-color: #ffffff !important;
 }
 
+/* Dark mode support - override white backgrounds */
+[data-theme="dark"] #content-main,
+html[data-theme="dark"] #content-main {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .module,
+html[data-theme="dark"] .module {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .field-box,
+html[data-theme="dark"] .field-box {
+    background-color: #2a2a2a !important;
+    border-color: #3a3a3a !important;
+}
+
+[data-theme="dark"] .form-row,
+html[data-theme="dark"] .form-row {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .inline-group,
+html[data-theme="dark"] .inline-group {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .results,
+html[data-theme="dark"] .results {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .results table,
+html[data-theme="dark"] .results table {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .results thead th,
+html[data-theme="dark"] .results thead th {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .results tbody tr,
+html[data-theme="dark"] .results tbody tr {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .results tbody tr:hover,
+html[data-theme="dark"] .results tbody tr:hover {
+    background-color: #2a2a2a !important;
+}
+
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] textarea,
+[data-theme="dark"] select,
+html[data-theme="dark"] input[type="text"],
+html[data-theme="dark"] input[type="email"],
+html[data-theme="dark"] input[type="number"],
+html[data-theme="dark"] input[type="password"],
+html[data-theme="dark"] textarea,
+html[data-theme="dark"] select {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+    border-color: #3a3a3a !important;
+}
+
+[data-theme="dark"] .changelist,
+html[data-theme="dark"] .changelist {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .changelist-filters,
+html[data-theme="dark"] .changelist-filters {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] #content,
+html[data-theme="dark"] #content {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .changelist,
+html[data-theme="dark"] .changelist {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .changelist .results,
+html[data-theme="dark"] .changelist .results {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .form-row p,
+html[data-theme="dark"] .form-row p {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] label,
+html[data-theme="dark"] label {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .help,
+html[data-theme="dark"] .help {
+    color: #cccccc !important;
+}
+
+[data-theme="dark"] .readonly,
+html[data-theme="dark"] .readonly {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vLargeTextField,
+html[data-theme="dark"] .vLargeTextField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vTextField,
+html[data-theme="dark"] .vTextField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vIntegerField,
+html[data-theme="dark"] .vIntegerField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vURLField,
+html[data-theme="dark"] .vURLField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vEmailField,
+html[data-theme="dark"] .vEmailField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vBigIntegerField,
+html[data-theme="dark"] .vBigIntegerField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vDecimalField,
+html[data-theme="dark"] .vDecimalField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vTimeField,
+html[data-theme="dark"] .vTimeField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vDateField,
+html[data-theme="dark"] .vDateField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vDateTimeField,
+html[data-theme="dark"] .vDateTimeField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .vForeignKeyRawIdAdminField,
+html[data-theme="dark"] .vForeignKeyRawIdAdminField {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .related-lookup,
+html[data-theme="dark"] .related-lookup {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .add-another,
+html[data-theme="dark"] .add-another {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .related-widget-wrapper,
+html[data-theme="dark"] .related-widget-wrapper {
+    background-color: transparent !important;
+}
+
+[data-theme="dark"] .selector,
+html[data-theme="dark"] .selector {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .selector-available,
+html[data-theme="dark"] .selector-available {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .selector-chosen,
+html[data-theme="dark"] .selector-chosen {
+    background-color: #1a1a1a !important;
+}
+
+[data-theme="dark"] .selector-available h2,
+html[data-theme="dark"] .selector-available h2 {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .selector-chosen h2,
+html[data-theme="dark"] .selector-chosen h2 {
+    background-color: #2a2a2a !important;
+    color: #ffffff !important;
+}
+
 .object-tools a {
     background-color: #000000 !important;
     color: #ffffff !important;

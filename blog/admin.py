@@ -26,3 +26,15 @@ class BlogPostAdmin(admin.ModelAdmin):
         if db_field.name in ('short_description', 'full_description'):
             kwargs['widget'] = CKEditorUploadingWidget(config_name='default')
         return super().formfield_for_dbfield(db_field, request, **kwargs)
+    
+    def save_model(self, request, obj, form, change):
+        """
+        Override save_model to pass request to cleanup function.
+        This allows us to access session uploads for cleanup.
+        """
+        # Store request in obj temporarily so cleanup can access it
+        obj._request = request
+        super().save_model(request, obj, form, change)
+        # Clean up after save
+        if hasattr(obj, '_request'):
+            delattr(obj, '_request')

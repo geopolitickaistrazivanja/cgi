@@ -106,7 +106,7 @@ def mark_upload_as_used(file_path, model_name, instance_id):
         uploads.exclude(pk=upload.pk).delete()
 
 
-def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, is_new_instance=False):
+def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, is_new_instance=False, session_uploads=None):
     """
     Clean up uploads that were tracked but not used in ANY product/blog.
     Deletes orphaned files with a grace period to avoid deleting files that are still being edited.
@@ -181,30 +181,53 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
     
     deleted_count = 0
     
-    # For new instances: check all unused uploads, but only delete those not in any saved content
-    # Since we check against normalized_all_referenced (all saved content), we don't need a time window
-    # This is simpler and still efficient - we only delete truly orphaned uploads
-    if is_new_instance:
-        # Check all unused uploads
-        unused_uploads = CkeditorUpload.objects.filter(is_used=False)
+    # For new instances: use session-based cleanup (most efficient)
+    # Only check uploads from current editing session (tracked in session)
+    # Compare against current blog's HTML and delete orphaned ones
+    if is_new_instance and session_uploads:
+        # Normalize current content paths for comparison
+        # This is what's actually in the blog's HTML
+        normalized_current_content = set()
+        for path in normalized_referenced:
+            normalized_current_content.add(path)
         
-        for upload in unused_uploads:
-            # Normalize the upload path for comparison
-            upload_path = upload.file_path
+        # Check each upload from session: is it in the current blog's HTML?
+        for session_upload_path in session_uploads:
+            # Normalize the session upload path
+            upload_path = session_upload_path
             if upload_path.startswith('/'):
                 upload_path = upload_path[1:]
             
-            # IMPORTANT: Check if upload is in ANY saved content (existing products/blogs)
-            # OR in the current content being saved
-            # This prevents deleting images from previously created blogs/products
-            # Only delete if it's truly orphaned (not in any saved content)
-            if upload_path not in normalized_all_referenced:
-                # Upload not in ANY saved content AND not in current content
-                # This means it was uploaded but deleted before saving, or is truly orphaned
-                # Safe to delete - it's truly orphaned
-                if delete_file_from_storage(upload.file_path):
+            # Check if this upload is in the current blog's HTML
+            if upload_path not in normalized_current_content:
+                # Upload is NOT in the current blog's HTML
+                # This means it was uploaded but deleted from CKEditor before saving
+                # Delete it from R2
+                if delete_file_from_storage(upload_path):
                     deleted_count += 1
-                upload.delete()
+                
+                # Also delete the tracking record if it exists
+                try:
+                    upload_record = CkeditorUpload.objects.get(file_path=upload_path)
+                    upload_record.delete()
+                except CkeditorUpload.DoesNotExist:
+                    pass  # Record doesn't exist, that's fine
+            else:
+                # Upload IS in the current blog's HTML - mark it as used
+                try:
+                    upload_record = CkeditorUpload.objects.get(file_path=upload_path)
+                    upload_record.is_used = True
+                    upload_record.used_in_model = model_name
+                    upload_record.used_in_id = instance_id
+                    upload_record.save()
+                except CkeditorUpload.DoesNotExist:
+                    # Create tracking record as used
+                    CkeditorUpload.objects.create(
+                        file_path=upload_path,
+                        is_used=True,
+                        used_in_model=model_name,
+                        used_in_id=instance_id,
+                    )
         
         # Return early for new instances (we've handled the cleanup)
         return deleted_count

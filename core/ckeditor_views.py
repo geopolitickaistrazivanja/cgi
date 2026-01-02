@@ -96,13 +96,23 @@ class TrackedImageUploadView(ImageUploadView):
             filepath = get_upload_filename(uploaded_file.name, request)
             saved_path = filewrapper.save_as(filepath)
             
-            # Track the upload
+            # Track the upload in database (for general tracking)
             # saved_path is relative to media root (e.g., "uploads/2024/01/15/image.jpg")
             try:
                 track_upload(saved_path, user=request.user if request.user.is_authenticated else None)
             except Exception as e:
                 # Log tracking error but don't fail the upload
                 logger.warning(f"Failed to track upload {saved_path}: {str(e)}")
+            
+            # Also track in session for this editing session
+            # This allows us to check only uploads from current editing session when saving
+            if 'ckeditor_uploads' not in request.session:
+                request.session['ckeditor_uploads'] = []
+            
+            # Add this upload to session (store the file path)
+            if saved_path not in request.session['ckeditor_uploads']:
+                request.session['ckeditor_uploads'].append(saved_path)
+                request.session.modified = True  # Mark session as modified
             
             # Get the URL for the uploaded file
             url = utils.get_media_url(saved_path)

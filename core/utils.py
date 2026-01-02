@@ -145,11 +145,28 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     # This handles cases where images were uploaded but removed before saving
     # Pass old_instance info to help determine if this is a new instance
     is_new_instance = old_instance is None
+    
+    # For new instances, try to get session uploads if available
+    # This allows us to check only uploads from current editing session
+    session_uploads = None
+    if is_new_instance:
+        # Try to get request from model_instance (set by admin save_model)
+        request = getattr(model_instance, '_request', None)
+        if request and hasattr(request, 'session'):
+            session_uploads = request.session.get('ckeditor_uploads', [])
+    
     try:
-        cleanup_unused_uploads(current_image_paths, model_name, instance_id, is_new_instance=is_new_instance)
+        cleanup_unused_uploads(current_image_paths, model_name, instance_id, is_new_instance=is_new_instance, session_uploads=session_uploads)
     except Exception as e:
         # Log error but don't fail the save
         logger.warning(f"Failed to cleanup unused uploads: {str(e)}")
+    
+    # Clear session uploads after cleanup (for new instances)
+    if is_new_instance and session_uploads is not None:
+        request = getattr(model_instance, '_request', None)
+        if request and hasattr(request, 'session'):
+            request.session['ckeditor_uploads'] = []
+            request.session.modified = True
     
     # Delete orphaned images (from old content that was removed)
     for path in orphaned_paths:

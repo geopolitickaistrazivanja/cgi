@@ -57,11 +57,21 @@ class TrackedImageUploadView(ImageUploadView):
             if ck_func_num:
                 ck_func_num = escape(ck_func_num)
             
+            # Ensure WebP is in the allowed image extensions (patch might not be applied yet)
+            if not hasattr(utils, 'IMAGE_EXTENSIONS') or '.webp' not in utils.IMAGE_EXTENSIONS:
+                utils.IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+            
             filewrapper = backend(storage, uploaded_file)
             allow_nonimages = getattr(settings, "CKEDITOR_ALLOW_NONIMAGE_FILES", True)
             
-            # Check if file is an image
-            if not filewrapper.is_image and not allow_nonimages:
+            # Check file extension for image types (including WebP)
+            file_extension = os.path.splitext(uploaded_file.name)[1].lower()
+            image_extensions = {".jpg", ".jpeg", ".png", ".gif", ".webp"}
+            is_image_by_extension = file_extension in image_extensions
+            
+            # Check if file is an image (use both filewrapper check and extension check)
+            # This ensures WebP files are recognized even if filewrapper doesn't recognize them
+            if not (filewrapper.is_image or is_image_by_extension) and not allow_nonimages:
                 error_msg = "Invalid file type. Only image files are allowed."
                 if ck_func_num:
                     # Legacy format for old CKEditor

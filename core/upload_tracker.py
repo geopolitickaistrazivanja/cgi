@@ -109,16 +109,24 @@ def mark_upload_as_used(file_path, model_name, instance_id):
 def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None):
     """
     Clean up uploads that were tracked but not used in ANY product/blog.
-    Deletes orphaned files immediately when they become orphaned.
+    Deletes orphaned files with a grace period to avoid deleting files that are still being edited.
+    
+    This handles cases where:
+    - Images were uploaded but removed from CKEditor before saving
+    - Images were uploaded, saved, then removed from CKEditor and saved again
+    - Images were uploaded but never used in any content
     
     Args:
         referenced_paths: Set of file paths from the current instance being saved
         model_name: Name of the model being saved (optional)
         instance_id: ID of the instance being saved (optional)
     """
-    # Only run cleanup in production (when using R2)
-    if settings.DEBUG or not settings.AWS_ACCESS_KEY_ID:
-        return 0
+    from datetime import timedelta
+    from django.utils import timezone
+    
+    # Grace period: Don't delete uploads that are less than 5 minutes old
+    # This prevents deleting files that user just uploaded and might still be editing
+    grace_period = timezone.now() - timedelta(minutes=5)
     
     # Get ALL referenced paths from ALL products and blogs in database
     # This ensures we don't delete files that are used in other products/blogs
@@ -154,18 +162,42 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None):
     
     all_referenced_paths.update(normalized_referenced)
     
-    # Find tracked uploads that are not used in ANY product/blog
-    unused_uploads = CkeditorUpload.objects.filter(is_used=False)
-    
     deleted_count = 0
+    
+    # Clean up unused uploads (never saved in any content)
+    # Only delete if they're older than grace period (5 minutes)
+    # This handles: images uploaded but removed from CKEditor before saving
+    unused_uploads = CkeditorUpload.objects.filter(
+        is_used=False,
+        uploaded_at__lt=grace_period  # Only check uploads older than 5 minutes
+    )
+    
     for upload in unused_uploads:
         # Check if this upload is used in ANY product/blog
         if upload.file_path not in all_referenced_paths:
-            # This upload is truly orphaned - delete it immediately
+            # This upload is truly orphaned - delete it
             if delete_file_from_storage(upload.file_path):
                 deleted_count += 1
             # Delete the tracking record
             upload.delete()
+    
+    # Also check used uploads that are no longer referenced
+    # This handles cases where images were saved, then removed from content
+    # Only check uploads that were used in the current instance (more efficient)
+    if model_name and instance_id:
+        # Check uploads that were used in this specific instance
+        instance_used_uploads = CkeditorUpload.objects.filter(
+            is_used=True,
+            used_in_model=model_name,
+            used_in_id=instance_id
+        )
+        for upload in instance_used_uploads:
+            if upload.file_path not in all_referenced_paths:
+                # This upload was used in this instance but is no longer referenced - delete it
+                if delete_file_from_storage(upload.file_path):
+                    deleted_count += 1
+                # Delete the tracking record
+                upload.delete()
     
     return deleted_count
 

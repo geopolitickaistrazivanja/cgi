@@ -141,10 +141,13 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
                 # Log error but don't fail the save
                 logger.warning(f"Failed to mark upload as used: {path} - {str(e)}")
     
-    # For new instances, use upload tracking to find orphaned uploads
-    if not old_instance:
-        # This is a new instance - check tracked uploads that aren't in saved content
+    # Always cleanup unused uploads (for both new and edited instances)
+    # This handles cases where images were uploaded but removed before saving
+    try:
         cleanup_unused_uploads(current_image_paths, model_name, instance_id)
+    except Exception as e:
+        # Log error but don't fail the save
+        logger.warning(f"Failed to cleanup unused uploads: {str(e)}")
     
     # Delete orphaned images (from old content that was removed)
     for path in orphaned_paths:

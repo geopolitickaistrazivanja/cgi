@@ -184,43 +184,69 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
     # For new instances: use session-based cleanup (most efficient)
     # Only check uploads from current editing session (tracked in session)
     # Compare against current blog's HTML and delete orphaned ones
-    if is_new_instance and session_uploads:
+    if is_new_instance:
         # Normalize current content paths for comparison
         # This is what's actually in the blog's HTML
         normalized_current_content = set()
         for path in normalized_referenced:
             normalized_current_content.add(path)
         
-        # Check each upload from session: is it in the current blog's HTML?
-        for session_upload_path in session_uploads:
-            # Normalize the session upload path
-            upload_path = session_upload_path
-            if upload_path.startswith('/'):
-                upload_path = upload_path[1:]
-            
-            # Check if this upload is in the current blog's HTML
-            if upload_path not in normalized_current_content:
-                # Upload is NOT in the current blog's HTML
-                # This means it was uploaded but deleted from CKEditor before saving
-                # Delete it from R2
-                if delete_file_from_storage(upload_path):
-                    deleted_count += 1
+        # If we have session uploads, use them (most efficient)
+        if session_uploads:
+            # Check each upload from session: is it in the current blog's HTML?
+            for session_upload_path in session_uploads:
+                # Normalize the session upload path
+                upload_path = session_upload_path
+                if upload_path.startswith('/'):
+                    upload_path = upload_path[1:]
                 
-                # Also delete the tracking record if it exists
-                try:
-                    upload_record = CkeditorUpload.objects.get(file_path=upload_path)
-                    upload_record.delete()
-                except CkeditorUpload.DoesNotExist:
-                    pass  # Record doesn't exist, that's fine
-            else:
-                # Upload IS in the current blog's HTML - delete tracking record immediately
-                # We don't need to keep used records - the HTML content is the source of truth
-                # If we need to check if an image is used, we can extract it from HTML
-                try:
-                    upload_record = CkeditorUpload.objects.get(file_path=upload_path)
-                    upload_record.delete()  # Delete immediately - no need to keep it
-                except CkeditorUpload.DoesNotExist:
-                    pass  # Record doesn't exist, that's fine
+                # Check if this upload is in the current blog's HTML
+                if upload_path not in normalized_current_content:
+                    # Upload is NOT in the current blog's HTML
+                    # This means it was uploaded but deleted from CKEditor before saving
+                    # Delete it from R2
+                    if delete_file_from_storage(upload_path):
+                        deleted_count += 1
+                    
+                    # Also delete the tracking record if it exists
+                    try:
+                        upload_record = CkeditorUpload.objects.get(file_path=upload_path)
+                        upload_record.delete()
+                    except CkeditorUpload.DoesNotExist:
+                        pass  # Record doesn't exist, that's fine
+                else:
+                    # Upload IS in the current blog's HTML - delete tracking record immediately
+                    try:
+                        upload_record = CkeditorUpload.objects.get(file_path=upload_path)
+                        upload_record.delete()  # Delete immediately - no need to keep it
+                    except CkeditorUpload.DoesNotExist:
+                        pass  # Record doesn't exist, that's fine
+        else:
+            # Fallback: if no session uploads, check all unused uploads from database
+            # This handles cases where session might not be available
+            unused_uploads = CkeditorUpload.objects.filter(is_used=False)
+            
+            for upload in unused_uploads:
+                # Normalize the upload path
+                upload_path = upload.file_path
+                if upload_path.startswith('/'):
+                    upload_path = upload_path[1:]
+                
+                # Check if this upload is in the current blog's HTML
+                if upload_path not in normalized_current_content:
+                    # Upload is NOT in the current blog's HTML
+                    # But first check: is it in ANY other saved content? (protect existing blogs/products)
+                    if upload_path not in normalized_all_referenced:
+                        # Upload is NOT in current content AND NOT in any saved content
+                        # This means it was uploaded but deleted from CKEditor before saving
+                        # Delete it from R2
+                        if delete_file_from_storage(upload.file_path):
+                            deleted_count += 1
+                        # Delete the tracking record
+                        upload.delete()
+                else:
+                    # Upload IS in the current blog's HTML - delete tracking record immediately
+                    upload.delete()
         
         # Return early for new instances (we've handled the cleanup)
         return deleted_count

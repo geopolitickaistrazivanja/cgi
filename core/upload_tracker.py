@@ -154,21 +154,63 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
                 all_referenced_paths.update(images)
     
     # Also add paths from the current instance being saved
+    # This is critical for new instances - we need to know what's in the current content
     normalized_referenced = set()
     for path in referenced_paths:
-        if path.startswith('/'):
-            path = path[1:]
-        if path.startswith('uploads/'):
-            normalized_referenced.add(path)
+        # Normalize path
+        normalized_path = path
+        if normalized_path.startswith('/'):
+            normalized_path = normalized_path[1:]
+        # Only track uploads/ paths (CKEditor uploads)
+        if normalized_path.startswith('uploads/'):
+            normalized_referenced.add(normalized_path)
+            # Also add to all_referenced_paths for comparison
+            all_referenced_paths.add(normalized_path)
     
-    all_referenced_paths.update(normalized_referenced)
+    # Normalize all referenced paths once (more efficient)
+    # This includes paths from existing products/blogs AND current content being saved
+    normalized_all_referenced = set()
+    for path in all_referenced_paths:
+        normalized_path = path
+        if normalized_path.startswith('/'):
+            normalized_path = normalized_path[1:]
+        normalized_all_referenced.add(normalized_path)
+    
+    # Ensure normalized_referenced (current content) is also included
+    normalized_all_referenced.update(normalized_referenced)
     
     deleted_count = 0
     
-    # Clean up unused uploads (never saved in any content)
+    # For new instances: check all unused uploads, but only delete those not in any saved content
+    # Since we check against normalized_all_referenced (all saved content), we don't need a time window
+    # This is simpler and still efficient - we only delete truly orphaned uploads
+    if is_new_instance:
+        # Check all unused uploads
+        unused_uploads = CkeditorUpload.objects.filter(is_used=False)
+        
+        for upload in unused_uploads:
+            # Normalize the upload path for comparison
+            upload_path = upload.file_path
+            if upload_path.startswith('/'):
+                upload_path = upload_path[1:]
+            
+            # IMPORTANT: Check if upload is in ANY saved content (existing products/blogs)
+            # OR in the current content being saved
+            # This prevents deleting images from previously created blogs/products
+            # Only delete if it's truly orphaned (not in any saved content)
+            if upload_path not in normalized_all_referenced:
+                # Upload not in ANY saved content AND not in current content
+                # This means it was uploaded but deleted before saving, or is truly orphaned
+                # Safe to delete - it's truly orphaned
+                if delete_file_from_storage(upload.file_path):
+                    deleted_count += 1
+                upload.delete()
+        
+        # Return early for new instances (we've handled the cleanup)
+        return deleted_count
+    
+    # For existing instances: check all unused uploads (standard cleanup)
     # This handles: images uploaded but removed from CKEditor before saving
-    # We check all unused uploads, but apply grace period only to very recent ones
-    # that might be part of an active editing session
     unused_uploads = CkeditorUpload.objects.filter(is_used=False)
     
     for upload in unused_uploads:
@@ -177,41 +219,24 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
         if upload_path.startswith('/'):
             upload_path = upload_path[1:]
         
-        # Check if this upload is used in ANY product/blog (including current content being saved)
-        # Normalize all paths in all_referenced_paths for comparison
-        normalized_all_referenced = set()
-        for path in all_referenced_paths:
-            normalized_path = path
-            if normalized_path.startswith('/'):
-                normalized_path = normalized_path[1:]
-            normalized_all_referenced.add(normalized_path)
-        
-        # Check if upload is referenced anywhere
+        # Check if upload is referenced anywhere (in all saved content OR current content being saved)
         if upload_path not in normalized_all_referenced:
             # Upload is not in any saved content - it's orphaned
             # Check if it's in the current content being saved
             is_in_current_content = upload_path in normalized_referenced
             
-            # For new instances: if upload is not in current content, it was definitely deleted
-            # Delete it immediately (no grace period needed - we know it's orphaned)
-            # 
             # For existing instances: apply grace period only if upload is in current content
             # If upload is NOT in current content, it was deleted, so delete it immediately
-            
             # Only apply grace period if:
             # 1. This is an EXISTING instance (not new) AND
             # 2. Upload is very recent (< 5 minutes) AND
             # 3. Upload is in the current content being saved (user might still be editing)
-            # 
-            # For new instances OR uploads not in current content: delete immediately
-            # This handles: upload → delete from editor → save (for both new and existing instances)
             if not is_new_instance and upload.uploaded_at >= grace_period and is_in_current_content:
                 # Existing instance, very recent upload that's in current content - might still be editing, keep it
                 continue
             
             # This upload is truly orphaned - delete it immediately
             # Reasons:
-            # - New instance and upload not in current content (was deleted) ← This is the key case!
             # - Existing instance but upload not in current content (was deleted)
             # - Upload is old enough to be safe to delete
             if delete_file_from_storage(upload.file_path):

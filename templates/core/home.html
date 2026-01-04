@@ -3,33 +3,885 @@
 
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:home' %}">{% endblock %}
 
-{% block content %}
-<div class="home-hero">
-    <div class="container">
-        <h1>Dobrodošli u EhoLux</h1>
-        <p>Vaše akustično rešenje</p>
-        <a href="{% url 'shop:shop' %}" class="btn btn-primary">Pogledaj proizvode</a>
-    </div>
-</div>
+{% block extra_css %}
+<style>
+    /* Home Page Specific Styles - Mobile First */
+    .home-page {
+        overflow-x: hidden;
+    }
 
-<section class="home-features">
-    <div class="container">
-        <div class="features-grid">
-            <div class="feature-card">
-                <h3>Kvalitet</h3>
-                <p>Najkvalitetniji akustični paneli na tržištu</p>
-            </div>
-            <div class="feature-card">
-                <h3>Ugradnja</h3>
-                <p>Profesionalna ugradnja od strane naših stručnjaka</p>
-            </div>
-            <div class="feature-card">
-                <h3>Podrška</h3>
-                <p>Stalna podrška i savetovanje</p>
-            </div>
-        </div>
-    </div>
-</section>
+    /* Hero Section */
+    .home-hero {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+        color: var(--white);
+        text-align: center;
+        padding: 120px 20px 80px;
+        overflow: hidden;
+    }
+
+    .home-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('{% static "images/placeholder-hero-bg.jpg" %}') center/cover;
+        opacity: 0.15;
+        z-index: 0;
+    }
+
+    .home-hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .home-hero h1 {
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-weight: 700;
+        margin-bottom: 20px;
+        line-height: 1.2;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease forwards;
+    }
+
+    .home-hero p {
+        font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+        margin-bottom: 30px;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease 0.2s forwards;
+    }
+
+    .home-hero .btn {
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease 0.4s forwards;
+    }
+
+    /* Section Styles */
+    .home-section {
+        padding: 60px 20px;
+        position: relative;
+    }
+
+    .home-section:nth-child(even) {
+        background-color: var(--light-gray);
+    }
+
+    .section-content {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .section-title {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-align: center;
+        color: var(--text-dark);
+    }
+
+    .section-subtitle {
+        font-size: clamp(1.2rem, 3vw, 1.8rem);
+        font-weight: 600;
+        margin: 40px 0 20px;
+        color: var(--text-dark);
+    }
+
+    .section-text {
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        line-height: 1.8;
+        color: var(--text-light);
+        margin-bottom: 20px;
+    }
+
+    /* Problem List */
+    .problem-list {
+        list-style: none;
+        padding: 0;
+        margin: 30px 0;
+    }
+
+    .problem-list li {
+        padding: 15px 0 15px 40px;
+        position: relative;
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        line-height: 1.7;
+        color: var(--text-dark);
+    }
+
+    .problem-list li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        font-size: 2rem;
+        color: var(--accent);
+        line-height: 1;
+    }
+
+    /* Solution Cards */
+    .solution-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin: 40px 0;
+    }
+
+    @media (min-width: 768px) {
+        .solution-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .solution-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    .solution-card {
+        background: var(--white);
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .solution-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .solution-card h3 {
+        font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+        margin-bottom: 15px;
+        color: var(--text-dark);
+    }
+
+    /* Image Placeholders */
+    .content-image {
+        width: 100%;
+        max-width: 600px;
+        height: 300px;
+        margin: 30px auto;
+        background: var(--light-gray);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-light);
+        font-size: 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .content-image::before {
+        content: '📷';
+        font-size: 3rem;
+        opacity: 0.3;
+    }
+
+    .content-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+    /* Panel Type Sections */
+    .panel-type-section {
+        margin: 60px 0;
+        padding: 40px 20px;
+        background: var(--white);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .panel-type-section:nth-child(even) {
+        background: var(--light-gray);
+    }
+
+    .panel-type-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    @media (min-width: 768px) {
+        .panel-type-header {
+            flex-direction: row;
+            text-align: left;
+        }
+    }
+
+    .panel-type-image {
+        width: 100%;
+        max-width: 400px;
+        height: 250px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        background: var(--light-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    @media (min-width: 768px) {
+        .panel-type-image {
+            width: 40%;
+            margin-right: 30px;
+            margin-bottom: 0;
+        }
+    }
+
+    .panel-type-image::before {
+        content: '📷';
+        font-size: 3rem;
+        opacity: 0.3;
+    }
+
+    .panel-type-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+    .panel-type-content {
+        flex: 1;
+    }
+
+    /* Space Types Grid */
+    .space-types-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        margin: 40px 0;
+    }
+
+    @media (min-width: 768px) {
+        .space-types-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .space-type-card {
+        background: var(--white);
+        padding: 30px;
+        border-radius: 12px;
+        border-left: 4px solid var(--accent);
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .space-type-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .space-type-card h3 {
+        font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+        margin-bottom: 15px;
+        color: var(--text-dark);
+    }
+
+    .space-type-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 15px 0;
+    }
+
+    .space-type-card li {
+        padding: 8px 0 8px 25px;
+        position: relative;
+        font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+        line-height: 1.6;
+        color: var(--text-light);
+    }
+
+    .space-type-card li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+        font-weight: bold;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, var(--dark-gray) 0%, var(--accent) 100%);
+        color: var(--white);
+        padding: 80px 20px;
+        text-align: center;
+        margin: 60px 0;
+        border-radius: 16px;
+    }
+
+    .cta-section h2 {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        margin-bottom: 20px;
+    }
+
+    .cta-section p {
+        font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+        margin-bottom: 30px;
+        opacity: 0.9;
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    /* Scroll Animation Classes */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .slide-in-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .slide-in-left.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .slide-in-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .slide-in-right.visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .scale-in {
+        opacity: 0;
+        transform: scale(0.9);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .scale-in.visible {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    /* Stagger Animation Delays */
+    .stagger-1 { transition-delay: 0.1s; }
+    .stagger-2 { transition-delay: 0.2s; }
+    .stagger-3 { transition-delay: 0.3s; }
+    .stagger-4 { transition-delay: 0.4s; }
+    .stagger-5 { transition-delay: 0.5s; }
+
+    /* Parallax Effect */
+    .parallax-element {
+        transition: transform 0.3s ease-out;
+    }
+
+    /* Mobile Optimizations */
+    @media (max-width: 767px) {
+        .home-hero {
+            min-height: 80vh;
+            padding: 100px 20px 60px;
+        }
+
+        .home-section {
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            margin-bottom: 30px;
+        }
+
+        .panel-type-section {
+            padding: 30px 15px;
+        }
+
+        .solution-card,
+        .space-type-card {
+            padding: 20px;
+        }
+    }
+</style>
 {% endblock %}
 
+{% block content %}
+<div class="home-page">
+    <!-- Hero Section -->
+    <section class="home-hero">
+        <div class="home-hero-content">
+            <h1>Da li imate neki od ovih problema sa zvukom?</h1>
+            <p>Pravilno rešenje za akustiku vašeg prostora</p>
+            <a href="{% url 'shop:shop' %}" class="btn btn-primary">Pogledaj proizvode</a>
+        </div>
+    </section>
 
+    <!-- Problems Section -->
+    <section class="home-section">
+        <div class="section-content fade-in">
+            <p class="section-text">
+                Ako se prepoznajete u nekoj od sledećih stavki, akustika prostora verovatno nije pravilno rešena:
+            </p>
+            <ul class="problem-list">
+                <li>Zvuk u prostoru odzvanja i deluje neprirodno.</li>
+                <li>Govor se teško razume, posebno u većim ili praznijim prostorijama.</li>
+                <li>Muzika zvuči mutno i nejasno.</li>
+                <li>Bas je prenaglašen, „tutnji" ili se gubi u određenim delovima sobe.</li>
+                <li>Dug boravak u prostoru zamara uši.</li>
+                <li>Miksovi i snimci ne zvuče isto van vaše prostorije.</li>
+            </ul>
+            <p class="section-text">
+                Ovi problemi najčešće nisu vezani za kvalitet opreme, već za akustiku samog prostora — i tada je potrebno pravo rešenje, a ne „pojačavanje" zvuka.
+            </p>
+            <div class="content-image fade-in stagger-1">
+                <img src="{% static 'images/placeholder-problem.jpg' %}" alt="Akustički problemi" style="display: none;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="home-section">
+        <div class="section-content">
+            <h2 class="section-title fade-in">Rešenje: akustični paneli</h2>
+            <p class="section-text fade-in stagger-1">
+                Akustični paneli su dizajnirani da kontrolišu ponašanje zvuka u prostoriji, a ne da menjaju ili „ulepšavaju" zvuk veštački.
+            </p>
+            <div class="content-image fade-in stagger-2">
+                <img src="{% static 'images/placeholder-solution.jpg' %}" alt="Akustični paneli" style="display: none;">
+            </div>
+            <h3 class="section-subtitle fade-in stagger-3">Pravilno postavljeni akustični paneli:</h3>
+            <div class="solution-grid">
+                <div class="solution-card fade-in stagger-1">
+                    <h3>Smanjuju odjek</h3>
+                    <p>Smanjuju odjek i neželjene refleksije zvuka u prostoru.</p>
+                </div>
+                <div class="solution-card fade-in stagger-2">
+                    <h3>Poboljšavaju jasnoću</h3>
+                    <p>Poboljšavaju jasnoću govora i muzike za bolje razumevanje.</p>
+                </div>
+                <div class="solution-card fade-in stagger-3">
+                    <h3>Stabilizuju stereo sliku</h3>
+                    <p>Stabilizuju stereo sliku za precizniji zvučni doživljaj.</p>
+                </div>
+                <div class="solution-card fade-in stagger-4">
+                    <h3>Kontrolišu bas</h3>
+                    <p>Pomažu u kontroli basa uz bass trap panele za balansiran zvuk.</p>
+                </div>
+                <div class="solution-card fade-in stagger-5">
+                    <h3>Prirodan zvuk</h3>
+                    <p>Daju prirodan i balansiran zvuk u svakom prostoru.</p>
+                </div>
+            </div>
+            <p class="section-text fade-in">
+                Rezultat je prostor u kome zvuk postaje čist, razumljiv i prijatan — bilo da se radi o radu, slušanju muzike ili svakodnevnom boravku u stanu.
+            </p>
+        </div>
+    </section>
+
+    <!-- Why Combination Matters -->
+    <section class="home-section">
+        <div class="section-content">
+            <h2 class="section-title fade-in">Zašto je kombinacija panela važna?</h2>
+            <p class="section-text fade-in stagger-1">
+                Ne rešavaju svi paneli isti problem, zato je kombinacija ključna:
+            </p>
+            <div class="solution-grid">
+                <div class="solution-card slide-in-left stagger-1">
+                    <h3>Tanki paneli (5 cm)</h3>
+                    <p>Ciljaju srednje i visoke frekvencije i odlični su kada prostor „odzvanja" ili deluje mutno.</p>
+                </div>
+                <div class="solution-card slide-in-left stagger-2">
+                    <h3>Bass trap paneli (10, 15, 20 cm)</h3>
+                    <p>Rešavaju problem niskih frekvencija (bas) — „tutnjanje", boom efekat i neujednačen bas po prostoriji.</p>
+                </div>
+                <div class="solution-card slide-in-left stagger-3">
+                    <h3>Kombinovani modeli</h3>
+                    <p>Dodatno poboljšavaju balans i estetiku prostora za kompletan zvučni doživljaj.</p>
+                </div>
+            </div>
+            <p class="section-text fade-in">
+                Najbolji rezultat se postiže kombinovanjem više tipova panela, prilagođenih konkretnom prostoru.
+            </p>
+            <div class="content-image fade-in stagger-1">
+                <img src="{% static 'images/placeholder-combination.jpg' %}" alt="Kombinacija panela" style="display: none;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Customized Section -->
+    <section class="home-section">
+        <div class="section-content">
+            <h2 class="section-title fade-in">Prilagođeno vašem prostoru</h2>
+            <div class="panel-type-section scale-in">
+                <div class="panel-type-header">
+                    <div class="panel-type-image">
+                        <img src="{% static 'images/placeholder-custom.jpg' %}" alt="Prilagođeni paneli" style="display: none;">
+                    </div>
+                    <div class="panel-type-content">
+                        <p class="section-text">
+                            Svaki prostor je drugačiji, zato nudimo standardne dimenzije panela, različite debljine, širok izbor boja i izradu po meri.
+                        </p>
+                        <p class="section-text">
+                            Bez obzira da li su vam potrebni akustični paneli za stan ili rešenje za studio, cilj je isti: optimalna akustika i prijatan boravak.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Panel Selection Guide -->
+    <section class="home-section">
+        <div class="section-content">
+            <h2 class="section-title fade-in">Koji akustični panel je pravi izbor za vas?</h2>
+            <p class="section-text fade-in stagger-1">
+                Različiti akustični problemi zahtevaju različita rešenja. U nastavku je jednostavan vodič koji pomaže da izaberete pravi tip panela.
+            </p>
+
+            <!-- Panel Type 1 -->
+            <div class="panel-type-section fade-in stagger-1">
+                <div class="panel-type-header">
+                    <div class="panel-type-image">
+                        <img src="{% static 'images/placeholder-panel-5cm.jpg' %}" alt="Akustični paneli 5cm" style="display: none;">
+                    </div>
+                    <div class="panel-type-content">
+                        <h3 class="section-subtitle">Akustični paneli za srednje i visoke frekvencije (5 cm)</h3>
+                        <p class="section-text">
+                            Ovi paneli su namenjeni za smanjenje odjeka, poboljšanje jasnoće govora, uklanjanje neprijatnih refleksija i postizanje čistog, kontrolisanog zvuka u prostoru.
+                        </p>
+                        <p class="section-text"><strong>Idealni su za:</strong></p>
+                        <ul class="problem-list">
+                            <li>zidove i plafone,</li>
+                            <li>kućne i profesionalne studije,</li>
+                            <li>kancelarije i konferencijske sale,</li>
+                            <li>podcast i voice-over prostore.</li>
+                        </ul>
+                        <p class="section-text">
+                            Ako vam prostor odzvanja ili zvuči mutno, ovo je prvi korak akustičkog tretmana — naročito kada su u pitanju akustični paneli za studio.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Type 2 -->
+            <div class="panel-type-section fade-in stagger-2">
+                <div class="panel-type-header">
+                    <div class="panel-type-image">
+                        <img src="{% static 'images/placeholder-bass-trap.jpg' %}" alt="Bass trap paneli" style="display: none;">
+                    </div>
+                    <div class="panel-type-content">
+                        <h3 class="section-subtitle">Bass trap paneli za niske frekvencije (10, 15 i 20 cm)</h3>
+                        <p class="section-text">
+                            Bass trap paneli rešavaju probleme koje tanki paneli ne mogu: nagomilavanje basa, „boom" efekat i neujednačen bas u različitim delovima sobe.
+                        </p>
+                        <p class="section-text">
+                            Što su paneli deblji, to je kontrola niskih frekvencija bolja.
+                        </p>
+                        <p class="section-text"><strong>Idealni su za:</strong></p>
+                        <ul class="problem-list">
+                            <li>uglove prostorije,</li>
+                            <li>spojeve zid–plafon,</li>
+                            <li>muzičke i produkcijske studije,</li>
+                            <li>kućne bioskope.</li>
+                        </ul>
+                        <p class="section-text">
+                            Ako bas tutnji, nestaje ili zvuči neprecizno, bass trap paneli su neophodni.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Type 3 -->
+            <div class="panel-type-section fade-in stagger-3">
+                <div class="panel-type-header">
+                    <div class="panel-type-image">
+                        <img src="{% static 'images/placeholder-bass-trap-lux.jpg' %}" alt="Bass Trap Lux paneli" style="display: none;">
+                    </div>
+                    <div class="panel-type-content">
+                        <h3 class="section-subtitle">Bass Trap Lux paneli – apsorpcija i difuzija</h3>
+                        <p class="section-text">
+                            Ovi paneli kombinuju kontrolu niskih frekvencija, difuziju (razbijanje refleksija) i dekorativan, premium izgled.
+                        </p>
+                        <p class="section-text">
+                            Idealni su za prostore gde je važan i zvuk i estetika: studije sa vidljivim panelima, dnevne boravke i reprezentativne prostore. Savršeni su kada želite balans između akustike i dizajna.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Best Result -->
+            <div class="panel-type-section scale-in">
+                <h3 class="section-subtitle">Najbolji rezultat: kombinacija panela</h3>
+                <p class="section-text">
+                    U praksi, najbolji zvučni rezultat se postiže kada se kombinuju paneli za srednje i visoke frekvencije i bass trap paneli za niske frekvencije.
+                </p>
+                <p class="section-text">
+                    Svaki prostor ima svoje specifičnosti, zato ne postoji univerzalno rešenje. Postavka i izbor panela uvek se prilagođavaju prostoru.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Help Section -->
+    <section class="home-section">
+        <div class="section-content">
+            <div class="cta-section scale-in">
+                <h2>Niste sigurni koji panel vam treba?</h2>
+                <p>Ako niste sigurni koji tip panela je pravi izbor, pomažemo pri odabiru, savetujemo oko rasporeda i izrađujemo panele po meri prostora.</p>
+                <a href="{% url 'core:contact' %}" class="btn btn-primary">Kontaktirajte nas</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Space Types Section -->
+    <section class="home-section">
+        <div class="section-content">
+            <h2 class="section-title fade-in">Za koje prostore su namenjeni akustični paneli?</h2>
+            <p class="section-text fade-in stagger-1">
+                Akustični paneli nisu rezervisani samo za profesionalne studije. Pravilno odabrani i postavljeni, koriste se u različitim tipovima prostora gde je kvalitet zvuka važan za rad, komunikaciju ili komfor.
+            </p>
+            <div class="space-types-grid">
+                <div class="space-type-card fade-in stagger-1">
+                    <h3>Muzički i home studio prostori</h3>
+                    <p>Precizniji monitoring i miks, bolja stereo slika, kontrolisan bas i refleksije — osnova svakog ozbiljnog studija.</p>
+                </div>
+                <div class="space-type-card fade-in stagger-2">
+                    <h3>Podcast i voice-over sobe</h3>
+                    <p>Jasniji i prirodniji glas, manje odjeka i „sobnog" zvuka, profesionalniji snimci bez dodatne obrade.</p>
+                </div>
+                <div class="space-type-card fade-in stagger-3">
+                    <h3>Kancelarije i open space prostori</h3>
+                    <p>Bolja razumljivost govora, manje buke i zamora, prijatnija radna atmosfera — direktan uticaj na produktivnost i koncentraciju.</p>
+                </div>
+                <div class="space-type-card fade-in stagger-4">
+                    <h3>Kućni bioskopi</h3>
+                    <p>Čistiji dijalozi, kontrolisan bas i realističniji filmski doživljaj.</p>
+                </div>
+                <div class="space-type-card fade-in stagger-5">
+                    <h3>Dnevne sobe i stambeni prostori</h3>
+                    <p>Manje odjeka u modernim enterijerima, prijatniji zvuk za muziku i TV, uz estetsko uklapanje u prostor — idealno kada su u pitanju akustična rešenja za stan.</p>
+                </div>
+                <div class="space-type-card fade-in stagger-1">
+                    <h3>Učionice, sale i javni prostori</h3>
+                    <p>Bolja razumljivost govora, manje buke i eha, efikasnija komunikacija.</p>
+                </div>
+            </div>
+            <div class="content-image fade-in">
+                <img src="{% static 'images/placeholder-spaces.jpg' %}" alt="Različiti prostori" style="display: none;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Sound Isolation Section -->
+    <section class="home-section">
+        <div class="section-content">
+            <h2 class="section-title fade-in">Zvučna izolacija: zid, plafon i pod</h2>
+            <p class="section-text fade-in stagger-1">
+                Ako je vaš problem pre svega prolazak zvuka (komšije, sprat iznad/ispod, buka iz hodnika), tada je uz akustički tretman često potrebna i zvučna izolacija.
+            </p>
+            <div class="solution-grid">
+                <div class="solution-card slide-in-left stagger-1">
+                    <h3>Zvučna izolacija zida</h3>
+                    <p>Efikasno rešenje za smanjenje prolaska zvuka kroz zidove.</p>
+                </div>
+                <div class="solution-card slide-in-left stagger-2">
+                    <h3>Zvučna izolacija plafona</h3>
+                    <p>Zaštita od buke sa gornjeg sprata ili iznad prostora.</p>
+                </div>
+                <div class="solution-card slide-in-left stagger-3">
+                    <h3>Zvučna izolacija poda</h3>
+                    <p>Prevencija prolaska zvuka ka donjem spratu.</p>
+                </div>
+            </div>
+            <p class="section-text fade-in">
+                Rado ćemo preporučiti smer rešenja prema vašem prostoru i problemu.
+            </p>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="home-section">
+        <div class="section-content">
+            <h2 class="section-title fade-in">Cene: akustični paneli i zvučna izolacija</h2>
+            <p class="section-text fade-in stagger-1">
+                Često pitanje je cena — i to je potpuno normalno.
+            </p>
+            <div class="solution-grid">
+                <div class="solution-card scale-in stagger-1">
+                    <h3>Akustični paneli cena</h3>
+                    <p>Zavisi od dimenzija, debljine, obloge, boje i toga da li se radi izrada po meri.</p>
+                </div>
+                <div class="solution-card scale-in stagger-2">
+                    <h3>Zvučna izolacija cena</h3>
+                    <p>Zavisi od konstrukcije i nivoa izolacije koji želite postići.</p>
+                </div>
+                <div class="solution-card scale-in stagger-3">
+                    <h3>Cena po kvadratu</h3>
+                    <p>Za neke projekte relevantna je i cena po kvadratu, posebno kada se radi veća površina.</p>
+                </div>
+            </div>
+            <p class="section-text fade-in">
+                Pošaljite osnovne informacije (tip prostora, dimenzije, problem koji imate) i predložićemo najefikasnije rešenje.
+            </p>
+        </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="home-section">
+        <div class="section-content">
+            <div class="panel-type-section scale-in">
+                <h3 class="section-subtitle">Rešenja prilagođena prostoru</h3>
+                <p class="section-text">
+                    Svaki prostor ima drugačije dimenzije, namenu i akustičke probleme. Zato nudimo standardne modele panela, različite debljine, širok izbor boja i izradu panela po meri prostora.
+                </p>
+                <p class="section-text">
+                    Naš pristup je uvek isti: analiza prostora, pravi izbor panela i optimalan rezultat.
+                </p>
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="{% url 'core:contact' %}" class="btn btn-primary">Kontaktirajte nas</a>
+                    <a href="{% url 'shop:shop' %}" class="btn btn-primary" style="margin-left: 15px;">Pogledaj proizvode</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+    'use strict';
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                // Optional: Unobserve after animation to improve performance
+                // observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    // Observe all elements with animation classes
+    document.addEventListener('DOMContentLoaded', function() {
+        const animatedElements = document.querySelectorAll(
+            '.fade-in, .slide-in-left, .slide-in-right, .scale-in'
+        );
+        
+        animatedElements.forEach(function(el) {
+            observer.observe(el);
+        });
+
+        // Parallax effect for hero section
+        const hero = document.querySelector('.home-hero');
+        if (hero) {
+            let lastScroll = 0;
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset;
+                if (currentScroll <= hero.offsetHeight) {
+                    const parallaxSpeed = 0.5;
+                    hero.style.transform = `translateY(${currentScroll * parallaxSpeed}px)`;
+                }
+                lastScroll = currentScroll;
+            }, { passive: true });
+        }
+
+        // Smooth reveal for cards on scroll
+        const cards = document.querySelectorAll('.solution-card, .space-type-card, .panel-type-section');
+        cards.forEach(function(card, index) {
+            observer.observe(card);
+        });
+    });
+
+    // Add hover effects for interactive elements
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.solution-card, .space-type-card');
+        cards.forEach(function(card) {
+            card.addEventListener('mouseenter', function() {
+                this.style.transition = 'all 0.3s ease';
+            });
+        });
+    });
+})();
+</script>
+{% endblock %}

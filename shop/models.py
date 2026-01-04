@@ -5,12 +5,18 @@ from django.utils.text import slugify
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from core.utils import cleanup_orphaned_images, cleanup_all_instance_images
+from core.utils import (
+    cleanup_orphaned_images, 
+    cleanup_all_instance_images,
+    unique_product_image,
+    unique_product_thumbnail,
+    unique_product_pattern
+)
 
 
 class ProductImage(models.Model):
     product = models.ForeignKey('Product', related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(_('Slika'), upload_to='products/')
+    image = models.ImageField(_('Slika'), upload_to=unique_product_image)
     alt_text = models.CharField(_('Alternativni tekst'), max_length=200, blank=True)
     order = models.PositiveIntegerField(_('Redosled'), default=0)
 
@@ -54,7 +60,7 @@ class ProductDimension(models.Model):
 class ProductPattern(models.Model):
     """Pattern images for a product"""
     product = models.ForeignKey('Product', related_name='patterns', on_delete=models.CASCADE)
-    image = models.ImageField(_('Slika dezena'), upload_to='products/patterns/')
+    image = models.ImageField(_('Slika dezena'), upload_to=unique_product_pattern)
     order = models.PositiveIntegerField(_('Redosled'), default=0)
 
     class Meta:
@@ -77,7 +83,7 @@ class Product(models.Model):
     meta_description = models.TextField(_('Meta opis'), max_length=300)
     sku = models.CharField(_('SKU'), max_length=100, unique=True)
     title = models.CharField(_('Naziv'), max_length=200)
-    thumbnail = models.ImageField(_('Thumbnail'), upload_to='products/thumbnails/', blank=True, null=True)
+    thumbnail = models.ImageField(_('Thumbnail'), upload_to=unique_product_thumbnail, blank=True, null=True)
     short_description = models.TextField(_('Kratak opis'), max_length=500)
     full_description = models.TextField(_('Pun opis'))
     

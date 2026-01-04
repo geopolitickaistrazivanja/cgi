@@ -1,16 +1,73 @@
 """
-Utility functions for R2 bucket cleanup
+Utility functions for R2 bucket cleanup and file uploads
 """
 import os
 import re
 import logging
+import uuid
 from urllib.parse import urlparse
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.utils import timezone
 from datetime import datetime, timedelta
 from .upload_tracker import cleanup_unused_uploads, mark_upload_as_used, cleanup_old_tracking_records, delete_file_from_storage
 
 logger = logging.getLogger(__name__)
+
+
+def unique_filename(instance, filename, base_path=''):
+    """
+    Generate a unique filename to prevent collisions in storage.
+    Uses UUID and timestamp to ensure uniqueness.
+    
+    Args:
+        instance: The model instance (not used, but required by Django's upload_to signature)
+        filename: Original filename
+        base_path: Base directory path (e.g., 'products/', 'blog/thumbnails/')
+    
+    Returns:
+        A unique file path like 'products/uuid_timestamp_original_name.jpg'
+    
+    Example:
+        unique_filename(None, 'image.jpg', 'products/')
+        # Returns: 'products/550e8400-e29b-41d4-a716-446655440000_20240115_123456_image.jpg'
+    """
+    # Extract file extension
+    name, ext = os.path.splitext(filename)
+    
+    # Generate unique identifier (UUID4) and timestamp
+    unique_id = uuid.uuid4().hex[:16]  # First 16 characters of UUID for shorter filename
+    timestamp = timezone.now().strftime('%Y%m%d_%H%M%S')
+    
+    # Create unique filename: original_name_uuid_timestamp.ext
+    # Using original name first keeps it recognizable
+    safe_name = re.sub(r'[^\w\s-]', '', name).strip()[:50]  # Sanitize and limit length
+    unique_filename_str = f"{safe_name}_{unique_id}_{timestamp}{ext}"
+    
+    # Combine with base path
+    if base_path:
+        return os.path.join(base_path, unique_filename_str).replace('\\', '/')
+    return unique_filename_str
+
+
+def unique_product_image(instance, filename):
+    """Generate unique filename for product images"""
+    return unique_filename(instance, filename, 'products/')
+
+
+def unique_product_thumbnail(instance, filename):
+    """Generate unique filename for product thumbnails"""
+    return unique_filename(instance, filename, 'products/thumbnails/')
+
+
+def unique_product_pattern(instance, filename):
+    """Generate unique filename for product patterns"""
+    return unique_filename(instance, filename, 'products/patterns/')
+
+
+def unique_blog_thumbnail(instance, filename):
+    """Generate unique filename for blog thumbnails"""
+    return unique_filename(instance, filename, 'blog/thumbnails/')
 
 
 def extract_images_from_html(html_content):

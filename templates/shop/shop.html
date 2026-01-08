@@ -4,6 +4,102 @@
 {% block title %}Prodavnica - EhoLux{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'shop:shop' %}">{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Shop Page Content Styles */
+    .shop-content-section {
+        max-width: 1200px;
+        margin: 60px auto 0;
+        padding: 40px 20px;
+    }
+
+    .shop-section-title {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        font-weight: 700;
+        margin-bottom: 20px;
+        text-align: center;
+        color: var(--text-dark);
+    }
+
+    .shop-section-text {
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        line-height: 1.8;
+        color: var(--text-light);
+        margin-bottom: 20px;
+    }
+
+    .shop-problem-list {
+        list-style: none;
+        padding: 0;
+        margin: 30px 0;
+    }
+
+    .shop-problem-list li {
+        padding: 15px 0 15px 40px;
+        position: relative;
+        font-size: clamp(1rem, 2vw, 1.1rem);
+        line-height: 1.7;
+        color: var(--text-dark);
+    }
+
+    .shop-problem-list li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        font-size: 2rem;
+        color: var(--accent);
+        line-height: 1;
+    }
+
+    .shop-section-subtitle {
+        font-size: clamp(1.2rem, 3vw, 1.8rem);
+        font-weight: 600;
+        margin: 40px 0 20px;
+        color: var(--text-dark);
+    }
+
+    .shop-uses-list {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+
+    .shop-uses-list li {
+        padding: 8px 0 8px 25px;
+        position: relative;
+        font-size: clamp(0.95rem, 1.8vw, 1.05rem);
+        line-height: 1.6;
+        color: var(--text-light);
+    }
+
+    .shop-uses-list li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: var(--accent);
+        font-weight: bold;
+    }
+
+    /* Animations */
+    .fade-in {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .stagger-1 { transition-delay: 0.1s; }
+    .stagger-2 { transition-delay: 0.2s; }
+    .stagger-3 { transition-delay: 0.3s; }
+    .stagger-4 { transition-delay: 0.4s; }
+    .stagger-5 { transition-delay: 0.5s; }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="shop-page">
     <div class="container">
@@ -27,7 +123,113 @@
                 <p>Nema proizvoda.</p>
             {% endfor %}
         </div>
+
+        <!-- Content Section -->
+        <div class="shop-content-section">
+            <h2 class="shop-section-title fade-in">Akustični paneli – kontrola zvuka u vašem prostoru</h2>
+            <p class="shop-section-text fade-in stagger-1">
+                Akustični paneli su specijalno dizajnirani elementi namenjeni poboljšanju akustike prostora. Njihova osnovna uloga je da upiju neželjene refleksije zvuka, smanje odjek, poboljšaju razumljivost govora i omoguće čist, balansiran i prijatan zvuk.
+            </p>
+            <p class="shop-section-text fade-in stagger-2">
+                Bez obzira da li se radi o muzičkom studiju, kancelariji, kućnom bioskopu ili dnevnom boravku, pravilno postavljeni akustični paneli značajno unapređuju kvalitet zvuka i celokupan doživljaj prostora.
+            </p>
+            <p class="shop-section-text fade-in stagger-3">
+                Akustični problemi poput:
+            </p>
+            <ul class="shop-problem-list fade-in stagger-4">
+                <li>jakog odjeka</li>
+                <li>zamućenog zvuka</li>
+                <li>nagomilanog basa</li>
+                <li>loše razumljivosti govora</li>
+            </ul>
+            <p class="shop-section-text fade-in stagger-5">
+                ne mogu se rešiti nameštajem ili dekoracijom — potrebna su prava akustička rešenja.
+            </p>
+
+            <h3 class="shop-section-subtitle fade-in">Za šta služe akustični paneli?</h3>
+            <ul class="shop-uses-list fade-in stagger-1">
+                <li>Smanjuju odjek i refleksije zvuka</li>
+                <li>Poboljšavaju jasnoću govora i muzike</li>
+                <li>Kontrolišu visoke, srednje i niske frekvencije</li>
+                <li>Pomažu u stvaranju akustički balansiranog prostora</li>
+                <li>Unapređuju profesionalni i estetski izgled enterijera</li>
+            </ul>
+            <p class="shop-section-text fade-in stagger-2">
+                Koriste se u:
+            </p>
+            <ul class="shop-uses-list fade-in stagger-3">
+                <li>Muzičkim i home studijima</li>
+                <li>Podcast i voice-over prostorima</li>
+                <li>Kancelarijama i konferencijskim salama</li>
+                <li>Kućnim bioskopima</li>
+                <li>Dnevnim i radnim prostorima</li>
+            </ul>
+
+            <h3 class="shop-section-subtitle fade-in stagger-4">Naša ponuda akustičnih panela</h3>
+            <p class="shop-section-text fade-in stagger-5">
+                U ponudi imamo tri osnovne grupe proizvoda, pažljivo razvijene da pokriju sve ključne akustičke potrebe prostora:
+            </p>
+
+            <h4 class="shop-section-subtitle fade-in" style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-top: 30px;">1. Akustični paneli – srednje i visoke frekvencije</h4>
+            <p class="shop-section-text fade-in stagger-1">
+                Namenjeni su za kontrolu refleksija, odjeka i poboljšanje jasnoće zvuka. Idealni za zidove i plafone, posebno u prostorima gde je važno da zvuk bude čist i razumljiv.
+            </p>
+
+            <h4 class="shop-section-subtitle fade-in" style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-top: 30px;">2. Bass Trap paneli – niske frekvencije</h4>
+            <p class="shop-section-text fade-in stagger-1">
+                Specijalizovani paneli za kontrolu basa. Rešavaju problem nagomilavanja niskih frekvencija i „boom" efekta, koji se najčešće javlja u uglovima prostorije. Neizostavni su u studijima i prostorima gde je precizan zvuk od ključnog značaja.
+            </p>
+
+            <h4 class="shop-section-subtitle fade-in" style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); margin-top: 30px;">3. Bass Trap Lux paneli – niske frekvencije + difuzija</h4>
+            <p class="shop-section-text fade-in stagger-1">
+                Napredno akustičko rešenje koje kombinuje apsorpciju niskih frekvencija i difuziju zvuka. Ovi paneli ne samo da kontrolišu bas, već i razbijaju refleksije, čime se postiže prirodniji i prostorniji zvuk, uz premium vizuelni izgled.
+            </p>
+
+            <h3 class="shop-section-subtitle fade-in stagger-2">Prilagođena rešenja po meri</h3>
+            <p class="shop-section-text fade-in stagger-3">
+                Pored standardnih dimenzija i modela, nudimo i izradu akustičnih panela po meri, u skladu sa:
+            </p>
+            <ul class="shop-uses-list fade-in stagger-4">
+                <li>dimenzijama prostora</li>
+                <li>akustičkim problemima</li>
+                <li>estetskim zahtevima klijenta</li>
+            </ul>
+            <p class="shop-section-text fade-in stagger-5">
+                Naš cilj je da svaki prostor dobije optimalno akustičko rešenje, bez kompromisa između zvuka i dizajna.
+            </p>
+        </div>
     </div>
 </div>
 {% endblock %}
 
+{% block extra_js %}
+<script>
+(function() {
+    'use strict';
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+            }
+        });
+    }, observerOptions);
+
+    // Observe all elements with animation classes
+    document.addEventListener('DOMContentLoaded', function() {
+        const animatedElements = document.querySelectorAll('.fade-in');
+        
+        animatedElements.forEach(function(el) {
+            observer.observe(el);
+        });
+    });
+})();
+</script>
+{% endblock %}

@@ -6,40 +6,34 @@
 {% block extra_css %}
 <style>
     /* Home Page Specific Styles - Mobile First */
+    /* Remove main-content top padding for home page */
+    .main-content {
+        padding-top: 0 !important;
+        margin-top: 0 !important;
+    }
+    
     .home-page {
         overflow-x: hidden;
-    }
-
-    /* Hero Section */
-    .home-hero {
+        margin-top: 0;
+        padding-top: 0;
         position: relative;
-        min-height: 100vh;
+    }
+    
+    /* Hero Section - Clean Implementation */
+    .home-hero {
+        background: var(--white);
+        color: var(--text-dark);
+        padding: 100px 20px 80px 20px;
+        text-align: center;
+        min-height: 50vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
-        color: var(--white);
-        text-align: center;
-        padding: 120px 20px 80px;
-        overflow: hidden;
-    }
-
-    .home-hero::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%);
-        opacity: 0.5;
-        z-index: 0;
     }
 
     .home-hero-content {
-        position: relative;
-        z-index: 1;
         max-width: 800px;
+        width: 100%;
         margin: 0 auto;
     }
 
@@ -48,6 +42,7 @@
         font-weight: 700;
         margin-bottom: 20px;
         line-height: 1.2;
+        color: var(--text-dark);
         opacity: 0;
         transform: translateY(30px);
         animation: fadeInUp 0.8s ease forwards;
@@ -56,15 +51,27 @@
     .home-hero p {
         font-size: clamp(1.1rem, 2.5vw, 1.5rem);
         margin-bottom: 30px;
+        color: var(--text-light);
         opacity: 0;
         transform: translateY(30px);
         animation: fadeInUp 0.8s ease 0.2s forwards;
     }
 
     .home-hero .btn {
+        margin: 0 auto;
+        display: inline-block;
         opacity: 0;
         transform: translateY(30px);
         animation: fadeInUp 0.8s ease 0.4s forwards;
+    }
+    
+    .home-hero .hero-guarantee {
+        font-size: clamp(0.95rem, 2vw, 1.1rem);
+        color: var(--text-light);
+        margin-top: 20px;
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeInUp 0.8s ease 0.6s forwards;
     }
 
     /* Section Styles */
@@ -152,13 +159,13 @@
         background: var(--white);
         padding: 30px;
         border-radius: 12px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .solution-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
     }
 
     .solution-card h3 {
@@ -171,9 +178,9 @@
     .content-image {
         width: 100%;
         max-width: 600px;
-        height: 300px;
+        min-height: 200px;
         margin: 30px auto;
-        background: var(--light-gray);
+        background: var(--white);
         border-radius: 12px;
         display: flex;
         align-items: center;
@@ -188,13 +195,19 @@
         content: '📷';
         font-size: 3rem;
         opacity: 0.3;
+        position: absolute;
+        z-index: 0;
     }
 
     .content-image img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: auto;
+        max-height: 500px;
+        object-fit: contain;
         border-radius: 12px;
+        position: relative;
+        z-index: 1;
+        display: block;
     }
 
     /* Panel Type Sections */
@@ -203,7 +216,7 @@
         padding: 40px 20px;
         background: var(--white);
         border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
     }
 
     .panel-type-section:nth-child(even) {
@@ -227,10 +240,10 @@
     .panel-type-image {
         width: 100%;
         max-width: 400px;
-        height: 250px;
+        min-height: 200px;
         margin-bottom: 20px;
         border-radius: 12px;
-        background: var(--light-gray);
+        background: var(--white);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -250,13 +263,19 @@
         content: '📷';
         font-size: 3rem;
         opacity: 0.3;
+        position: absolute;
+        z-index: 0;
     }
 
     .panel-type-image img {
         width: 100%;
-        height: 100%;
-        object-fit: cover;
+        height: auto;
+        max-height: 400px;
+        object-fit: contain;
         border-radius: 12px;
+        position: relative;
+        z-index: 1;
+        display: block;
     }
 
     .panel-type-content {
@@ -282,13 +301,13 @@
         padding: 30px;
         border-radius: 12px;
         border-left: 4px solid var(--accent);
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .space-type-card:hover {
         transform: translateX(5px);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 6px 28px rgba(0, 0, 0, 0.3);
     }
 
     .space-type-card h3 {
@@ -446,16 +465,22 @@
     .stagger-4 { transition-delay: 0.4s; }
     .stagger-5 { transition-delay: 0.5s; }
 
-    /* Parallax Effect */
-    .parallax-element {
-        transition: transform 0.3s ease-out;
-    }
-
     /* Mobile Optimizations */
     @media (max-width: 767px) {
         .home-hero {
-            min-height: 80vh;
-            padding: 100px 20px 60px;
+            padding: 20px 20px 60px 20px;
+            min-height: auto;
+        }
+        
+        /* Ensure no white space appears during scroll on mobile */
+        .main-content {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+        
+        .home-page {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
         }
 
         .home-section {
@@ -484,8 +509,9 @@
     <section class="home-hero">
         <div class="home-hero-content">
             <h1>Da li imate neki od ovih problema sa zvukom?</h1>
-            <p>Pravilno rešenje za akustiku vašeg prostora</p>
+            <p>Pravilno rešenje za akustiku vašeg prostora.</p>
             <a href="{% url 'shop:shop' %}" class="btn btn-primary">Pogledaj proizvode</a>
+            <p class="hero-guarantee">Garantujemo brzu i efikasnu ugradnju i kvalitetne akustične panele.</p>
         </div>
     </section>
 
@@ -507,8 +533,7 @@
                 Ovi problemi najčešće nisu vezani za kvalitet opreme, već za akustiku samog prostora — i tada je potrebno pravo rešenje, a ne „pojačavanje" zvuka.
             </p>
             <div class="content-image fade-in stagger-1">
-                <img src="https://placehold.co/600x300/1a1a1a/ffffff?text=Akustički+problemi" alt="Akustički problemi">
-                <!-- To replace: add image file to static/images/ and use static tag -->
+                <img src="{% static 'images/img-1.webp' %}" alt="Akustički problemi">
             </div>
         </div>
     </section>
@@ -521,8 +546,7 @@
                 Akustični paneli su dizajnirani da kontrolišu ponašanje zvuka u prostoriji, a ne da menjaju ili „ulepšavaju" zvuk veštački.
             </p>
             <div class="content-image fade-in stagger-2">
-                <img src="https://placehold.co/600x300/2c2c2c/ffffff?text=Akustični+paneli" alt="Akustični paneli">
-                <!-- To replace: add image file to static/images/ and use static tag -->
+                <img src="{% static 'images/img-2.webp' %}" alt="Akustični paneli">
             </div>
             <h3 class="section-subtitle fade-in stagger-3">Pravilno postavljeni akustični paneli:</h3>
             <div class="solution-grid">
@@ -578,8 +602,7 @@
                 Najbolji rezultat se postiže kombinovanjem više tipova panela, prilagođenih konkretnom prostoru.
             </p>
             <div class="content-image fade-in stagger-1">
-                <img src="https://placehold.co/600x300/333333/ffffff?text=Kombinacija+panela" alt="Kombinacija panela">
-                <!-- To replace: add image file to static/images/ and use static tag -->
+                <img src="{% static 'images/img-3.webp' %}" alt="Kombinacija panela">
             </div>
         </div>
     </section>
@@ -591,8 +614,7 @@
             <div class="panel-type-section scale-in">
                 <div class="panel-type-header">
                     <div class="panel-type-image">
-                        <img src="https://placehold.co/400x250/1a1a1a/ffffff?text=Prilagođeni+paneli" alt="Prilagođeni paneli">
-                        <!-- To replace: add image using static tag with images/placeholder-*.jpg -->
+                        <img src="{% static 'images/img-4.webp' %}" alt="Prilagođeni paneli">
                     </div>
                     <div class="panel-type-content">
                         <p class="section-text">
@@ -619,8 +641,7 @@
             <div class="panel-type-section fade-in stagger-1">
                 <div class="panel-type-header">
                     <div class="panel-type-image">
-                        <img src="https://placehold.co/400x250/2c2c2c/ffffff?text=Panel+5cm" alt="Akustični paneli 5cm">
-                        <!-- To replace: add image using static tag with images/placeholder-*.jpg -->
+                        <img src="{% static 'images/img-5.webp' %}" alt="Akustični paneli 5cm">
                     </div>
                     <div class="panel-type-content">
                         <h3 class="section-subtitle">Akustični paneli za srednje i visoke frekvencije (5 cm)</h3>
@@ -645,8 +666,7 @@
             <div class="panel-type-section fade-in stagger-2">
                 <div class="panel-type-header">
                     <div class="panel-type-image">
-                        <img src="https://placehold.co/400x250/333333/ffffff?text=Bass+Trap" alt="Bass trap paneli">
-                        <!-- To replace: add image using static tag with images/placeholder-*.jpg -->
+                        <img src="{% static 'images/img-6.webp' %}" alt="Bass trap paneli">
                     </div>
                     <div class="panel-type-content">
                         <h3 class="section-subtitle">Bass trap paneli za niske frekvencije (10, 15 i 20 cm)</h3>
@@ -674,8 +694,7 @@
             <div class="panel-type-section fade-in stagger-3">
                 <div class="panel-type-header">
                     <div class="panel-type-image">
-                        <img src="https://placehold.co/400x250/1a1a1a/ffffff?text=Bass+Trap+Lux" alt="Bass Trap Lux paneli">
-                        <!-- To replace: add image using static tag with images/placeholder-*.jpg -->
+                        <img src="{% static 'images/img-7.webp' %}" alt="Bass Trap Lux paneli">
                     </div>
                     <div class="panel-type-content">
                         <h3 class="section-subtitle">Bass Trap Lux paneli – apsorpcija i difuzija</h3>
@@ -747,8 +766,7 @@
                 </div>
             </div>
             <div class="content-image fade-in">
-                <img src="https://placehold.co/600x300/2c2c2c/ffffff?text=Različiti+prostori" alt="Različiti prostori">
-                <!-- To replace: add image using static tag with images/placeholder-*.jpg -->
+                <img src="{% static 'images/img-8.webp' %}" alt="Različiti prostori">
             </div>
         </div>
     </section>
@@ -860,19 +878,6 @@
             observer.observe(el);
         });
 
-        // Parallax effect for hero section
-        const hero = document.querySelector('.home-hero');
-        if (hero) {
-            let lastScroll = 0;
-            window.addEventListener('scroll', function() {
-                const currentScroll = window.pageYOffset;
-                if (currentScroll <= hero.offsetHeight) {
-                    const parallaxSpeed = 0.5;
-                    hero.style.transform = `translateY(${currentScroll * parallaxSpeed}px)`;
-                }
-                lastScroll = currentScroll;
-            }, { passive: true });
-        }
 
         // Smooth reveal for cards on scroll
         const cards = document.querySelectorAll('.solution-card, .space-type-card, .panel-type-section');

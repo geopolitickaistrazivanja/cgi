@@ -7,10 +7,6 @@ deactivate
 python manage.py makemigrations
 python manage.py migrate
 
-.\export_structure.ps1 - kompletna struktura sa sadržajem
-
-.\export_django_structure.ps1 - kompletna struktura sa sadržajem settings.py i Exercises i Blogs app-activate
-
 Prevodjenje:
 
 # Only Croatian translation needed - source strings are in English

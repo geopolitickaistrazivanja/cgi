@@ -6,36 +6,61 @@ const offcanvasOverlay = document.getElementById('offcanvasOverlay');
 
 function openOffcanvas() {
     if (offcanvas && window.innerWidth <= 767) {
+        document.body.classList.add('offcanvas-open');
         offcanvas.classList.add('open');
-        if (offcanvasOverlay) {
-            offcanvasOverlay.classList.add('active');
-        }
-        document.body.style.overflow = 'hidden';
+        // No overlay needed since offcanvas covers full screen
     }
 }
 
 function closeOffcanvas() {
     if (offcanvas) {
         offcanvas.classList.remove('open');
-        if (offcanvasOverlay) {
-            offcanvasOverlay.classList.remove('active');
-        }
-        document.body.style.overflow = '';
+        document.body.classList.remove('offcanvas-open');
     }
 }
 
-if (mobileMenuBtn) {
-    mobileMenuBtn.addEventListener('click', openOffcanvas);
-}
+// Wait for DOM to be ready before attaching event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', openOffcanvas);
+    }
+    
+    // Make menu label clickable
+    const mobileMenuLabel = document.getElementById('mobileMenuLabel');
+    if (mobileMenuLabel) {
+        mobileMenuLabel.addEventListener('click', openOffcanvas);
+    }
+    
+    // Offcanvas dropdown toggle - arrow button toggles dropdown, text link navigates
+    const dropdownToggles = document.querySelectorAll('.offcanvas-dropdown-toggle');
+    dropdownToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const dropdown = this.closest('.offcanvas-item-dropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('open');
+            }
+        });
+    });
+    
+    // Close offcanvas when clicking on navigation links (regular links and dropdown items)
+    const offcanvasLinks = document.querySelectorAll('.offcanvas-menu-list .offcanvas-item, .offcanvas-dropdown-item');
+    offcanvasLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 767) {
+                // No closeOffcanvas() call - instant navigation without animation
+                // Navigation happens naturally without preventDefault
+            }
+        });
+    });
+});
 
 if (offcanvasClose) {
     offcanvasClose.addEventListener('click', closeOffcanvas);
 }
 
-// Close offcanvas when clicking on overlay
-if (offcanvasOverlay) {
-    offcanvasOverlay.addEventListener('click', closeOffcanvas);
-}
+// Overlay not needed since offcanvas covers full screen
 
 // Close offcanvas when clicking outside (on the offcanvas itself, not the content)
 if (offcanvas) {
@@ -63,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function openSearch() {
         if (searchOverlay) {
             searchOverlay.classList.add('active');
+            document.body.classList.add('search-open');
             if (searchInput) {
                 searchInput.focus();
             }
@@ -73,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeSearch() {
         if (searchOverlay) {
             searchOverlay.classList.remove('active');
+            document.body.classList.remove('search-open');
             if (searchInput) {
                 searchInput.value = '';
             }
@@ -89,6 +116,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchBtnMobile) {
         searchBtnMobile.addEventListener('click', openSearch);
     }
+    
+    // Make search label clickable
+    const mobileSearchLabel = document.getElementById('mobileSearchLabel');
+    if (mobileSearchLabel) {
+        mobileSearchLabel.addEventListener('click', openSearch);
+    }
     if (searchClose) {
         searchClose.addEventListener('click', closeSearch);
     }
@@ -100,114 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Search with debounce
-    let searchTimeout;
-    if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            const query = e.target.value.trim();
-            
-            if (query.length < 2) {
-                if (searchResults) {
-                    searchResults.innerHTML = '';
-                }
-                return;
-            }
-            
-            searchTimeout = setTimeout(() => {
-                fetch(`/prodavnica/pretraga/?q=${encodeURIComponent(query)}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (searchResults) {
-                            displaySearchResults(data.products || []);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Search error:', error);
-                        if (searchResults) {
-                            searchResults.innerHTML = '<div class="search-result-item">Greška pri pretrazi</div>';
-                        }
-                    });
-            }, 300);
-        });
-    }
-    
-    function displaySearchResults(products) {
-        if (!searchResults) return;
-        
-        if (!products || products.length === 0) {
-            searchResults.innerHTML = '<div class="search-result-item">Nema rezultata</div>';
-            return;
-        }
-        
-        searchResults.innerHTML = products.map(product => `
-            <div class="search-result-item" onclick="window.location.href='/prodavnica/proizvod/${product.slug}/'">
-                ${product.image ? `<img src="${product.image}" alt="${product.title}">` : ''}
-                <div>
-                    <h4>${product.title}</h4>
-                    <p>${product.price || 'Izaberite opcije'}</p>
-                </div>
-            </div>
-        `).join('');
-    }
-});
-
-// Add to Cart
-document.querySelectorAll('.add-to-cart-form').forEach(form => {
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const productId = form.dataset.productId;
-        const quantity = form.querySelector('#quantity').value;
-        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
-        
-        try {
-            const response = await fetch(`/prodavnica/dodaj-u-korpu/${productId}/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrfToken
-                },
-                body: `quantity=${quantity}`
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                // Update cart count
-                const cartCount = document.querySelector('.cart-count');
-                if (cartCount) {
-                    cartCount.textContent = data.cart_count;
-                    if (data.cart_count > 0) {
-                        cartCount.style.display = 'flex';
-                    }
-                } else {
-                    // Create cart count if it doesn't exist
-                    const cartIcon = document.querySelector('.cart-icon');
-                    if (cartIcon && data.cart_count > 0) {
-                        let countEl = cartIcon.querySelector('.cart-count');
-                        if (!countEl) {
-                            countEl = document.createElement('span');
-                            countEl.className = 'cart-count';
-                            cartIcon.appendChild(countEl);
-                        }
-                        countEl.textContent = data.cart_count;
-                    }
-                }
-                
-                // Success is handled by product_detail.html notification system
-            } else {
-                // Error is handled by product_detail.html notification system
-            }
-        } catch (error) {
-            console.error('Add to cart error:', error);
-            // Error is handled by product_detail.html notification system
-        }
-    });
+    // Search functionality can be added here for topics if needed
 });
 
 // Back to Top Button
@@ -233,6 +159,62 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
     document.body.classList.add('touch-device');
 }
 
+// Position dropdown menu dynamically using fixed positioning
+(function() {
+    function initDropdowns() {
+        if (window.innerWidth <= 767) return; // Only on desktop
+        
+        const navItemDropdowns = document.querySelectorAll('.nav-item-dropdown');
+        
+        navItemDropdowns.forEach(dropdown => {
+            const navItemLink = dropdown.querySelector('.nav-item-link');
+            const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+            
+            if (!navItemLink || !dropdownMenu) return;
+            
+            function positionDropdown() {
+                const rect = navItemLink.getBoundingClientRect();
+                
+                // Position dropdown below the nav item, centered (getBoundingClientRect gives viewport coordinates)
+                // Bridge element handles the gap
+                dropdownMenu.style.position = 'fixed';
+                dropdownMenu.style.top = rect.bottom + 'px';
+                dropdownMenu.style.left = (rect.left + rect.width / 2) + 'px';
+                dropdownMenu.style.transform = 'translateX(-50%)';
+                dropdownMenu.style.zIndex = '10000';
+            }
+            
+            // Position on hover
+            dropdown.addEventListener('mouseenter', positionDropdown);
+            navItemLink.addEventListener('mouseenter', positionDropdown);
+            
+            // Update position when scrolling or resizing
+            function updatePosition() {
+                if (dropdown.classList.contains('dropdown-open')) {
+                    positionDropdown();
+                }
+            }
+            
+            window.addEventListener('scroll', updatePosition, true);
+            window.addEventListener('resize', updatePosition);
+        });
+    }
+    
+    // Run when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initDropdowns);
+    } else {
+        initDropdowns();
+    }
+    
+    // Re-init on resize to handle desktop/mobile switching
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 767) {
+            initDropdowns();
+        }
+    });
+})();
+
 // Auto-hide messages
 setTimeout(() => {
     const alerts = document.querySelectorAll('.alert');
@@ -242,189 +224,4 @@ setTimeout(() => {
         setTimeout(() => alert.remove(), 500);
     });
 }, 5000);
-
-// Cart Dropdown - Works for both desktop and mobile
-const cartIconBtn = document.getElementById('cartIconBtn');
-const cartDropdown = document.getElementById('cartDropdown');
-const cartIconBtnMobile = document.getElementById('cartIconBtnMobile');
-const cartDropdownMobile = document.getElementById('cartDropdownMobile');
-
-function loadCartDropdown(isMobile = false) {
-    const itemsContainerId = isMobile ? 'cartDropdownItemsMobile' : 'cartDropdownItems';
-    const totalElementId = isMobile ? 'cartDropdownTotalMobile' : 'cartDropdownTotal';
-    
-    fetch('/prodavnica/korpa-dropdown/')
-        .then(response => response.json())
-        .then(data => {
-            const itemsContainer = document.getElementById(itemsContainerId);
-            const totalElement = document.getElementById(totalElementId);
-            
-            if (!itemsContainer || !totalElement) return;
-            
-            if (data.items && data.items.length > 0) {
-                itemsContainer.innerHTML = data.items.map(item => {
-                    // Escape cart_key for use in onclick
-                    const cartKey = (item.cart_key || '').replace(/'/g, "\\'");
-                    const productId = item.product_id || 0;
-                    return `
-                    <div class="cart-dropdown-item">
-                        <img src="${item.image}" alt="${item.title}" class="cart-dropdown-item-image">
-                        <div class="cart-dropdown-item-info">
-                            <h4>${item.title}</h4>
-                            <p>Količina: ${item.quantity}</p>
-                            <p>${item.price}</p>
-                        </div>
-                        <button class="cart-dropdown-item-remove" data-product-id="${productId}" data-cart-key="${cartKey}" onclick="removeFromCartDropdown('${cartKey}', ${productId})">×</button>
-                    </div>
-                `;
-                }).join('');
-                totalElement.textContent = data.total;
-            } else {
-                itemsContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-light);">Korpa je prazna</div>';
-                totalElement.textContent = '0 RSD';
-            }
-        })
-        .catch(error => {
-            console.error('Error loading cart:', error);
-        });
-}
-
-// Desktop cart dropdown
-if (cartIconBtn && cartDropdown) {
-    cartIconBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        cartDropdown.classList.toggle('active');
-        if (cartDropdown.classList.contains('active')) {
-            loadCartDropdown(false);
-        }
-    });
-}
-
-// Mobile cart dropdown
-if (cartIconBtnMobile && cartDropdownMobile) {
-    cartIconBtnMobile.addEventListener('click', function(e) {
-        e.stopPropagation();
-        cartDropdownMobile.classList.toggle('active');
-        if (cartDropdownMobile.classList.contains('active')) {
-            loadCartDropdown(true);
-        }
-    });
-}
-
-// Close dropdowns when clicking outside
-document.addEventListener('click', function(e) {
-    // Desktop
-    if (cartIconBtn && cartDropdown) {
-        if (!cartIconBtn.contains(e.target) && !cartDropdown.contains(e.target)) {
-            cartDropdown.classList.remove('active');
-        }
-    }
-    // Mobile
-    if (cartIconBtnMobile && cartDropdownMobile) {
-        if (!cartIconBtnMobile.contains(e.target) && !cartDropdownMobile.contains(e.target)) {
-            cartDropdownMobile.classList.remove('active');
-        }
-    }
-});
-
-function removeFromCartDropdown(cartKey, productId) {
-    const formData = new FormData();
-    
-    // Get CSRF token from multiple possible sources
-    let csrfToken = null;
-    // Try to get from form input
-    const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
-    if (csrfInput) {
-        csrfToken = csrfInput.value;
-    }
-    // Try to get from meta tag
-    if (!csrfToken) {
-        const csrfMeta = document.querySelector('meta[name=csrf-token]');
-        if (csrfMeta) {
-            csrfToken = csrfMeta.getAttribute('content');
-        }
-    }
-    // Try to get from cookie
-    if (!csrfToken) {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.startsWith('csrftoken=')) {
-                csrfToken = cookie.substring('csrftoken='.length);
-                break;
-            }
-        }
-    }
-    
-    if (csrfToken) {
-        formData.append('csrfmiddlewaretoken', csrfToken);
-    }
-    
-    // Add cart_key if available
-    if (cartKey) {
-        formData.append('cart_key', cartKey);
-    }
-    
-    fetch(`/prodavnica/ukloni-iz-korpe/${productId}/`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Update cart count for both desktop and mobile
-            const cartCountElements = document.querySelectorAll('.cart-count');
-            if (data.cart_count > 0) {
-                if (cartCountElements.length > 0) {
-                    cartCountElements.forEach(el => {
-                        el.textContent = data.cart_count;
-                    });
-                } else {
-                    // Add cart count to desktop cart icon
-                    const cartIcon = document.querySelector('#cartIconBtn');
-                    if (cartIcon && !cartIcon.querySelector('.cart-count')) {
-                        const countSpan = document.createElement('span');
-                        countSpan.className = 'cart-count';
-                        countSpan.textContent = data.cart_count;
-                        cartIcon.appendChild(countSpan);
-                    }
-                    // Add cart count to mobile cart icon
-                    const cartIconMobile = document.querySelector('#cartIconBtnMobile');
-                    if (cartIconMobile && !cartIconMobile.querySelector('.cart-count')) {
-                        const countSpan = document.createElement('span');
-                        countSpan.className = 'cart-count';
-                        countSpan.textContent = data.cart_count;
-                        cartIconMobile.appendChild(countSpan);
-                    }
-                }
-            } else {
-                cartCountElements.forEach(el => {
-                    el.remove();
-                });
-            }
-            
-            // Reload dropdowns (both desktop and mobile)
-            if (cartDropdown && cartDropdown.classList.contains('active')) {
-                loadCartDropdown(false);
-            }
-            if (cartDropdownMobile && cartDropdownMobile.classList.contains('active')) {
-                loadCartDropdown(true);
-            }
-            
-            // Reload page if on cart page
-            if (window.location.pathname.includes('/korpa/')) {
-                window.location.reload();
-            }
-        }
-    })
-    .catch(error => {
-        console.error('Error removing item:', error);
-    });
-}
-
-// Make function globally available
-window.removeFromCartDropdown = removeFromCartDropdown;
 

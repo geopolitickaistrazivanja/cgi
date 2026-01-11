@@ -9,7 +9,6 @@ from urllib.parse import urlparse
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.utils import timezone
-from datetime import datetime, timedelta
 from .upload_tracker import cleanup_unused_uploads, mark_upload_as_used, cleanup_old_tracking_records, delete_file_from_storage
 
 logger = logging.getLogger(__name__)
@@ -23,14 +22,14 @@ def unique_filename(instance, filename, base_path=''):
     Args:
         instance: The model instance (not used, but required by Django's upload_to signature)
         filename: Original filename
-        base_path: Base directory path (e.g., 'products/', 'blog/thumbnails/')
+        base_path: Base directory path (e.g., 'topics/thumbnails/')
     
     Returns:
-        A unique file path like 'products/uuid_timestamp_original_name.jpg'
+        A unique file path like 'topics/uuid_timestamp_original_name.jpg'
     
     Example:
-        unique_filename(None, 'image.jpg', 'products/')
-        # Returns: 'products/550e8400-e29b-41d4-a716-446655440000_20240115_123456_image.jpg'
+        unique_filename(None, 'image.jpg', 'topics/thumbnails/')
+        # Returns: 'topics/thumbnails/550e8400-e29b-41d4-a716-446655440000_20240115_123456_image.jpg'
     """
     # Extract file extension
     name, ext = os.path.splitext(filename)
@@ -50,24 +49,16 @@ def unique_filename(instance, filename, base_path=''):
     return unique_filename_str
 
 
-def unique_product_image(instance, filename):
-    """Generate unique filename for product images"""
-    return unique_filename(instance, filename, 'products/')
 
 
-def unique_product_thumbnail(instance, filename):
-    """Generate unique filename for product thumbnails"""
-    return unique_filename(instance, filename, 'products/thumbnails/')
+def unique_topic_thumbnail(instance, filename):
+    """Generate unique filename for topic thumbnails"""
+    return unique_filename(instance, filename, 'topics/thumbnails/')
 
 
-def unique_product_pattern(instance, filename):
-    """Generate unique filename for product patterns"""
-    return unique_filename(instance, filename, 'products/patterns/')
-
-
-def unique_blog_thumbnail(instance, filename):
-    """Generate unique filename for blog thumbnails"""
-    return unique_filename(instance, filename, 'blog/thumbnails/')
+def unique_category_thumbnail(instance, filename):
+    """Generate unique filename for category thumbnails"""
+    return unique_filename(instance, filename, 'categories/thumbnails/')
 
 
 def extract_images_from_html(html_content):
@@ -93,7 +84,7 @@ def extract_images_from_html(html_content):
         # Handle different URL formats:
         # 1. Relative: /media/uploads/2024/01/15/image.jpg
         # 2. Absolute: https://media.domain.com/media/uploads/2024/01/15/image.jpg
-        # 3. Absolute with custom domain: https://media.akusticnipanelieholux.com/media/uploads/...
+        # 3. Absolute with custom domain: https://media.example.com/media/uploads/...
         
         # Remove leading slash
         if path.startswith('/'):
@@ -120,7 +111,7 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     Clean up orphaned images when a model instance is saved or deleted.
     This includes:
     - Thumbnail images
-    - Product gallery images
+    - Topic thumbnails
     - CKEditor uploaded images in descriptions
     
     Args:
@@ -134,21 +125,9 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     # Get all current image paths from the instance
     current_image_paths = set()
     
-    # Handle thumbnail (for both Product and BlogPost)
+    # Handle thumbnail (for Topic)
     if hasattr(model_instance, 'thumbnail') and model_instance.thumbnail:
         current_image_paths.add(model_instance.thumbnail.name)
-    
-    # Handle Product images (gallery)
-    if hasattr(model_instance, 'images'):
-        for img in model_instance.images.all():
-            if img.image:
-                current_image_paths.add(img.image.name)
-    
-    # Handle ProductPattern images
-    if hasattr(model_instance, 'patterns'):
-        for pattern in model_instance.patterns.all():
-            if pattern.image:
-                current_image_paths.add(pattern.image.name)
     
     # Handle CKEditor images in descriptions
     # Check short_description and full_description fields
@@ -164,17 +143,6 @@ def cleanup_orphaned_images(model_instance, old_instance=None):
     if old_instance:
         if hasattr(old_instance, 'thumbnail') and old_instance.thumbnail:
             old_image_paths.add(old_instance.thumbnail.name)
-        
-        if hasattr(old_instance, 'images'):
-            for img in old_instance.images.all():
-                if img.image:
-                    old_image_paths.add(img.image.name)
-        
-        # Handle ProductPattern images from old instance
-        if hasattr(old_instance, 'patterns'):
-            for pattern in old_instance.patterns.all():
-                if pattern.image:
-                    old_image_paths.add(pattern.image.name)
         
         # Handle CKEditor images in old descriptions
         for field_name in ['short_description', 'full_description']:
@@ -259,7 +227,6 @@ def cleanup_all_instance_images(instance):
     Clean up all images when an instance is deleted.
     This includes:
     - Thumbnail images
-    - Product gallery images
     - CKEditor uploaded images in descriptions
     """
     # Only run cleanup in production (when using R2)
@@ -268,21 +235,9 @@ def cleanup_all_instance_images(instance):
     
     image_paths = []
     
-    # Handle thumbnail (for both Product and BlogPost)
+    # Handle thumbnail (for Topic)
     if hasattr(instance, 'thumbnail') and instance.thumbnail:
         image_paths.append(instance.thumbnail.name)
-    
-    # Handle Product images (gallery)
-    if hasattr(instance, 'images'):
-        for img in instance.images.all():
-            if img.image:
-                image_paths.append(img.image.name)
-    
-    # Handle ProductPattern images
-    if hasattr(instance, 'patterns'):
-        for pattern in instance.patterns.all():
-            if pattern.image:
-                image_paths.append(pattern.image.name)
     
     # Handle CKEditor images in descriptions
     for field_name in ['short_description', 'full_description']:
@@ -299,12 +254,11 @@ def cleanup_all_instance_images(instance):
 
 def cleanup_all_orphaned_files():
     """
-    Scan entire R2 bucket and delete all files that are not referenced by any Product or BlogPost.
+    Scan entire R2 bucket and delete all files that are not referenced by any Topic.
     This is a comprehensive cleanup that checks all files in the bucket.
     """
     # Import here to avoid circular imports
-    from shop.models import Product, ProductImage
-    from blog.models import BlogPost
+    from topics.models import Topic
     
     # Only run cleanup in production (when using R2)
     if settings.DEBUG or not settings.AWS_ACCESS_KEY_ID:
@@ -313,20 +267,10 @@ def cleanup_all_orphaned_files():
     # Get all referenced image paths from database
     referenced_paths = set()
     
-    # Get all product thumbnails
-    for product in Product.objects.all():
-        if product.thumbnail:
-            referenced_paths.add(product.thumbnail.name)
-    
-    # Get all product gallery images
-    for product_image in ProductImage.objects.all():
-        if product_image.image:
-            referenced_paths.add(product_image.image.name)
-    
-    # Get all blog thumbnails
-    for blog in BlogPost.objects.all():
-        if blog.thumbnail:
-            referenced_paths.add(blog.thumbnail.name)
+    # Get all topic thumbnails
+    for topic in Topic.objects.all():
+        if topic.thumbnail:
+            referenced_paths.add(topic.thumbnail.name)
     
     # Get all CKEditor uploads (from full_description and short_description)
     # These are stored in the uploads/ path
@@ -337,10 +281,10 @@ def cleanup_all_orphaned_files():
     try:
         # Get all files from the media directory
         # This requires listing the bucket, which might be expensive
-        # We'll focus on known paths: products/ and blog/
+        # We'll focus on known paths: topics/
         
         # For now, we'll use a simpler approach:
-        # Only check files in products/ and blog/ directories
+        # Only check files in topics/ directories
         # and compare with database references
         
         # This is a simplified version - full bucket scan would require

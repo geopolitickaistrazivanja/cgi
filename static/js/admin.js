@@ -89,17 +89,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 link.textContent = 'Početna';
             }
             // Translate app names
-            else if (text === 'Blog') {
-                link.textContent = 'Blog';
+            else if (text === 'Blog' || text === 'Topics') {
+                link.textContent = 'Teme';
             }
             else if (text === 'Accounts') {
                 link.textContent = 'Nalozi';
             }
             else if (text === 'Core') {
                 link.textContent = 'Osnovno';
-            }
-            else if (text === 'Shop') {
-                link.textContent = 'Prodavnica';
             }
             else if (text === 'Authentication and Authorization' || text === 'Authentication & Authorization') {
                 link.textContent = 'Autentifikacija i autorizacija';
@@ -131,10 +128,6 @@ document.addEventListener('DOMContentLoaded', function() {
         else if (text === 'Core') {
             heading.textContent = 'Osnovno';
         }
-        // Translate "Shop"
-        else if (text === 'Shop') {
-            heading.textContent = 'Prodavnica';
-        }
     });
     
     // Also check in module captions
@@ -148,8 +141,6 @@ document.addEventListener('DOMContentLoaded', function() {
             caption.textContent = 'Nalozi';
         } else if (text === 'Core') {
             caption.textContent = 'Osnovno';
-        } else if (text === 'Shop') {
-            caption.textContent = 'Prodavnica';
         } else if (text === 'Users') {
             caption.textContent = 'Korisnici';
         }
@@ -537,9 +528,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             heading.textContent = 'Nalozi';
                         } else if (text === 'Core') {
                             heading.textContent = 'Osnovno';
-                        } else if (text === 'Shop') {
-                            heading.textContent = 'Prodavnica';
-                        }
                     });
                 }
             });

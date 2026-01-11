@@ -1,6 +1,6 @@
-# EhoLux Webshop
+# CGI
 
-Django webshop aplikacija za prodaju akustičnih panela.
+Django aplikacija.
 
 ## Tehnologije
 
@@ -13,22 +13,17 @@ Django webshop aplikacija za prodaju akustičnih panela.
 
 ## Funkcionalnosti
 
-- ✅ Product management sa kategorijama i atributima
-- ✅ Blog sistem sa rich text editorom
-- ✅ Shopping cart
+- ✅ Topics sistem sa rich text editorom
 - ✅ User accounts
 - ✅ Contact form sa SendGrid
 - ✅ Email archiving
-- ✅ Stock management sa email notifikacijama
-- ✅ Search functionality
 - ✅ Responsive design (mobile-first)
 - ✅ Custom Django admin
 
 ## Struktura projekta
 
-- `shop/` - Aplikacija za proizvode
-- `blog/` - Aplikacija za blogove
-- `accounts/` - User accounts i porudžbine
+- `topics/` - Aplikacija za teme
+- `accounts/` - User accounts
 - `core/` - Home, contact, email management
 - `templates/` - HTML template-i
 - `static/` - CSS, JS, images

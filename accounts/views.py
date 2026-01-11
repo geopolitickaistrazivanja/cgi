@@ -6,9 +6,7 @@ from django.contrib import messages
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_protect
 from django.utils.translation import gettext_lazy as _
-from django.http import HttpResponseRedirect
 from core.models import UserEmail
-from accounts.models import Order
 
 
 class UserCreationForm(BaseUserCreationForm):
@@ -111,8 +109,5 @@ def account(request):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
     
-    orders = Order.objects.filter(user=request.user)
-    context = {
-        'orders': orders,
-    }
+    context = {}
     return render(request, 'accounts/account.html', context)

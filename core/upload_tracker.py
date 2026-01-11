@@ -66,7 +66,7 @@ def mark_upload_as_used(file_path, model_name, instance_id):
     
     Args:
         file_path: Path to the file
-        model_name: Name of the model ('Product' or 'BlogPost')
+        model_name: Name of the model ('Topic')
         instance_id: ID of the instance
     """
     # Normalize path
@@ -108,7 +108,7 @@ def mark_upload_as_used(file_path, model_name, instance_id):
 
 def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, is_new_instance=False, session_uploads=None):
     """
-    Clean up uploads that were tracked but not used in ANY product/blog.
+    Clean up uploads that were tracked but not used in ANY topic.
     Deletes orphaned files with a grace period to avoid deleting files that are still being edited.
     
     This handles cases where:
@@ -129,26 +129,17 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
     # This prevents deleting files that user just uploaded and might still be editing
     grace_period = timezone.now() - timedelta(minutes=5)
     
-    # Get ALL referenced paths from ALL products and blogs in database
-    # This ensures we don't delete files that are used in other products/blogs
-    from shop.models import Product
-    from blog.models import BlogPost
+    # Get ALL referenced paths from ALL topics in database
+    # This ensures we don't delete files that are used in other topics
+    from topics.models import Topic
     from core.utils import extract_images_from_html
     
     all_referenced_paths = set()
     
-    # Get all images from all products
-    for product in Product.objects.all():
+    # Get all images from all topics
+    for topic in Topic.objects.all():
         for field_name in ['short_description', 'full_description']:
-            field_value = getattr(product, field_name, '')
-            if field_value:
-                images = extract_images_from_html(field_value)
-                all_referenced_paths.update(images)
-    
-    # Get all images from all blogs
-    for blog in BlogPost.objects.all():
-        for field_name in ['short_description', 'full_description']:
-            field_value = getattr(blog, field_name, '')
+            field_value = getattr(topic, field_name, '')
             if field_value:
                 images = extract_images_from_html(field_value)
                 all_referenced_paths.update(images)
@@ -168,7 +159,7 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
             all_referenced_paths.add(normalized_path)
     
     # Normalize all referenced paths once (more efficient)
-    # This includes paths from existing products/blogs AND current content being saved
+    # This includes paths from existing topics AND current content being saved
     normalized_all_referenced = set()
     for path in all_referenced_paths:
         normalized_path = path
@@ -183,26 +174,26 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
     
     # For new instances: use session-based cleanup (most efficient)
     # Only check uploads from current editing session (tracked in session)
-    # Compare against current blog's HTML and delete orphaned ones
+    # Compare against current topic's HTML and delete orphaned ones
     if is_new_instance:
         # Normalize current content paths for comparison
-        # This is what's actually in the blog's HTML
+        # This is what's actually in the topic's HTML
         normalized_current_content = set()
         for path in normalized_referenced:
             normalized_current_content.add(path)
         
         # If we have session uploads, use them (most efficient)
         if session_uploads:
-            # Check each upload from session: is it in the current blog's HTML?
+            # Check each upload from session: is it in the current topic's HTML?
             for session_upload_path in session_uploads:
                 # Normalize the session upload path
                 upload_path = session_upload_path
                 if upload_path.startswith('/'):
                     upload_path = upload_path[1:]
                 
-                # Check if this upload is in the current blog's HTML
+                # Check if this upload is in the current topic's HTML
                 if upload_path not in normalized_current_content:
-                    # Upload is NOT in the current blog's HTML
+                    # Upload is NOT in the current topic's HTML
                     # This means it was uploaded but deleted from CKEditor before saving
                     # Delete it from R2
                     if delete_file_from_storage(upload_path):
@@ -215,7 +206,7 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
                     except CkeditorUpload.DoesNotExist:
                         pass  # Record doesn't exist, that's fine
                 else:
-                    # Upload IS in the current blog's HTML - mark as used (will be cleaned up later)
+                    # Upload IS in the current topic's HTML - mark as used (will be cleaned up later)
                     # We mark it as used first to ensure proper tracking, then delete immediately after
                     try:
                         upload_record = CkeditorUpload.objects.get(file_path=upload_path)
@@ -245,10 +236,10 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
                 if upload_path.startswith('/'):
                     upload_path = upload_path[1:]
                 
-                # Check if this upload is in the current blog's HTML
+                # Check if this upload is in the current topic's HTML
                 if upload_path not in normalized_current_content:
-                    # Upload is NOT in the current blog's HTML
-                    # But first check: is it in ANY other saved content? (protect existing blogs/products)
+                    # Upload is NOT in the current topic's HTML
+                    # But first check: is it in ANY other saved content? (protect existing topics)
                     if upload_path not in normalized_all_referenced:
                         # Upload is NOT in current content AND NOT in any saved content
                         # This means it was uploaded but deleted from CKEditor before saving
@@ -258,7 +249,7 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
                         # Delete the tracking record
                         upload.delete()
                 else:
-                    # Upload IS in the current blog's HTML - mark as used then delete immediately
+                    # Upload IS in the current topic's HTML - mark as used then delete immediately
                     upload.is_used = True
                     upload.used_in_model = model_name
                     upload.used_in_id = instance_id
@@ -315,7 +306,7 @@ def cleanup_unused_uploads(referenced_paths, model_name=None, instance_id=None, 
 def cleanup_old_tracking_records():
     """
     Clean up old tracking records to keep the database clean.
-    This runs automatically on every product/blog save.
+    This runs automatically on every topic save.
     
     Note: Used records are now deleted immediately when images are saved,
     so this function is mainly for cleaning up any orphaned unused records

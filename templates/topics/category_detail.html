@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ category.name }} - CGI{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'topics:category_detail' category.slug %}">{% endblock %}
+
+{% block content %}
+<div class="category-detail-page">
+    <div class="container">
+        <h1 class="page-title">{{ category.name }}</h1>
+        <div class="topic-grid">
+            {% for topic in topics %}
+                <article class="topic-card">
+                    <a href="{% url 'topics:topic_detail' category.slug topic.slug %}">
+                        {% if topic.thumbnail %}
+                            <img src="{{ topic.thumbnail.url }}" alt="{{ topic.title }}">
+                        {% else %}
+                            <div class="topic-placeholder">Nema slike</div>
+                        {% endif %}
+                        <div class="topic-card-content">
+                            <h2>{{ topic.title }}</h2>
+                            {% if topic.short_description %}
+                                <p>{{ topic.short_description|striptags|truncatewords:30 }}</p>
+                            {% endif %}
+                            <span class="topic-date">{{ topic.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </a>
+                </article>
+            {% empty %}
+                <p>Nema tema u ovoj kategoriji.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Moj nalog - EhoLux{% endblock %}
+{% block title %}Moj nalog - CGI{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:account' %}">{% endblock %}
 
 {% block content %}
@@ -15,23 +15,6 @@
             <p><strong>Email:</strong> {{ user.email|default:"Nije unet" }}</p>
         </div>
 
-        <div class="order-history">
-            <h2>Istorija porudžbina</h2>
-            {% if orders %}
-                <div class="orders-list">
-                    {% for order in orders %}
-                        <div class="order-item">
-                            <h3>Porudžbina #{{ order.id }}</h3>
-                            <p><strong>Datum:</strong> {{ order.created_at|date:"d.m.Y H:i" }}</p>
-                            <p><strong>Status:</strong> {{ order.get_status_display }}</p>
-                            <p><strong>Ukupno:</strong> {{ order.total_amount }} RSD</p>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p>Nemate porudžbina.</p>
-            {% endif %}
-        </div>
     </div>
 </div>
 {% endblock %}

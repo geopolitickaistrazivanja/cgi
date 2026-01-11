@@ -9,10 +9,6 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
     {% block canonical_url %}{% endblock %}
     <title>{% block title %}CGI - Centar za geopolitička istraživanja{% endblock %}</title>
-    <link rel="icon" type="image/webp" href="{% static 'images/favicon.webp' %}" sizes="32x32">
-    <link rel="icon" type="image/webp" href="{% static 'images/favicon.webp' %}" sizes="16x16">
-    <link rel="apple-touch-icon" href="{% static 'images/favicon.webp' %}">
-    <link rel="shortcut icon" type="image/webp" href="{% static 'images/favicon.webp' %}">
     <!-- Using system fonts for zero flicker and instant load -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}

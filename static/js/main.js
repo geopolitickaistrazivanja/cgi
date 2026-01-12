@@ -162,6 +162,7 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
 // Position dropdown menu dynamically using fixed positioning
 (function() {
     let scrollTimeout;
+    let isScrolling = false;
     
     function initDropdowns() {
         if (window.innerWidth <= 767) return; // Only on desktop
@@ -174,11 +175,13 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             
             if (!navItemLink || !dropdownMenu) return;
             
+            let isHoveringTrigger = false;
+            let isHoveringDropdown = false;
+            
             function positionDropdown() {
                 const rect = navItemLink.getBoundingClientRect();
                 
-                // Position dropdown below the nav item, centered (getBoundingClientRect gives viewport coordinates)
-                // Bridge element handles the gap
+                // Position dropdown below the nav item, centered
                 dropdownMenu.style.position = 'fixed';
                 dropdownMenu.style.top = rect.bottom + 'px';
                 dropdownMenu.style.left = (rect.left + rect.width / 2) + 'px';
@@ -186,47 +189,79 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
                 dropdownMenu.style.zIndex = '10000';
             }
             
-            // Position on hover
-            dropdown.addEventListener('mouseenter', positionDropdown);
-            navItemLink.addEventListener('mouseenter', positionDropdown);
+            function showDropdown() {
+                positionDropdown();
+                dropdownMenu.style.opacity = '1';
+                dropdownMenu.style.visibility = 'visible';
+                dropdownMenu.style.pointerEvents = 'auto';
+            }
             
-            // Close dropdown when mouse leaves
-            dropdown.addEventListener('mouseleave', function(e) {
-                // Check if mouse is moving to a child element
-                const relatedTarget = e.relatedTarget;
-                if (!dropdown.contains(relatedTarget)) {
-                    // Reset dropdown position - will be repositioned on next hover
-                    dropdownMenu.style.top = '0';
-                    dropdownMenu.style.left = '0';
+            function hideDropdown() {
+                dropdownMenu.style.opacity = '0';
+                dropdownMenu.style.visibility = 'hidden';
+                dropdownMenu.style.pointerEvents = 'none';
+            }
+            
+            // Show dropdown on hover
+            navItemLink.addEventListener('mouseenter', function() {
+                isHoveringTrigger = true;
+                if (!isScrolling) {
+                    showDropdown();
                 }
             });
             
-            // Prevent page scroll when scrolling inside dropdown (only if dropdown can scroll)
+            dropdownMenu.addEventListener('mouseenter', function() {
+                isHoveringDropdown = true;
+                showDropdown();
+            });
+            
+            // Hide dropdown when leaving trigger or dropdown
+            dropdown.addEventListener('mouseleave', function(e) {
+                // Check if mouse is leaving to somewhere outside the dropdown area
+                const relatedTarget = e.relatedTarget;
+                if (!dropdown.contains(relatedTarget)) {
+                    isHoveringTrigger = false;
+                    isHoveringDropdown = false;
+                    hideDropdown();
+                }
+            });
+            
+            // Prevent page scroll when scrolling inside dropdown
             dropdownMenu.addEventListener('wheel', function(e) {
-                const dropdownMenu = this;
                 const canScrollUp = dropdownMenu.scrollTop > 0;
                 const canScrollDown = dropdownMenu.scrollTop < (dropdownMenu.scrollHeight - dropdownMenu.clientHeight);
                 
-                // Only prevent page scroll if dropdown can scroll in that direction
                 if ((e.deltaY < 0 && canScrollUp) || (e.deltaY > 0 && canScrollDown)) {
                     e.stopPropagation();
                 }
             }, { passive: false });
-        });
-        
-        // Close dropdowns when page scrolls
-        window.addEventListener('scroll', function() {
-            if (window.innerWidth <= 767) return; // Only on desktop
             
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(function() {
-                const dropdowns = document.querySelectorAll('.nav-item-dropdown .dropdown-menu');
-                dropdowns.forEach(menu => {
-                    menu.style.top = '0';
-                    menu.style.left = '0';
-                });
-            }, 50);
-        }, { passive: true });
+            // Hide dropdown on page scroll (best practice)
+            function handleScroll() {
+                isScrolling = true;
+                clearTimeout(scrollTimeout);
+                
+                // If only hovering trigger (not dropdown), hide on scroll
+                if (isHoveringTrigger && !isHoveringDropdown) {
+                    hideDropdown();
+                }
+                
+                scrollTimeout = setTimeout(function() {
+                    isScrolling = false;
+                    // Restore dropdown if still hovering
+                    if (isHoveringTrigger || isHoveringDropdown) {
+                        showDropdown();
+                    }
+                }, 150);
+            }
+            
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            window.addEventListener('resize', function() {
+                if (isHoveringTrigger || isHoveringDropdown) {
+                    positionDropdown();
+                }
+            });
+        });
     }
     
     // Run when DOM is ready

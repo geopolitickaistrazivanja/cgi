@@ -488,11 +488,7 @@ body.search-open .desktop-nav {
     background: transparent;
 }
 
-.nav-item-dropdown:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-}
+/* Dropdown visibility is now controlled by JavaScript */
 
 
 .dropdown-item {

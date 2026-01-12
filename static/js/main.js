@@ -1,39 +1,117 @@
-// Mobile Menu Toggle
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const offcanvas = document.getElementById('offcanvas');
-const offcanvasClose = document.getElementById('offcanvasClose');
-const offcanvasOverlay = document.getElementById('offcanvasOverlay');
-
-function openOffcanvas() {
-    if (offcanvas && window.innerWidth <= 767) {
-        document.body.classList.add('offcanvas-open');
-        offcanvas.classList.add('open');
-        // No overlay needed since offcanvas covers full screen
-    }
-}
-
-function closeOffcanvas() {
-    if (offcanvas) {
-        offcanvas.classList.remove('open');
-        document.body.classList.remove('offcanvas-open');
-    }
-}
-
-// Wait for DOM to be ready before attaching event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    if (mobileMenuBtn) {
-        mobileMenuBtn.addEventListener('click', openOffcanvas);
+// Mobile menu toggle
+(function() {
+    'use strict';
+    
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const offcanvas = document.getElementById('offcanvas');
+    const offcanvasClose = document.getElementById('offcanvasClose');
+    const body = document.body;
+    
+    if (mobileMenuBtn && offcanvas) {
+        mobileMenuBtn.addEventListener('click', function() {
+            offcanvas.classList.add('open');
+            body.classList.add('offcanvas-open');
+        });
     }
     
-    // Make menu label clickable
-    const mobileMenuLabel = document.getElementById('mobileMenuLabel');
-    if (mobileMenuLabel) {
-        mobileMenuLabel.addEventListener('click', openOffcanvas);
+    if (offcanvasClose) {
+        offcanvasClose.addEventListener('click', function() {
+            offcanvas.classList.remove('open');
+            body.classList.remove('offcanvas-open');
+        });
+    }
+})();
+
+// Search overlay toggle
+(function() {
+    'use strict';
+    
+    const searchBtn = document.getElementById('searchBtn');
+    const searchBtnMobile = document.getElementById('searchBtnMobile');
+    const searchOverlay = document.getElementById('searchOverlay');
+    const searchClose = document.getElementById('searchClose');
+    const searchInput = document.getElementById('searchInput');
+    const body = document.body;
+    
+    function openSearch() {
+        if (searchOverlay) {
+            searchOverlay.classList.add('active');
+            body.classList.add('search-active');
+            if (searchInput) {
+                setTimeout(() => {
+                    searchInput.focus();
+                }, 100);
+            }
+        }
     }
     
-    // Offcanvas dropdown toggle - arrow button toggles dropdown, text link navigates
-    const dropdownToggles = document.querySelectorAll('.offcanvas-dropdown-toggle');
-    dropdownToggles.forEach(toggle => {
+    function closeSearch() {
+        if (searchOverlay) {
+            searchOverlay.classList.remove('active');
+            body.classList.remove('search-active');
+            if (searchInput) {
+                searchInput.value = '';
+            }
+        }
+    }
+    
+    if (searchBtn) {
+        searchBtn.addEventListener('click', openSearch);
+    }
+    
+    if (searchBtnMobile) {
+        searchBtnMobile.addEventListener('click', openSearch);
+    }
+    
+    if (searchClose) {
+        searchClose.addEventListener('click', closeSearch);
+    }
+    
+    if (searchOverlay) {
+        searchOverlay.addEventListener('click', function(e) {
+            if (e.target === searchOverlay) {
+                closeSearch();
+            }
+        });
+    }
+    
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && searchOverlay && searchOverlay.classList.contains('active')) {
+            closeSearch();
+        }
+    });
+})();
+
+// Offcanvas menu navigation
+(function() {
+    'use strict';
+    
+    const offcanvasLinks = document.querySelectorAll('.offcanvas-item:not(.offcanvas-item-parent)');
+    const offcanvas = document.getElementById('offcanvas');
+    const body = document.body;
+    
+    offcanvasLinks.forEach(function(link) {
+        link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href && href !== '#' && !this.closest('.offcanvas-item-dropdown')) {
+                e.preventDefault();
+                offcanvas.classList.remove('open');
+                body.classList.remove('offcanvas-open');
+                setTimeout(function() {
+                    window.location.href = href;
+                }, 200);
+            }
+        });
+    });
+})();
+
+// Offcanvas dropdown toggle
+(function() {
+    'use strict';
+    
+    const offcanvasDropdownToggles = document.querySelectorAll('.offcanvas-dropdown-toggle');
+    
+    offcanvasDropdownToggles.forEach(function(toggle) {
         toggle.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
@@ -44,129 +122,48 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Close offcanvas when clicking on navigation links (regular links and dropdown items)
-    const offcanvasLinks = document.querySelectorAll('.offcanvas-menu-list .offcanvas-item, .offcanvas-dropdown-item');
-    offcanvasLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            if (window.innerWidth <= 767) {
-                // No closeOffcanvas() call - instant navigation without animation
-                // Navigation happens naturally without preventDefault
-            }
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.offcanvas-item-dropdown')) {
+            offcanvasDropdownToggles.forEach(function(toggle) {
+                const dropdown = toggle.closest('.offcanvas-item-dropdown');
+                if (dropdown && dropdown.classList.contains('open')) {
+                    dropdown.classList.remove('open');
+                }
+            });
+        }
+    });
+})();
+
+// Desktop dropdown scroll handling
+(function() {
+    'use strict';
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const dropdownMenus = document.querySelectorAll('.dropdown-menu');
+        
+        dropdownMenus.forEach(function(dropdownMenu) {
+            dropdownMenu.addEventListener('wheel', function(e) {
+                const { scrollTop, scrollHeight, clientHeight } = dropdownMenu;
+                const threshold = 2; // Small threshold for rounding errors
+                const isAtTop = scrollTop <= threshold;
+                const isAtBottom = scrollTop + clientHeight >= scrollHeight - threshold;
+                const scrollingDown = e.deltaY > 0;
+                const scrollingUp = e.deltaY < 0;
+                
+                // If at top and scrolling up, allow page scroll immediately
+                if (isAtTop && scrollingUp) {
+                    return; // Let event bubble to page
+                }
+                
+                // If at bottom and scrolling down, allow page scroll immediately
+                if (isAtBottom && scrollingDown) {
+                    return; // Let event bubble to page
+                }
+                
+                // Otherwise, prevent page scroll but allow dropdown to scroll naturally
+                e.stopPropagation();
+            }, { passive: false });
         });
     });
-});
-
-if (offcanvasClose) {
-    offcanvasClose.addEventListener('click', closeOffcanvas);
-}
-
-// Overlay not needed since offcanvas covers full screen
-
-// Close offcanvas when clicking outside (on the offcanvas itself, not the content)
-if (offcanvas) {
-    offcanvas.addEventListener('click', (e) => {
-        if (e.target === offcanvas) {
-            closeOffcanvas();
-        }
-    });
-}
-
-// Search Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const searchBtn = document.getElementById('searchBtn');
-    const searchBtnMobile = document.getElementById('searchBtnMobile');
-    const searchOverlay = document.getElementById('searchOverlay');
-    const searchClose = document.getElementById('searchClose');
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    
-    if (!searchOverlay || !searchInput || !searchResults) {
-        console.log('Search elements not found, skipping search initialization');
-        return;
-    }
-    
-    function openSearch() {
-        if (searchOverlay) {
-            searchOverlay.classList.add('active');
-            document.body.classList.add('search-open');
-            if (searchInput) {
-                searchInput.focus();
-            }
-            document.body.style.overflow = 'hidden';
-        }
-    }
-    
-    function closeSearch() {
-        if (searchOverlay) {
-            searchOverlay.classList.remove('active');
-            document.body.classList.remove('search-open');
-            if (searchInput) {
-                searchInput.value = '';
-            }
-            if (searchResults) {
-                searchResults.innerHTML = '';
-            }
-            document.body.style.overflow = '';
-        }
-    }
-    
-    if (searchBtn) {
-        searchBtn.addEventListener('click', openSearch);
-    }
-    if (searchBtnMobile) {
-        searchBtnMobile.addEventListener('click', openSearch);
-    }
-    
-    // Make search label clickable
-    const mobileSearchLabel = document.getElementById('mobileSearchLabel');
-    if (mobileSearchLabel) {
-        mobileSearchLabel.addEventListener('click', openSearch);
-    }
-    if (searchClose) {
-        searchClose.addEventListener('click', closeSearch);
-    }
-    
-    // Close search on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && searchOverlay && searchOverlay.classList.contains('active')) {
-            closeSearch();
-        }
-    });
-    
-    // Search functionality can be added here for topics if needed
-});
-
-// Back to Top Button
-const backToTop = document.getElementById('backToTop');
-
-window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 300) {
-        backToTop.classList.add('visible');
-    } else {
-        backToTop.classList.remove('visible');
-    }
-});
-
-backToTop.addEventListener('click', () => {
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    });
-});
-
-// Disable hover effects on touch devices
-if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
-    document.body.classList.add('touch-device');
-}
-
-
-// Auto-hide messages
-setTimeout(() => {
-    const alerts = document.querySelectorAll('.alert');
-    alerts.forEach(alert => {
-        alert.style.transition = 'opacity 0.5s ease';
-        alert.style.opacity = '0';
-        setTimeout(() => alert.remove(), 500);
-    });
-}, 5000);
-
+})();

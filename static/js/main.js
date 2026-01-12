@@ -188,6 +188,17 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             dropdown.addEventListener('mouseenter', positionDropdown);
             navItemLink.addEventListener('mouseenter', positionDropdown);
             
+            // Prevent page scroll when scrolling inside dropdown
+            dropdownMenu.addEventListener('wheel', function(e) {
+                const dropdownMenu = this;
+                const canScrollUp = dropdownMenu.scrollTop > 0;
+                const canScrollDown = dropdownMenu.scrollTop < (dropdownMenu.scrollHeight - dropdownMenu.clientHeight);
+                
+                if ((e.deltaY < 0 && canScrollUp) || (e.deltaY > 0 && canScrollDown)) {
+                    e.stopPropagation();
+                }
+            }, { passive: false });
+            
             // Update position when scrolling or resizing
             function updatePosition() {
                 if (dropdown.classList.contains('dropdown-open')) {

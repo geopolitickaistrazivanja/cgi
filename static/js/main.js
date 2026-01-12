@@ -145,9 +145,9 @@
         dropdownMenus.forEach(function(dropdownMenu) {
             dropdownMenu.addEventListener('wheel', function(e) {
                 const { scrollTop, scrollHeight, clientHeight } = dropdownMenu;
-                const threshold = 2; // Small threshold for rounding errors
-                const isAtTop = scrollTop <= threshold;
-                const isAtBottom = scrollTop + clientHeight >= scrollHeight - threshold;
+                const epsilon = 0.5; // Very small threshold for floating point precision
+                const isAtTop = scrollTop <= epsilon;
+                const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) <= epsilon;
                 const scrollingDown = e.deltaY > 0;
                 const scrollingUp = e.deltaY < 0;
                 

@@ -145,23 +145,36 @@
         dropdownMenus.forEach(function(dropdownMenu) {
             dropdownMenu.addEventListener('wheel', function(e) {
                 const { scrollTop, scrollHeight, clientHeight } = dropdownMenu;
-                const epsilon = 0.5; // Very small threshold for floating point precision
-                const isAtTop = scrollTop <= epsilon;
-                const isAtBottom = Math.abs(scrollHeight - clientHeight - scrollTop) <= epsilon;
-                const scrollingDown = e.deltaY > 0;
-                const scrollingUp = e.deltaY < 0;
+                const deltaY = e.deltaY;
+                const scrollingDown = deltaY > 0;
+                const scrollingUp = deltaY < 0;
                 
-                // If at top and scrolling up, allow page scroll immediately
-                if (isAtTop && scrollingUp) {
-                    return; // Let event bubble to page
+                // Calculate if we can scroll in the requested direction
+                const maxScrollTop = scrollHeight - clientHeight;
+                const canScrollDown = scrollTop < maxScrollTop;
+                const canScrollUp = scrollTop > 0;
+                
+                // If scrolling down and we're at or past the bottom, allow page scroll
+                if (scrollingDown && !canScrollDown) {
+                    return; // Let event bubble to page immediately
                 }
                 
-                // If at bottom and scrolling down, allow page scroll immediately
-                if (isAtBottom && scrollingDown) {
-                    return; // Let event bubble to page
+                // If scrolling up and we're at or past the top, allow page scroll
+                if (scrollingUp && !canScrollUp) {
+                    return; // Let event bubble to page immediately
                 }
                 
-                // Otherwise, prevent page scroll but allow dropdown to scroll naturally
+                // Check if the scroll would exceed bounds
+                const newScrollTop = scrollTop + deltaY;
+                const wouldExceedTop = newScrollTop < 0;
+                const wouldExceedBottom = newScrollTop > maxScrollTop;
+                
+                // If scroll would exceed bounds, allow page scroll
+                if ((scrollingDown && wouldExceedBottom) || (scrollingUp && wouldExceedTop)) {
+                    return; // Let event bubble to page immediately
+                }
+                
+                // Otherwise, scroll the dropdown and prevent page scroll
                 e.stopPropagation();
             }, { passive: false });
         });

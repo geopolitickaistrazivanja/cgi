@@ -97,7 +97,7 @@ a:active {
 .header {
     background-color: #f1ece2;
     color: var(--dark-gray);
-    padding: 5px 0;
+    padding: 2px 0;
     z-index: 1000;
     box-shadow: 0 4px 12px rgba(0,0,0,0.25);
     width: 100%;
@@ -335,7 +335,7 @@ body.search-open .desktop-nav {
 }
 
 .header-logo img {
-    height: 180px;
+    height: 240px;
     width: auto;
     max-width: 100%;
     object-fit: contain;
@@ -798,10 +798,10 @@ body.search-open .desktop-nav {
 }
 
 .offcanvas-logo img {
-    max-width: 280px;
+    max-width: 340px;
     width: auto;
     height: auto;
-    max-height: 160px;
+    max-height: 260px;
     object-fit: contain;
 }
 
@@ -886,15 +886,22 @@ body.search-open .desktop-nav {
 }
 
 .offcanvas-item-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
+    position: relative;
     width: 100%;
-    gap: 10px;
+    text-align: center;
 }
 
 .offcanvas-item-wrapper .offcanvas-item {
-    flex: 0 1 auto;
+    display: inline-block;
+    text-align: center;
+}
+
+.offcanvas-item-wrapper .offcanvas-dropdown-toggle {
+    position: absolute;
+    left: calc(50% + 1.5em + 8px);
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .offcanvas-dropdown-toggle {
@@ -1973,7 +1980,7 @@ a.btn-primary * {
     
     .header-logo img {
         height: auto;
-        max-height: 160px;
+        max-height: 220px;
         width: auto;
         max-width: 100%;
         object-fit: contain;

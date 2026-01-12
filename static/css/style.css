@@ -464,6 +464,7 @@ body.search-open .desktop-nav {
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
+    overscroll-behavior-y: contain;
     padding: 8px 0;
     top: 100%;
     left: 50%;

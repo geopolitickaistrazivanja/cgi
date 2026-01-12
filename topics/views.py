@@ -3,7 +3,7 @@ from .models import Topic, Category
 
 
 def category_list(request):
-    categories = Category.objects.all()
+    categories = Category.objects.all().order_by('order', 'name')
     context = {
         'categories': categories,
     }

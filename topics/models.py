@@ -15,13 +15,14 @@ class Category(models.Model):
     name = models.CharField(_('Naziv'), max_length=200)
     slug = models.SlugField(_('Slug'), max_length=200, unique=True, blank=True)
     thumbnail = models.ImageField(_('Thumbnail'), upload_to=unique_category_thumbnail)
+    order = models.IntegerField(_('Redosled'), default=0, help_text=_('Koristi se za sortiranje kategorija u padajućem meniju'))
     created_at = models.DateTimeField(_('Kreirano'), auto_now_add=True)
     updated_at = models.DateTimeField(_('Ažurirano'), auto_now=True)
 
     class Meta:
         verbose_name = _('Category')
         verbose_name_plural = _('Categories')
-        ordering = ['name']
+        ordering = ['order', 'name']
 
     def __str__(self):
         return self.name

@@ -6,17 +6,18 @@ from .models import Topic, Category
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'created_at')
+    list_display = ('name', 'order', 'slug', 'created_at')
     list_filter = ('created_at',)
     search_fields = ('name',)
     prepopulated_fields = {'slug': ('name',)}
+    list_editable = ('order',)
     
     class Meta:
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
     fieldsets = (
         (_('Osnovne informacije'), {
-            'fields': ('name', 'slug', 'thumbnail')
+            'fields': ('name', 'slug', 'thumbnail', 'order')
         }),
     )
 

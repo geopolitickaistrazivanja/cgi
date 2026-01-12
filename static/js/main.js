@@ -149,54 +149,31 @@
                 const scrollingDown = deltaY > 0;
                 const scrollingUp = deltaY < 0;
                 
-                // Calculate maximum scroll position with small tolerance for rounding
+                // Calculate maximum scroll position
                 const maxScrollTop = Math.max(0, scrollHeight - clientHeight);
-                const tolerance = 1; // 1px tolerance for floating point precision
                 
-                // Check current position relative to limits (with more aggressive tolerance)
-                const isAtTop = scrollTop <= tolerance;
-                const isAtBottom = scrollTop >= (maxScrollTop - tolerance);
+                // Check if we can scroll in the requested direction
+                const canScrollDown = scrollTop < maxScrollTop;
+                const canScrollUp = scrollTop > 0;
                 
-                // If at top and trying to scroll up, allow page scroll immediately
-                if (isAtTop && scrollingUp) {
-                    // Don't prevent anything, let event bubble naturally to page
+                // If we can't scroll in the requested direction, allow page scroll immediately
+                if ((scrollingDown && !canScrollDown) || (scrollingUp && !canScrollUp)) {
+                    // Don't prevent anything - let the event bubble to the page
                     return;
                 }
                 
-                // If at bottom and trying to scroll down, allow page scroll immediately
-                if (isAtBottom && scrollingDown) {
-                    // Don't prevent anything, let event bubble naturally to page
-                    return;
-                }
-                
-                // Also check if we're very close to the limits (within 5px) and scrolling toward them
-                const nearTop = scrollTop <= 5 && scrollingUp;
-                const nearBottom = scrollTop >= (maxScrollTop - 5) && scrollingDown;
-                
-                if (nearTop || nearBottom) {
-                    // Allow page scroll when very close to limits
-                    return;
-                }
-                
-                // Check if scroll would exceed bounds (predictive check)
+                // Check if the scroll would exceed bounds (predictive check)
                 const newScrollTop = scrollTop + deltaY;
-                const wouldExceedTop = newScrollTop < -tolerance;
-                const wouldExceedBottom = newScrollTop > (maxScrollTop + tolerance);
+                const wouldExceedTop = newScrollTop < 0;
+                const wouldExceedBottom = newScrollTop > maxScrollTop;
                 
                 // If scroll would exceed bounds, allow page scroll immediately
                 if (wouldExceedTop || wouldExceedBottom) {
-                    return; // Don't prevent, let page scroll
+                    // Don't prevent anything - let the event bubble to the page
+                    return;
                 }
                 
-                // Check if we can actually scroll in the requested direction
-                const canScrollInDirection = scrollingDown ? scrollTop < maxScrollTop : scrollTop > 0;
-                
-                // If we can't scroll in the requested direction, allow page scroll
-                if (!canScrollInDirection) {
-                    return; // Don't prevent, let page scroll
-                }
-                
-                // Otherwise, prevent page scroll and let dropdown scroll naturally
+                // Otherwise, we can scroll the dropdown, so prevent page scroll
                 e.stopPropagation();
             }, { passive: false });
         });

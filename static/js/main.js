@@ -161,6 +161,8 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
 
 // Position dropdown menu dynamically using fixed positioning
 (function() {
+    let scrollTimeout;
+    
     function initDropdowns() {
         if (window.innerWidth <= 767) return; // Only on desktop
         
@@ -188,27 +190,43 @@ if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
             dropdown.addEventListener('mouseenter', positionDropdown);
             navItemLink.addEventListener('mouseenter', positionDropdown);
             
-            // Prevent page scroll when scrolling inside dropdown
+            // Close dropdown when mouse leaves
+            dropdown.addEventListener('mouseleave', function(e) {
+                // Check if mouse is moving to a child element
+                const relatedTarget = e.relatedTarget;
+                if (!dropdown.contains(relatedTarget)) {
+                    // Reset dropdown position - will be repositioned on next hover
+                    dropdownMenu.style.top = '0';
+                    dropdownMenu.style.left = '0';
+                }
+            });
+            
+            // Prevent page scroll when scrolling inside dropdown (only if dropdown can scroll)
             dropdownMenu.addEventListener('wheel', function(e) {
                 const dropdownMenu = this;
                 const canScrollUp = dropdownMenu.scrollTop > 0;
                 const canScrollDown = dropdownMenu.scrollTop < (dropdownMenu.scrollHeight - dropdownMenu.clientHeight);
                 
+                // Only prevent page scroll if dropdown can scroll in that direction
                 if ((e.deltaY < 0 && canScrollUp) || (e.deltaY > 0 && canScrollDown)) {
                     e.stopPropagation();
                 }
             }, { passive: false });
-            
-            // Update position when scrolling or resizing
-            function updatePosition() {
-                if (dropdown.classList.contains('dropdown-open')) {
-                    positionDropdown();
-                }
-            }
-            
-            window.addEventListener('scroll', updatePosition, true);
-            window.addEventListener('resize', updatePosition);
         });
+        
+        // Close dropdowns when page scrolls
+        window.addEventListener('scroll', function() {
+            if (window.innerWidth <= 767) return; // Only on desktop
+            
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(function() {
+                const dropdowns = document.querySelectorAll('.nav-item-dropdown .dropdown-menu');
+                dropdowns.forEach(menu => {
+                    menu.style.top = '0';
+                    menu.style.left = '0';
+                });
+            }, 50);
+        }, { passive: true });
     }
     
     // Run when DOM is ready

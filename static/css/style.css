@@ -452,9 +452,9 @@ body.search-open .desktop-nav {
     }
 }
 
-/* Dropdown Menu - Fixed positioning to escape all clipping */
+/* Dropdown Menu - Absolute positioning relative to parent */
 .dropdown-menu {
-    position: fixed !important;
+    position: absolute;
     background-color: var(--white);
     border: 2px solid var(--light-gray);
     border-radius: 12px;
@@ -466,14 +466,14 @@ body.search-open .desktop-nav {
     overflow-x: hidden;
     padding: 8px 0;
     margin-top: 8px;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease;
     pointer-events: none;
-    z-index: 10000 !important;
-    top: 0;
-    left: 0;
-    margin: 0 !important;
+    z-index: 10000;
 }
 
 /* Bridge the gap between trigger and dropdown */
@@ -488,7 +488,11 @@ body.search-open .desktop-nav {
     background: transparent;
 }
 
-/* Dropdown visibility is now controlled by JavaScript */
+.nav-item-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
 
 
 .dropdown-item {

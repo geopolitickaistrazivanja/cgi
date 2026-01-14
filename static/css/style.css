@@ -2168,43 +2168,27 @@ a.btn-primary * {
 }
 
 .monograph-item {
-    padding: 16px 20px;
-    margin-bottom: 12px;
-    background: linear-gradient(to right, rgba(240, 211, 110, 0.1) 0%, rgba(239, 166, 67, 0.15) 50%, rgba(240, 211, 110, 0.1) 100%);
-    border-left: 4px solid;
-    border-image: linear-gradient(to bottom, #f0d36e 0%, #efa643 50%, #f0d36e 100%) 1;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    background: rgba(255, 255, 255, 0.6);
+    border-left: 3px solid transparent;
     border-radius: 8px;
     font-size: clamp(0.95rem, 2.5vw, 1.1rem);
     line-height: 1.7;
     color: var(--text-dark);
     opacity: 0;
-    transform: translateX(-30px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    transform: translateY(20px);
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), border-left-color 0.4s ease, background-color 0.4s ease;
     position: relative;
-    overflow: hidden;
-}
-
-.monograph-item::before {
-    content: '→';
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #efa643;
-    font-weight: bold;
-    font-size: 1.2em;
-    opacity: 0;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .monograph-item.is-visible {
     opacity: 1;
-    transform: translateX(0);
-}
-
-.monograph-item.is-visible::before {
-    opacity: 1;
-    transform: translateY(-50%) translateX(0);
+    transform: translateY(0);
+    border-left-color: #efa643;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 12px rgba(239, 166, 67, 0.15);
 }
 
 /* Desktop Styles for About Page */
@@ -2235,20 +2219,9 @@ a.btn-primary * {
     }
 
     .monograph-item {
-        padding: 20px 28px;
-        margin-bottom: 16px;
-        padding-left: 50px;
+        padding: 22px 32px;
+        margin-bottom: 20px;
         font-size: 1.1rem;
-    }
-
-    .monograph-item::before {
-        left: 16px;
-        font-size: 1.4em;
-    }
-
-    .monograph-item:hover {
-        transform: translateX(5px);
-        box-shadow: 0 4px 12px rgba(239, 166, 67, 0.2);
     }
 }
 

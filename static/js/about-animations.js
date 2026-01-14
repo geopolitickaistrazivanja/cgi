@@ -1,4 +1,4 @@
-// Modern scroll animations for About page - List items with staggered animation
+// Modern scroll animations for About page - List items with individual reveal animation
 (function() {
     'use strict';
     
@@ -13,36 +13,27 @@
             return;
         }
         
-        // Create Intersection Observer for list container
-        const listObserverOptions = {
+        // Create Intersection Observer for individual list items
+        const itemObserverOptions = {
             root: null,
             rootMargin: '0px 0px -10% 0px',
             threshold: 0.1
         };
         
-        const listObserver = new IntersectionObserver((entries) => {
+        const itemObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const listContainer = entry.target;
-                    const listItems = listContainer.querySelectorAll('.scroll-list-item');
-                    
-                    // Animate each list item with stagger effect
-                    listItems.forEach((item, index) => {
-                        setTimeout(() => {
-                            item.classList.add('is-visible');
-                        }, index * 80); // 80ms delay between each item
-                    });
-                    
-                    listObserver.unobserve(listContainer);
+                    entry.target.classList.add('is-visible');
+                    itemObserver.unobserve(entry.target);
                 }
             });
-        }, listObserverOptions);
+        }, itemObserverOptions);
         
-        // Observe the monographs list container
-        const monographsList = document.querySelector('.monographs-list');
-        if (monographsList) {
-            listObserver.observe(monographsList);
-        }
+        // Observe each list item individually
+        const listItems = document.querySelectorAll('.scroll-list-item');
+        listItems.forEach(item => {
+            itemObserver.observe(item);
+        });
     }
     
     // Run when DOM is ready

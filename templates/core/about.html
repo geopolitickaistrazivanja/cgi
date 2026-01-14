@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}O nama - CGI{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:about' %}">{% endblock %}
+
+{% block content %}
+<div class="about-page">
+    <section class="about-content">
+        <div class="container">
+            <!-- Reč unapred Section -->
+            <div class="content-section scroll-fade-in">
+                <h2 class="section-title">Reč unapred: Zašto centar za geopolitička istraživanja?</h2>
+                <div class="section-text">
+                    <p>Geopolitika je dugo bila zanemarivana i negirana. Diskvalifikujuće je svođena na „prevaziđen pristup", „arhaičan način mišljenja", „ideološku dogmu", „doktrinarno zastranjivanje"…, i tako poricana njena naučna i upotrebna vrednost. Uprkos tome, geopolitika je od naučne discipline dosegla nivo samostalne nauke, a svet uporedo postajao sve više geopolitičan. Balkan je sinonim geopolitike i nikada nije prestao da se suočava sa tom činjenicom. Ma koliko „bežao" od geopolitike, geopolitika ga je uvek „sustizala". Ta njegova prošlost, sadašnjost, a izvesno je i budućnost naročito važi za Srbiju, srpski narod i srpske zemlje u celini. Pokazalo se da je misliti i delati geopolitički za Srbe od životne važnosti.</p>
+                    <p>Danas se srpska naučna, prosvetna, kulturna, medijska i javna scena uopšte suočavaju sa reafirmacijom geopolitike. To je „eho" burnih procesa preraspodele moći i političko-teritorijalnog restrukturisanja od globalnog do regionalnog nivoa. Uzroci i posledice se najadekvatnije objašnjavaju na geopolitički način, i to širom sveta bez izuzetka – od Pekinga i Tokija, do Vašingtona i Buenos Ajresa, i od Moskve i Berlina, do Nju Delhija i Pretorije. Paradoksalno – s jedne strane, geopolitika je zahvaćena pravom poplavom senzacionalističkih analiza „estradnih" novinskih, podkast i TV analitičara od kojih joj preti opasnost da postane „sve i ništa". S druge strane, sporo i nedovoljno se pozicionira u visokoškolskim i naučno-istraživačkim institucijama, gde tzv. stare nauke žele da je i dalje zadrže u stanju hibernacije.</p>
+                    <p>Stoga je formiranje Centra za geopolitička istraživanja ne samo akademska, već i praktična potreba. On bi trebalo da bude centar gravitacije za već geopolitički obrazovane i istraživački dokazane autore gde će raspravljati o aktuelnim pojavama i procesima, preispitivati stereotipe i dekonstruisati predrasude, te strategološki razmatrati scenarije za vreme koje dolazi, prvenstveno u balkanskom i srpskom ključu. Uporedo, sabiraće mlade i pružiti im nedostajuće geopolitičko znanje, motivišući ih da svoju kreativnu energiju usmere na razmišljanje u smislu „oprostorenja političkog". Jer samo u tom slučaju neće budućnost iznenaditi njih, već će oni iznenaditi i kreirati budućnost. Na „polzu" svoju, svoga naroda i države.</p>
+                </div>
+            </div>
+
+            <!-- O autoru Section -->
+            <div class="content-section scroll-fade-in">
+                <h2 class="section-title">O autoru - Milomir Stepić</h2>
+                <div class="section-text">
+                    <p>Milomir Stepić rođen je 30. avgusta 1959. godine u Beogradu. Na Geografskom fakultetu Univerziteta u Beogradu je diplomirao, magistrirao, doktorirao i predavao do 2008. godine. Na Geoekonomskom fakultetu bio je redovni profesor od 2008. do 2012. godine. Od 2012. do penzionisanja 2025. godine radio je kao naučni savetnik u Institutu za političke studije.</p>
+                    <p>Honorano i kao gostujući profesor predavao je ili sada predaje na Ekonomskom fakultetu, Pravnom fakultetu, Fakultetu političkih nauka u Beogradu i Banja Luci, Visokim studijama bezbednosti i odbrane Vojne akademije, Diplomatskoj akademiji Ministarstva spoljnih poslova Srbije i Srpskoj internet akademiji. Bio je prodekan za nauku Geografskog fakulteta, stalni saradnik i član upravnog odbora nekadašnjeg privatnog Instituta za geopolitičke studije.</p>
+                    <p>Autor ili koautor je detaljnih etničkih karata eh-jugoslovenskog prostora i jedan od pokretača naučnog projekta „Etnički prostor Srba" Geografskog fakulteta Univerziteta u Beogradu 1991–1995. godine, a koji je rezultirao sa nekoliko koautorskih monografija na srpskom, grčkom i engleskom jeziku, te dokumentacijom za Konferenciju o Jugoslaviji u Londonu 1992. godine.</p>
+                    <p>Član je Srpskog geografskog društva, Društva „Sveti Sava", Matice srpske (Odbora Odeljenja za društvene nauke), Odbora za proučavanje stanovništva SANU i Odbora za proučavanje Kosova i Metohije SANU. U redakcijama je naučnih časopisa Politeia i Kosovsko-metohijski zbornik. Urednik Zbornika Matice srpske za društvene nauke bio je 2020–2022. Do odlaska u penziju rukovodio je Centrom za geopolitiku u Institutu za političke studije iz Beograda. Od početka 2023. i sada je glavni i odgovorni urednik naučnog časopisa Nacionalni interes.</p>
+                    <p>Bavi se teorijskom geopolitikom, geopolitikom Balkana i geopolitikom srpskih zemalja. Napisao je brojne naučne radove, udžbenike, enciklopedijske odrednice i poglavlja u monografijama na srpskom, ruskom i engleskom jeziku. Organizovao je više zapaženih naučnih skupova i priredio nekoliko domaćih i međunarodnih zbornika radova. Dugogodišnji je geopolitički kolumnista nedeljnika Pečat i portala RT Balkan i EagleEyeExplore.</p>
+                    <p>Nosilac je Ordena Karađorđeve zvijezde Republike Srpske I reda, te dobitnik nagrade „Pečat vremena" za nauku i društvenu teoriju 2017. i nagrade „Dimitrije Bogdanović" za društveno-humanističke nauke 2023. godine.</p>
+                </div>
+            </div>
+
+            <!-- Author Images -->
+            <div class="author-images-grid scroll-fade-in">
+                <div class="content-image scroll-scale">
+                    <img src="{% static 'images/milomir-stepic-1.webp' %}" alt="Milomir Stepić" loading="lazy">
+                </div>
+                <div class="content-image scroll-scale">
+                    <img src="{% static 'images/milomir-stepic-2.webp' %}" alt="Milomir Stepić" loading="lazy">
+                </div>
+            </div>
+
+            <!-- Monographs List Section -->
+            <div class="content-section scroll-fade-in">
+                <div class="section-text">
+                    <p>Do sada je objavio 19 autorskih i koautorskih knjiga – 3 udžbenika i 16 naučnih monografija. Monografije su:</p>
+                </div>
+            </div>
+
+            <!-- Monographs List with Special Animation -->
+            <div class="monographs-list scroll-fade-in">
+                <ul class="monographs-list-items">
+                    <li class="monograph-item scroll-list-item">Etnički sastav stanovništva Bosne i Hercegovine, 1992;</li>
+                    <li class="monograph-item scroll-list-item">Η ΕΘΝΙΚΗ ΣΥΣΤΑΣΗ ΤΩΝ ΠΛΗΘΥΣΜΩΝ ΤΗΣ ΒΟΣΝΙΑΣ ΚΑΙ ΕΡΖΕΓΟΒΙΝΗΣ, 1993. (prevod na grčki, koautor);</li>
+                    <li class="monograph-item scroll-list-item">The Serbian Question in the Balkans, 1995 (koautor);</li>
+                    <li class="monograph-item scroll-list-item">Kosovo i Metohija – političkogeografske i geopolitičke perspektive, 1999;</li>
+                    <li class="monograph-item scroll-list-item">U vrtlogu balkanizacije, 2001;</li>
+                    <li class="monograph-item scroll-list-item">Jugoistok Srbije – kontinuitet krize i mogući ishodi, 2001. (koautor);</li>
+                    <li class="monograph-item scroll-list-item">Southeastern Srbia: Continuity of Crisis and Possible Outcomes, 2001. (prevod na engleski, koautor);</li>
+                    <li class="monograph-item scroll-list-item">Srpsko pitanje – geopolitičko pitanje, 2004;</li>
+                    <li class="monograph-item scroll-list-item">Prirodni potencijali i degradirane površine opštine Obrenovac, 2008. (koautor);</li>
+                    <li class="monograph-item scroll-list-item">Kosovo i Metohija – postmoderni geopolitički eksperiment, 2012;</li>
+                    <li class="monograph-item scroll-list-item">Geopolitika neoevroazijstva – pozicija srpskih zemalja, 2013;</li>
+                    <li class="monograph-item scroll-list-item">Geopolitika – ideje, teorije, koncepcije, 2016;</li>
+                    <li class="monograph-item scroll-list-item">Srpski geopolitički obrazac, 2019;</li>
+                    <li class="monograph-item scroll-list-item">Kroz balkanski durbin, 2020;</li>
+                    <li class="monograph-item scroll-list-item">Geopolitički pojmovnik Balkana, 2023;</li>
+                    <li class="monograph-item scroll-list-item">Svet na ivici provalije, 2025.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home-animations.js' %}" defer></script>
+<script src="{% static 'js/about-animations.js' %}" defer></script>
+{% endblock %}

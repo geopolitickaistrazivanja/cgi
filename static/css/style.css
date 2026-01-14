@@ -2115,3 +2115,140 @@ a.btn-primary * {
     }
 }
 
+/* About Page - Mobile First */
+.about-page {
+    min-height: 100vh;
+}
+
+.about-content {
+    padding: 20px 20px;
+    background-color: var(--white);
+}
+
+/* Author Images Grid */
+.author-images-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    width: 100%;
+    margin: 0 auto 50px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.author-images-grid.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.author-images-grid .content-image {
+    margin: 0;
+    aspect-ratio: 4 / 3;
+}
+
+/* Monographs List */
+.monographs-list {
+    max-width: 100%;
+    margin: 0 auto 50px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.monographs-list.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.monographs-list-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.monograph-item {
+    padding: 16px 20px;
+    margin-bottom: 12px;
+    background: linear-gradient(to right, rgba(240, 211, 110, 0.1) 0%, rgba(239, 166, 67, 0.15) 50%, rgba(240, 211, 110, 0.1) 100%);
+    border-left: 4px solid;
+    border-image: linear-gradient(to bottom, #f0d36e 0%, #efa643 50%, #f0d36e 100%) 1;
+    border-radius: 8px;
+    font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+    line-height: 1.7;
+    color: var(--text-dark);
+    opacity: 0;
+    transform: translateX(-30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.monograph-item::before {
+    content: '→';
+    position: absolute;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #efa643;
+    font-weight: bold;
+    font-size: 1.2em;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.monograph-item.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.monograph-item.is-visible::before {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+}
+
+/* Desktop Styles for About Page */
+@media (min-width: 768px) {
+    .about-content {
+        padding: 40px 20px;
+    }
+
+    .content-section {
+        max-width: 900px;
+        margin-bottom: 80px;
+    }
+
+    .author-images-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
+        max-width: 1200px;
+        margin-bottom: 80px;
+    }
+
+    .author-images-grid .content-image {
+        aspect-ratio: 4 / 3;
+    }
+
+    .monographs-list {
+        max-width: 900px;
+        margin-bottom: 80px;
+    }
+
+    .monograph-item {
+        padding: 20px 28px;
+        margin-bottom: 16px;
+        padding-left: 50px;
+        font-size: 1.1rem;
+    }
+
+    .monograph-item::before {
+        left: 16px;
+        font-size: 1.4em;
+    }
+
+    .monograph-item:hover {
+        transform: translateX(5px);
+        box-shadow: 0 4px 12px rgba(239, 166, 67, 0.2);
+    }
+}
+

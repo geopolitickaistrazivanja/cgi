@@ -21,6 +21,11 @@ def home(request):
         raise
 
 
+def about(request):
+    """About page view"""
+    return render(request, 'core/about.html')
+
+
 @csrf_protect
 @require_http_methods(["GET", "POST"])
 def contact(request):

@@ -60,6 +60,7 @@
                             </div>
                         {% endif %}
                     </div>
+                    <a href="{% url 'core:about' %}" class="nav-item">O nama</a>
                     <a href="{% url 'core:contact' %}" class="nav-item">Kontakt</a>
                 </nav>
 
@@ -270,6 +271,7 @@
                                     </ul>
                                 {% endif %}
                             </li>
+                <li><a href="{% url 'core:about' %}" class="offcanvas-item">O nama</a></li>
                 <li><a href="{% url 'core:contact' %}" class="offcanvas-item">Kontakt</a></li>
             </ul>
         </nav>

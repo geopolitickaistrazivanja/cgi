@@ -32,7 +32,7 @@
         
         // Observe all elements with scroll animation classes
         const animatedElements = document.querySelectorAll(
-            '.scroll-fade-in, .scroll-slide-left, .scroll-slide-right, .scroll-scale, .content-image, .content-images-grid, .content-section-image-layout'
+            '.scroll-fade-in, .scroll-slide-left, .scroll-slide-right, .scroll-scale, .content-image, .content-images-grid, .content-section-image-layout, .author-images-grid'
         );
         
         animatedElements.forEach(element => {

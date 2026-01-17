@@ -22,13 +22,40 @@ def home(request):
 
 
 def about(request):
-    """About page view"""
+    """About page view with language-aware slug handling"""
+    from django.utils import translation
+    from django.shortcuts import redirect
+    
+    lang = translation.get_language()
+    # Get the path without language prefix (i18n_patterns removes it)
+    current_path = request.path
+    
+    # If on English and accessing Serbian slug (o-nama), redirect to English slug
+    if lang == 'en' and request.resolver_match.url_name == 'about':
+        return redirect('core:about_en')
+    # If on Serbian (Latin/Cyrillic) and accessing English slug (about_en), redirect to Serbian slug
+    elif lang in ('sr-latn', 'sr-cyrl') and request.resolver_match.url_name == 'about_en':
+        return redirect('core:about')
+    
     return render(request, 'core/about.html')
 
 
 @csrf_protect
 @require_http_methods(["GET", "POST"])
 def contact(request):
+    """Contact page view with language-aware slug handling"""
+    from django.utils import translation
+    from django.shortcuts import redirect
+    
+    lang = translation.get_language()
+    
+    # If on English and accessing Serbian slug (kontakt), redirect to English slug
+    if lang == 'en' and request.resolver_match.url_name == 'contact':
+        return redirect('core:contact_en')
+    # If on Serbian (Latin/Cyrillic) and accessing English slug (contact_en), redirect to Serbian slug
+    elif lang in ('sr-latn', 'sr-cyrl') and request.resolver_match.url_name == 'contact_en':
+        return redirect('core:contact')
+    
     if request.method == 'POST':
         name = request.POST.get('name', '').strip()
         surname = request.POST.get('surname', '').strip()

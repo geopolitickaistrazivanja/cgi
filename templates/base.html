@@ -1,5 +1,6 @@
 {% load static %}
 {% load i18n %}
+{% load core_urls %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
@@ -341,8 +342,8 @@
                                     </ul>
                                 {% endif %}
                             </li>
-                <li><a href="{% url 'core:about' %}" class="offcanvas-item">{% trans 'O nama' %}</a></li>
-                <li><a href="{% url 'core:contact' %}" class="offcanvas-item">{% trans 'Kontakt' %}</a></li>
+                <li><a href="{% lang_url 'core:about' %}" class="offcanvas-item">{% trans 'O nama' %}</a></li>
+                <li><a href="{% lang_url 'core:contact' %}" class="offcanvas-item">{% trans 'Kontakt' %}</a></li>
             </ul>
         </nav>
     </div>

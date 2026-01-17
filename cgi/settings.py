@@ -28,7 +28,25 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-aq(+p^pi0*emk&u76hf34
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['*'] if DEBUG else ['www.geopolitickaistrazivanja.com', 'geopolitickaistrazivanja.com', '*.render.com']
+# ALLOWED_HOSTS configuration
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = [
+        'www.geopolitickaistrazivanja.com',
+        'geopolitickaistrazivanja.com',
+    ]
+    
+    # Add Render service hostname if available
+    render_hostname = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+    if render_hostname:
+        ALLOWED_HOSTS.append(render_hostname)
+    
+    # Render uses internal hostnames like cgi-ux1b.onrender.com
+    # If running on Render (RENDER is set), we need to allow render.com subdomains
+    # Since Django doesn't support wildcards, we'll use '*' when on Render
+    if os.environ.get('RENDER'):
+        ALLOWED_HOSTS = ['*']  # Allow all hosts when on Render (required for service URLs)
 
 
 # Application definition

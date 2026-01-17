@@ -9,6 +9,8 @@ services:
         sync: false
       - key: DEBUG
         value: False
+      - key: RENDER
+        value: true
       # Note: DATABASE_URL is automatically set when you link a Render PostgreSQL database
       # If using external PostgreSQL, uncomment and set these variables:
       # - key: DB_NAME

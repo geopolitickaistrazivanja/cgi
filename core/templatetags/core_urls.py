@@ -44,24 +44,46 @@ def lang_url(context, view_name, *args):
     # Handle accounts URLs specially - need to manually construct with correct base path
     if view_name.startswith('accounts:'):
         try:
-            # Reverse the URL - Django will return path with one of the base paths
-            url_path = reverse(view_name, args=args)
+            # Map to correct URL name based on language (similar to core URLs)
+            url_name_map = {
+                'accounts:register': 'accounts:register_en' if lang == 'en' else 'accounts:register',
+                'accounts:login': 'accounts:login_en' if lang == 'en' else 'accounts:login',
+                'accounts:logout': 'accounts:logout_en' if lang == 'en' else 'accounts:logout',
+                'accounts:account': 'accounts:account_en' if lang == 'en' else 'accounts:account',
+            }
+            mapped_view_name = url_name_map.get(view_name, view_name)
             
-            # Replace base path and slugs based on language
+            # Try to reverse with the mapped name first
+            try:
+                url_path = reverse(mapped_view_name, args=args)
+            except NoReverseMatch:
+                # Fallback to original view name
+                url_path = reverse(view_name, args=args)
+            
+            # Replace base path and slugs based on language to ensure correctness
+            # Important: Replace language-prefixed paths FIRST, then non-prefixed
             if lang == 'en':
                 # For English, ensure /users/ base and English slugs
-                url_path = url_path.replace('/korisnici/', '/users/', 1)
+                # Replace language-prefixed base paths first
                 url_path = url_path.replace('/en/korisnici/', '/en/users/', 1)
+                url_path = url_path.replace('/sr-latn/users/', '/sr-latn/korisnici/', 1)
+                url_path = url_path.replace('/sr-cyrl/users/', '/sr-cyrl/korisnici/', 1)
+                # Then replace non-prefixed base paths
+                url_path = url_path.replace('/korisnici/', '/users/', 1)
+                # Replace Serbian slugs with English slugs
                 url_path = url_path.replace('/registracija/', '/register/', 1)
                 url_path = url_path.replace('/prijava/', '/login/', 1)
                 url_path = url_path.replace('/odjava/', '/logout/', 1)
                 url_path = url_path.replace('/nalog/', '/account/', 1)
             else:
                 # For Serbian (Latin/Cyrillic), ensure /korisnici/ base and Serbian slugs
-                url_path = url_path.replace('/users/', '/korisnici/', 1)
+                # Replace language-prefixed base paths first
                 url_path = url_path.replace('/en/users/', '/en/korisnici/', 1)
                 url_path = url_path.replace('/sr-latn/users/', '/sr-latn/korisnici/', 1)
                 url_path = url_path.replace('/sr-cyrl/users/', '/sr-cyrl/korisnici/', 1)
+                # Then replace non-prefixed base paths
+                url_path = url_path.replace('/users/', '/korisnici/', 1)
+                # Replace English slugs with Serbian slugs
                 url_path = url_path.replace('/register/', '/registracija/', 1)
                 url_path = url_path.replace('/login/', '/prijava/', 1)
                 url_path = url_path.replace('/logout/', '/odjava/', 1)

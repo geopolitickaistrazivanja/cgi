@@ -143,7 +143,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'sr'
+LANGUAGE_CODE = 'sr-latn'
 
 TIME_ZONE = 'Europe/Belgrade'
 
@@ -154,6 +154,34 @@ USE_TZ = True
 LOCALE_PATHS = [
     BASE_DIR / 'locale',
 ]
+
+LANGUAGES = [
+    ('sr-latn', 'Srpski (latinica)'),
+    ('sr-cyrl', 'Српски (ћирилица)'),
+    ('en', 'English'),
+]
+
+# Map custom language codes to locale directories
+# sr-latn and sr-cyrl both use 'sr' locale directory for gettext
+# The distinction will be handled in the application logic
+EXTRA_LANG_INFO = {
+    'sr-latn': {
+        'bidi': False,
+        'code': 'sr-latn',
+        'name': 'Srpski (latinica)',
+        'name_local': 'Srpski (latinica)',
+    },
+    'sr-cyrl': {
+        'bidi': False,
+        'code': 'sr-cyrl',
+        'name': 'Српски (ћирилица)',
+        'name_local': 'Српски (ћирилица)',
+    },
+}
+
+LANGUAGE_COOKIE_NAME = 'django_language'
+LANGUAGE_COOKIE_AGE = 60 * 60 * 24 * 365  # 1 year
+LANGUAGE_COOKIE_HTTPONLY = True
 
 
 # Static files (CSS, JavaScript, Images)

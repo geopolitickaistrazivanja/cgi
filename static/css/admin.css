@@ -17,7 +17,10 @@
 
 .module h2,
 .module caption,
-.inline-group h2 {
+.inline-group h2,
+fieldset.module.aligned h2,
+#content fieldset.module.aligned h2,
+#content .module fieldset h2 {
     background-color: #1a1a1a !important;
     color: #ffffff !important;
 }
@@ -396,10 +399,20 @@ select.error {
     margin-bottom: 20px !important;
 }
 
-#content .module h1,
-#content .module h2 {
+#content .module h1 {
     color: #000000 !important;
     margin-bottom: 15px !important;
+}
+
+#content .module h2:not(fieldset.module h2) {
+    color: #000000 !important;
+    margin-bottom: 15px !important;
+}
+
+#content fieldset.module.aligned h2,
+fieldset.module.aligned h2 {
+    color: #ffffff !important;
+    background-color: #1a1a1a !important;
 }
 
 #content .module p {

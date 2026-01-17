@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Prijava - CGI{% endblock %}
+{% block title %}{% trans 'Prijava' %} - CGI{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:login' %}">{% endblock %}
 
 {% block content %}
 <div class="auth-page">
     <div class="container">
-        <h1>Prijava</h1>
+        <h1>{% trans 'Prijava' %}</h1>
         
         {% if messages %}
             {% for message in messages %}
@@ -20,15 +21,15 @@
         <form method="post" class="auth-form">
             {% csrf_token %}
             <div class="form-group">
-                <label for="username">Korisničko ime</label>
+                <label for="username">{% trans 'Korisničko ime' %}</label>
                 <input type="text" id="username" name="username" required>
             </div>
             <div class="form-group">
-                <label for="password">Lozinka</label>
+                <label for="password">{% trans 'Lozinka' %}</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="btn btn-primary">Prijavi se</button>
-            <p>Nemate nalog? <a href="{% url 'accounts:register' %}">Registrujte se</a></p>
+            <button type="submit" class="btn btn-primary">{% trans 'Prijavi se' %}</button>
+            <p>{% trans 'Nemate nalog?' %} <a href="{% url 'accounts:register' %}">{% trans 'Registrujte se' %}</a></p>
         </form>
     </div>
 </div>

@@ -8,16 +8,29 @@ from .models import Topic, Category
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'order', 'slug', 'created_at')
     list_filter = ('created_at',)
-    search_fields = ('name',)
-    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ('name', 'name_sr_cyrl', 'name_en')
+    prepopulated_fields = {
+        'slug': ('name',),
+        'slug_sr_cyrl': ('name_sr_cyrl',),
+        'slug_en': ('name_en',),
+    }
     list_editable = ('order',)
     
     class Meta:
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
     fieldsets = (
-        (_('Osnovne informacije'), {
-            'fields': ('name', 'slug', 'thumbnail', 'order')
+        (_('Srpski (latinica)'), {
+            'fields': ('name', 'slug')
+        }),
+        (_('Српски (ћирилица)'), {
+            'fields': ('name_sr_cyrl', 'slug_sr_cyrl')
+        }),
+        (_('English'), {
+            'fields': ('name_en', 'slug_en')
+        }),
+        (_('Ostalo'), {
+            'fields': ('thumbnail', 'order')
         }),
     )
 
@@ -26,26 +39,35 @@ class CategoryAdmin(admin.ModelAdmin):
 class TopicAdmin(admin.ModelAdmin):
     list_display = ('title', 'category', 'slug', 'created_at')
     list_filter = ('category', 'created_at')
-    search_fields = ('title', 'short_description', 'full_description')
-    prepopulated_fields = {'slug': ('title',)}
+    search_fields = ('title', 'title_sr_cyrl', 'title_en', 'short_description', 'full_description')
+    prepopulated_fields = {
+        'slug': ('title',),
+        'slug_sr_cyrl': ('title_sr_cyrl',),
+        'slug_en': ('title_en',),
+    }
     
     class Meta:
         verbose_name = 'Topic'
         verbose_name_plural = 'Topics'
     fieldsets = (
-        (_('Osnovne informacije'), {
-            'fields': ('title', 'slug', 'category', 'thumbnail')
+        (_('Srpski (latinica)'), {
+            'fields': ('title', 'slug', 'meta_title', 'meta_description', 'short_description', 'full_description')
         }),
-        (_('SEO'), {
-            'fields': ('meta_title', 'meta_description')
+        (_('Српски (ћирилица)'), {
+            'fields': ('title_sr_cyrl', 'slug_sr_cyrl', 'meta_title_sr_cyrl', 'meta_description_sr_cyrl', 'short_description_sr_cyrl', 'full_description_sr_cyrl')
         }),
-        (_('Opis'), {
-            'fields': ('short_description', 'full_description')
+        (_('English'), {
+            'fields': ('title_en', 'slug_en', 'meta_title_en', 'meta_description_en', 'short_description_en', 'full_description_en')
+        }),
+        (_('Ostalo'), {
+            'fields': ('category', 'thumbnail')
         }),
     )
     
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        if db_field.name in ('short_description', 'full_description'):
+        if db_field.name in ('short_description', 'full_description', 
+                             'short_description_sr_cyrl', 'full_description_sr_cyrl',
+                             'short_description_en', 'full_description_en'):
             kwargs['widget'] = CKEditorUploadingWidget(config_name='default')
         return super().formfield_for_dbfield(db_field, request, **kwargs)
     

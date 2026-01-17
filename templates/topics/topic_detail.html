@@ -1,38 +1,39 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}{{ topic.meta_title|default:topic.title }} - CGI{% endblock %}
-{% block meta_description %}{{ topic.meta_description|default:"CGI - Centar za geopolitička istraživanja" }}{% endblock %}
-{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'topics:topic_detail' category.slug topic.slug %}">{% endblock %}
+{% block title %}{{ topic.get_meta_title }} - CGI{% endblock %}
+{% block meta_description %}{{ topic.get_meta_description|default:_("CGI - Centar za geopolitička istraživanja") }}{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'topics:topic_detail' category.get_slug topic.get_slug %}">{% endblock %}
 
 {% block content %}
 <div class="topic-detail-page">
     <div class="container">
         <article class="topic-post">
-            <h1>{{ topic.title }}</h1>
+            <h1>{{ topic.get_title }}</h1>
             <p class="topic-meta">{{ topic.created_at|date:"d.m.Y" }}</p>
-            {% if topic.short_description %}
-                <p class="topic-short-description">{{ topic.short_description|striptags }}</p>
+            {% if topic.get_short_description %}
+                <p class="topic-short-description">{{ topic.get_short_description|striptags }}</p>
             {% endif %}
             <div class="topic-content">
-                {{ topic.full_description|safe }}
+                {{ topic.get_full_description|safe }}
             </div>
         </article>
 
         {% if recent_topics %}
             <section class="recent-topics">
-                <h2>Najnovije teme</h2>
+                <h2>{% trans 'Najnovije teme' %}</h2>
                 <div class="topic-grid">
                     {% for recent_topic in recent_topics %}
                         <article class="topic-card">
-                            <a href="{% url 'topics:topic_detail' category.slug recent_topic.slug %}">
+                            <a href="{% url 'topics:topic_detail' category.get_slug recent_topic.get_slug %}">
                                 {% if recent_topic.thumbnail %}
-                                    <img src="{{ recent_topic.thumbnail.url }}" alt="{{ recent_topic.title }}">
+                                    <img src="{{ recent_topic.thumbnail.url }}" alt="{{ recent_topic.get_title }}">
                                 {% else %}
                                     <div class="topic-placeholder">Nema slike</div>
                                 {% endif %}
                                 <div class="topic-card-content">
-                                    <h2>{{ recent_topic.title }}</h2>
+                                    <h2>{{ recent_topic.get_title }}</h2>
                                     <span class="topic-date">{{ recent_topic.created_at|date:"d.m.Y" }}</span>
                                 </div>
                             </a>

@@ -1,18 +1,19 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Moj nalog - CGI{% endblock %}
+{% block title %}{% trans 'Moj nalog' %} - CGI{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:account' %}">{% endblock %}
 
 {% block content %}
 <div class="account-page">
     <div class="container">
-        <h1>Moj nalog</h1>
+        <h1>{% trans 'Moj nalog' %}</h1>
         
         <div class="account-info">
-            <h2>Korisnički podaci</h2>
-            <p><strong>Korisničko ime:</strong> {{ user.username }}</p>
-            <p><strong>Email:</strong> {{ user.email|default:"Nije unet" }}</p>
+            <h2>{% trans 'Korisnički podaci' %}</h2>
+            <p><strong>{% trans 'Korisničko ime' %}:</strong> {{ user.username }}</p>
+            <p><strong>{% trans 'Email' %}:</strong> {{ user.email|default:_('Nije unet') }}</p>
         </div>
 
     </div>

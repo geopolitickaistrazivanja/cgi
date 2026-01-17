@@ -552,6 +552,298 @@ body.search-open .desktop-nav {
     }
 }
 
+/* Language Switcher - Modern Design */
+.language-switcher {
+    position: relative;
+}
+
+/* Desktop Language Switcher */
+.language-switcher-desktop {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .language-switcher-desktop {
+        display: block;
+    }
+}
+
+.language-switcher-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    color: var(--dark-gray);
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    padding: 6px 8px;
+    transition: color 0.2s ease;
+    position: relative;
+}
+
+.language-switcher-btn * {
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+.language-switcher-btn::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 8px;
+    right: 8px;
+    height: 1.5px;
+    background-color: rgba(21, 33, 61, 0.2);
+    transform: scaleX(0);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.language-switcher-btn:hover {
+    color: rgba(21, 33, 61, 0.8);
+}
+
+.language-switcher-btn:hover::after {
+    transform: scaleX(1);
+    background-color: rgba(21, 33, 61, 0.4);
+}
+
+.language-switcher-btn[aria-expanded="true"] {
+    color: rgba(21, 33, 61, 0.9);
+}
+
+.language-switcher-btn[aria-expanded="true"]::after {
+    transform: scaleX(1);
+    background-color: rgba(21, 33, 61, 0.5);
+}
+
+.language-switcher-btn .dropdown-arrow {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.language-switcher-btn[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.language-flag {
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.language-text {
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.language-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    background-color: var(--white);
+    border: 1px solid rgba(21, 33, 61, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    min-width: 140px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 10001;
+    padding: 4px;
+    overflow: hidden;
+}
+
+.language-switcher-desktop.open .language-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.language-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    width: 100%;
+    background: none !important;
+    border: none !important;
+    color: var(--dark-gray) !important;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    text-align: left;
+}
+
+.language-dropdown-item * {
+    background: none !important;
+    color: inherit !important;
+}
+
+.language-dropdown-item:hover {
+    background-color: rgba(21, 33, 61, 0.06);
+    color: rgba(21, 33, 61, 0.9) !important;
+}
+
+.language-dropdown-item.active {
+    background-color: rgba(21, 33, 61, 0.08) !important;
+    background: none !important;
+    font-weight: 500;
+    color: #15213d !important;
+}
+
+/* Mobile Language Switcher */
+.language-switcher-mobile {
+    display: flex;
+    align-items: center;
+}
+
+.language-switcher-btn-mobile {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    color: var(--dark-gray);
+    font-size: 13px;
+    font-weight: 400;
+    cursor: pointer;
+    padding: 5px 7px;
+    transition: color 0.2s ease;
+    position: relative;
+}
+
+.language-switcher-btn-mobile * {
+    background: none !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+.language-switcher-btn-mobile::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 7px;
+    right: 7px;
+    height: 1.5px;
+    background-color: rgba(21, 33, 61, 0.2);
+    transform: scaleX(0);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.language-switcher-btn-mobile:hover {
+    color: rgba(21, 33, 61, 0.8);
+}
+
+.language-switcher-btn-mobile:hover::after {
+    transform: scaleX(1);
+    background-color: rgba(21, 33, 61, 0.4);
+}
+
+.language-switcher-btn-mobile[aria-expanded="true"] {
+    color: rgba(21, 33, 61, 0.9);
+}
+
+.language-switcher-btn-mobile[aria-expanded="true"]::after {
+    transform: scaleX(1);
+    background-color: rgba(21, 33, 61, 0.5);
+}
+
+@media (max-width: 767px) {
+    .language-switcher-btn-mobile::after {
+        display: none !important;
+    }
+    
+    .language-switcher-btn-mobile:hover::after,
+    .language-switcher-btn-mobile[aria-expanded="true"]::after {
+        display: none !important;
+    }
+}
+
+.language-switcher-btn-mobile .dropdown-arrow {
+    width: 10px;
+    height: 10px;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.language-switcher-btn-mobile[aria-expanded="true"] .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.language-dropdown-menu-mobile {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: 0;
+    background-color: var(--white);
+    border: 1px solid rgba(21, 33, 61, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    min-width: 140px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 10001;
+    padding: 4px;
+    overflow: hidden;
+}
+
+.language-switcher-mobile.open .language-dropdown-menu-mobile {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.language-dropdown-menu-mobile .language-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    width: 100%;
+    background: none !important;
+    border: none !important;
+    color: var(--dark-gray);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    text-align: left;
+}
+
+.language-dropdown-menu-mobile .language-dropdown-item * {
+    background: none !important;
+    color: inherit !important;
+}
+
+.language-dropdown-menu-mobile .language-dropdown-item:hover {
+    background-color: rgba(21, 33, 61, 0.06);
+    color: rgba(21, 33, 61, 0.9);
+}
+
+.language-dropdown-menu-mobile .language-dropdown-item.active {
+    background-color: rgba(21, 33, 61, 0.08) !important;
+    background: none !important;
+    font-weight: 500;
+    color: #15213d;
+}
+
 /* Mobile Menu */
 .mobile-menu-btn {
     display: none;
@@ -617,17 +909,25 @@ body.search-open .desktop-nav {
 
 .mobile-nav-row-first {
     display: none;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
     padding-bottom: 5px;
     margin-top: 15px;
+    gap: 15px;
 }
 
 .mobile-auth-links {
     display: flex;
     gap: 20px;
     align-items: center;
+    margin-left: auto;
+}
+
+@media (max-width: 767px) {
+    .mobile-auth-links {
+        gap: 12px;
+    }
 }
 
 .mobile-header-icons {
@@ -1136,7 +1436,7 @@ body.search-open .desktop-nav {
 /* Buttons - All buttons have gradient background with dark text */
 a.btn,
 a.btn-primary,
-button:not(.nav-item):not(.search-icon-btn):not(.mobile-menu-btn):not(.offcanvas-close):not(.search-close):not(.back-to-top),
+button:not(.nav-item):not(.search-icon-btn):not(.mobile-menu-btn):not(.offcanvas-close):not(.search-close):not(.back-to-top):not(.language-switcher-btn):not(.language-switcher-btn-mobile):not(.language-dropdown-item),
 input[type="submit"],
 input[type="button"],
 .btn {

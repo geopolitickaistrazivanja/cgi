@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:home' %}">{% endblock %}
 
@@ -10,64 +11,64 @@
         <div class="container">
             <!-- Svrha Section -->
             <div class="content-section scroll-fade-in">
-                <h2 class="section-title">Svrha</h2>
+                <h2 class="section-title">{% trans 'Svrha' %}</h2>
                 <div class="section-text">
-                    <p>Postojanje i rad CGI usmereni su na proučavanje geopolitičkih pojava i procesa u svetu, posebno na Balkanu. Geopolitika, ranije marginalizovana kao način mišljenja i nauka, kod nas je na mukotrpan način obnavljana tokom razgradnje SFRJ, a na globalnom planu, mada nikada nije zanemarivana u praksi, pravi preporod doživela je sa multipolarizacijom poretka i rasplamsavanjem oružanih konflikata širom sveta.</p>
-                    <p>U tom kontekstu, veliku, često životnu važnost ima objektivno poimanje, proučavanje i objašnjavanje ne samo recentnih događaja, već njihovih uzroka i posledica, te predviđanje daljih dinamičnih tokova i transformacija.</p>
+                    <p>{% trans 'Postojanje i rad CGI usmereni su na proučavanje geopolitičkih pojava i procesa u svetu, posebno na Balkanu. Geopolitika, ranije marginalizovana kao način mišljenja i nauka, kod nas je na mukotrpan način obnavljana tokom razgradnje SFRJ, a na globalnom planu, mada nikada nije zanemarivana u praksi, pravi preporod doživela je sa multipolarizacijom poretka i rasplamsavanjem oružanih konflikata širom sveta.' %}</p>
+                    <p>{% trans 'U tom kontekstu, veliku, često životnu važnost ima objektivno poimanje, proučavanje i objašnjavanje ne samo recentnih događaja, već njihovih uzroka i posledica, te predviđanje daljih dinamičnih tokova i transformacija.' %}</p>
                 </div>
             </div>
 
             <!-- Image 1 -->
             <div class="content-image scroll-fade-in scroll-scale">
-                <img src="{% static 'images/image-1.webp' %}" alt="Geopolitička istraživanja" loading="lazy">
+                <img src="{% static 'images/image-1.webp' %}" alt="{% trans 'Geopolitička istraživanja' %}" loading="lazy">
             </div>
 
             <!-- Polazište Section with Image 2 -->
             <div class="content-section-image-layout scroll-fade-in">
                 <div class="section-image-wrapper">
                     <div class="content-image-no-aspect">
-                        <img src="{% static 'images/image-2.webp' %}" alt="Obrazovanje i razvoj" loading="lazy">
+                        <img src="{% static 'images/image-2.webp' %}" alt="{% trans 'Obrazovanje i razvoj' %}" loading="lazy">
                     </div>
                 </div>
                 <div class="section-content-wrapper">
-                    <h2 class="section-title">Polazište</h2>
+                    <h2 class="section-title">{% trans 'Polazište' %}</h2>
                     <div class="section-text">
-                        <p>Ideja-vodilja CGI jeste okupljanje priznatih stručnjaka u oblasti geopolitike u najširem smislu – u prvom redu naučnika, ali i diplomata, privrednika, oficira, novinara, kulturnih poslenika… – kako bi objektivno analizirali stvarnost sve oštrijeg nadmetanja za vladanje prostorom u njegovom kvantitativnom i kvalitativnom smislu.</p>
-                        <p>Namera CGI je da privuče sve zainteresovane za geopolitiku, naročito mlade ljude, da njihovo obrazovanje proširi nedostajućim geopolitičkim znanjima i tako doprinese stvaranju nove nacionalne elite koja će u turbulentnim vremenima koja dolaze biti spremna da se suoči sa svim izazovima.</p>
+                        <p>{% trans 'Ideja-vodilja CGI jeste okupljanje priznatih stručnjaka u oblasti geopolitike u najširem smislu – u prvom redu naučnika, ali i diplomata, privrednika, oficira, novinara, kulturnih poslenika… – kako bi objektivno analizirali stvarnost sve oštrijeg nadmetanja za vladanje prostorom u njegovom kvantitativnom i kvalitativnom smislu.' %}</p>
+                        <p>{% trans 'Namera CGI je da privuče sve zainteresovane za geopolitiku, naročito mlade ljude, da njihovo obrazovanje proširi nedostajućim geopolitičkim znanjima i tako doprinese stvaranju nove nacionalne elite koja će u turbulentnim vremenima koja dolaze biti spremna da se suoči sa svim izazovima.' %}</p>
                     </div>
                 </div>
             </div>
 
             <!-- Ciljna grupa Section -->
             <div class="content-section scroll-fade-in scroll-slide-right">
-                <h2 class="section-title">Ciljna grupa</h2>
+                <h2 class="section-title">{% trans 'Ciljna grupa' %}</h2>
                 <div class="section-text">
-                    <p>Ciljna grupa su studenti osnovnih, master i doktorskih studija geografije, istorije, politikologije, prava, ekonomije, sociologije, bezbednosti, vojne i policijske akademije državnih i privatnih fakulteta i strukovnih studija, kao i mlađi novinari, državni službenici, urednici portala…</p>
+                    <p>{% trans 'Ciljna grupa su studenti osnovnih, master i doktorskih studija geografije, istorije, politikologije, prava, ekonomije, sociologije, bezbednosti, vojne i policijske akademije državnih i privatnih fakulteta i strukovnih studija, kao i mlađi novinari, državni službenici, urednici portala…' %}</p>
                 </div>
             </div>
 
             <!-- Image 3 -->
             <div class="content-image scroll-fade-in scroll-scale">
-                <img src="{% static 'images/image-3.webp' %}" alt="Studenti i obrazovanje" loading="lazy">
+                <img src="{% static 'images/image-3.webp' %}" alt="{% trans 'Studenti i obrazovanje' %}" loading="lazy">
             </div>
 
             <!-- Delatnost Section -->
             <div class="content-section scroll-fade-in scroll-slide-left">
-                <h2 class="section-title">Delatnost</h2>
+                <h2 class="section-title">{% trans 'Delatnost' %}</h2>
                 <div class="section-text">
-                    <p>Rad CGI zasniva se na spoljnim saradnicima i njihovom učešću na tematskim predavanjima, naučnim konferencijama, okruglim stolovima, istraživačkim projektima, ad hoc debatama, medijskim nastupima, podkast digitalnim serijama…</p>
-                    <p>CGI ima sopstvenu izdavačku delatnost, koja obuhvata objavljivanje mahom naučnih monografija i zbornika, strogo vodeći računa o kvalitetu radova i kompetentnosti autora.</p>
-                    <p>Jedna od ključnih aktivnosti CGI jeste organizovanje seminara i škola geopolitike, savremenog, interaktivnog karaktera. Način rada je kabinetski, a nekada kombinovanog, odnosno kabinetskog i terenskog tipa, te na kraju podrazumeva da polaznici dobiju sertifikat o uspešnom završetku.</p>
+                    <p>{% trans 'Rad CGI zasniva se na spoljnim saradnicima i njihovom učešću na tematskim predavanjima, naučnim konferencijama, okruglim stolovima, istraživačkim projektima, ad hoc debatama, medijskim nastupima, podkast digitalnim serijama…' %}</p>
+                    <p>{% trans 'CGI ima sopstvenu izdavačku delatnost, koja obuhvata objavljivanje mahom naučnih monografija i zbornika, strogo vodeći računa o kvalitetu radova i kompetentnosti autora.' %}</p>
+                    <p>{% trans 'Jedna od ključnih aktivnosti CGI jeste organizovanje seminara i škola geopolitike, savremenog, interaktivnog karaktera. Način rada je kabinetski, a nekada kombinovanog, odnosno kabinetskog i terenskog tipa, te na kraju podrazumeva da polaznici dobiju sertifikat o uspešnom završetku.' %}</p>
                 </div>
             </div>
 
             <!-- Image 4 and 5 Side by Side -->
             <div class="content-images-grid scroll-fade-in">
                 <div class="content-image scroll-scale">
-                    <img src="{% static 'images/image-4.webp' %}" alt="Izdavačka delatnost" loading="lazy">
+                    <img src="{% static 'images/image-4.webp' %}" alt="{% trans 'Izdavačka delatnost' %}" loading="lazy">
                 </div>
                 <div class="content-image scroll-scale">
-                    <img src="{% static 'images/image-5.webp' %}" alt="Seminari i škole" loading="lazy">
+                    <img src="{% static 'images/image-5.webp' %}" alt="{% trans 'Seminari i škole' %}" loading="lazy">
                 </div>
             </div>
         </div>

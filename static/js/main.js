@@ -135,6 +135,83 @@
     });
 })();
 
+// Language Switcher Click Toggle (Desktop and Mobile)
+(function() {
+    'use strict';
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Desktop language switcher
+        const desktopLangBtn = document.getElementById('languageSwitcherBtn');
+        const desktopLangSwitcher = desktopLangBtn ? desktopLangBtn.closest('.language-switcher-desktop') : null;
+        const desktopLangMenu = document.getElementById('languageDropdownMenu');
+        
+        // Mobile language switcher
+        const mobileLangBtn = document.getElementById('languageSwitcherMobileBtn');
+        const mobileLangSwitcher = mobileLangBtn ? mobileLangBtn.closest('.language-switcher-mobile') : null;
+        const mobileLangMenu = document.getElementById('languageDropdownMenuMobile');
+        
+        // Toggle desktop dropdown
+        if (desktopLangBtn && desktopLangSwitcher) {
+            desktopLangBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const isOpen = desktopLangSwitcher.classList.contains('open');
+                
+                if (isOpen) {
+                    desktopLangSwitcher.classList.remove('open');
+                    desktopLangBtn.setAttribute('aria-expanded', 'false');
+                } else {
+                    // Close any other open language switchers
+                    if (mobileLangSwitcher) {
+                        mobileLangSwitcher.classList.remove('open');
+                        mobileLangBtn.setAttribute('aria-expanded', 'false');
+                    }
+                    desktopLangSwitcher.classList.add('open');
+                    desktopLangBtn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        }
+        
+        // Toggle mobile dropdown
+        if (mobileLangBtn && mobileLangSwitcher) {
+            mobileLangBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const isOpen = mobileLangSwitcher.classList.contains('open');
+                
+                if (isOpen) {
+                    mobileLangSwitcher.classList.remove('open');
+                    mobileLangBtn.setAttribute('aria-expanded', 'false');
+                } else {
+                    // Close any other open language switchers
+                    if (desktopLangSwitcher) {
+                        desktopLangSwitcher.classList.remove('open');
+                        desktopLangBtn.setAttribute('aria-expanded', 'false');
+                    }
+                    mobileLangSwitcher.classList.add('open');
+                    mobileLangBtn.setAttribute('aria-expanded', 'true');
+                }
+            });
+        }
+        
+        // Close language dropdowns when clicking outside
+        document.addEventListener('click', function(e) {
+            if (desktopLangSwitcher && !desktopLangSwitcher.contains(e.target)) {
+                desktopLangSwitcher.classList.remove('open');
+                if (desktopLangBtn) {
+                    desktopLangBtn.setAttribute('aria-expanded', 'false');
+                }
+            }
+            if (mobileLangSwitcher && !mobileLangSwitcher.contains(e.target)) {
+                mobileLangSwitcher.classList.remove('open');
+                if (mobileLangBtn) {
+                    mobileLangBtn.setAttribute('aria-expanded', 'false');
+                }
+            }
+        });
+    });
+})();
+
 // Desktop dropdown scroll handling
 (function() {
     'use strict';

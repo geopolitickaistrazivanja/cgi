@@ -18,7 +18,7 @@ class UserEmailAdmin(admin.ModelAdmin):
         response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename="emails_selected.csv"'
         writer = csv.writer(response)
-        writer.writerow(['Email', 'Izvor', 'Kreirano'])
+        writer.writerow([_('Email'), _('Izvor'), _('Kreirano')])
         for email in queryset:
             writer.writerow([email.email, email.get_source_display(), email.created_at.strftime('%Y-%m-%d %H:%M:%S')])
         return response
@@ -29,7 +29,7 @@ class UserEmailAdmin(admin.ModelAdmin):
         response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename="emails_all.csv"'
         writer = csv.writer(response)
-        writer.writerow(['Email', 'Izvor', 'Kreirano'])
+        writer.writerow([_('Email'), _('Izvor'), _('Kreirano')])
         for email in UserEmail.objects.all().order_by('-created_at'):
             writer.writerow([email.email, email.get_source_display(), email.created_at.strftime('%Y-%m-%d %H:%M:%S')])
         return response

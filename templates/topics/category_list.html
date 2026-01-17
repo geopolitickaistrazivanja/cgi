@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Kategorije - CGI{% endblock %}
+{% block title %}{% trans 'Kategorije' %} - CGI{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'topics:category_list' %}">{% endblock %}
 
 {% block content %}
@@ -10,19 +11,19 @@
         <div class="category-grid">
             {% for category in categories %}
                 <article class="category-card">
-                    <a href="{% url 'topics:category_detail' category.slug %}">
+                    <a href="{% url 'topics:category_detail' category.get_slug %}">
                         {% if category.thumbnail %}
-                            <img src="{{ category.thumbnail.url }}" alt="{{ category.name }}">
+                            <img src="{{ category.thumbnail.url }}" alt="{{ category.get_name }}">
                         {% else %}
-                            <div class="category-placeholder">Nema slike</div>
+                            <div class="category-placeholder">{% trans 'Nema slike' %}</div>
                         {% endif %}
                         <div class="category-card-content">
-                            <h2>{{ category.name }}</h2>
+                            <h2>{{ category.get_name }}</h2>
                         </div>
                     </a>
                 </article>
             {% empty %}
-                <p>Nema kategorija.</p>
+                <p>{% trans 'Nema kategorija.' %}</p>
             {% endfor %}
         </div>
     </div>

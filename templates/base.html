@@ -1,14 +1,19 @@
 {% load static %}
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="sr">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{% block meta_description %}CGI - Centar za geopolitička istraživanja{% endblock %}">
+    <meta name="description" content="{% block meta_description %}{% trans 'CGI - Centar za geopolitička istraživanja' %}{% endblock %}">
     <meta name="keywords" content="geopolitika, istraživanja, CGI">
     <meta name="csrf-token" content="{{ csrf_token }}">
     {% block canonical_url %}{% endblock %}
     <title>{% block title %}CGI - Centar za geopolitička istraživanja{% endblock %}</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/webp" href="{% static 'images/favicon.webp' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/favicon.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/favicon.webp' %}">
     <!-- Using system fonts for zero flicker and instant load -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
@@ -19,13 +24,46 @@
         <div class="container">
             <!-- Mobile Navigation Row (first row) -->
             <div class="mobile-nav-row-first">
+                <!-- Language Switcher Mobile -->
+                <div class="language-switcher language-switcher-mobile">
+                    <button class="language-switcher-btn-mobile" id="languageSwitcherMobileBtn" aria-label="{% trans 'Izmeni jezik' %}">
+                        {% get_current_language as CURRENT_LANGUAGE %}
+                        {% if CURRENT_LANGUAGE == 'sr-latn' %}
+                            <span class="language-text">Srpski</span>
+                        {% elif CURRENT_LANGUAGE == 'sr-cyrl' %}
+                            <span class="language-text">Српски</span>
+                        {% elif CURRENT_LANGUAGE == 'en' %}
+                            <span class="language-text">English</span>
+                        {% endif %}
+                        <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 4l4 4 4-4"/>
+                        </svg>
+                    </button>
+                    <form action="{% url 'set_language' %}" method="post" class="language-dropdown-menu language-dropdown-menu-mobile" id="languageDropdownMenuMobile">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        {% get_available_languages as LANGUAGES_LIST %}
+                        {% for lang_code, lang_name in LANGUAGES_LIST %}
+                            <button type="submit" name="language" value="{{ lang_code }}" class="language-dropdown-item {% if lang_code == CURRENT_LANGUAGE %}active{% endif %}">
+                                {% if lang_code == 'sr-latn' %}
+                                    <span class="language-text">Srpski</span>
+                                {% elif lang_code == 'sr-cyrl' %}
+                                    <span class="language-text">Српски</span>
+                                {% elif lang_code == 'en' %}
+                                    <span class="language-text">English</span>
+                                {% endif %}
+                            </button>
+                        {% endfor %}
+                    </form>
+                </div>
+                
                 <div class="mobile-auth-links">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'accounts:account' %}" class="mobile-header-link">Moj nalog</a>
-                        <a href="{% url 'accounts:logout' %}" class="mobile-header-link">Odjava</a>
+                        <a href="{% url 'accounts:account' %}" class="mobile-header-link">{% trans 'Moj nalog' %}</a>
+                        <a href="{% url 'accounts:logout' %}" class="mobile-header-link">{% trans 'Odjava' %}</a>
                     {% else %}
-                        <a href="{% url 'accounts:login' %}" class="mobile-header-link">Prijava</a>
-                        <a href="{% url 'accounts:register' %}" class="mobile-header-link">Registracija</a>
+                        <a href="{% url 'accounts:login' %}" class="mobile-header-link">{% trans 'Prijava' %}</a>
+                        <a href="{% url 'accounts:register' %}" class="mobile-header-link">{% trans 'Registracija' %}</a>
                     {% endif %}
                 </div>
             </div>
@@ -39,10 +77,10 @@
                 
                 <!-- Desktop Navigation -->
                 <nav class="desktop-nav">
-                    <a href="{% url 'core:home' %}" class="nav-item">Početna</a>
+                    <a href="{% url 'core:home' %}" class="nav-item">{% trans 'Početna' %}</a>
                     <div class="nav-item-dropdown">
                         <a href="{% url 'topics:category_list' %}" class="nav-item-link">
-                            Teme
+                            {% trans 'Teme' %}
                             <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M2 4l4 4 4-4"/>
                             </svg>
@@ -50,27 +88,27 @@
                         {% if categories %}
                             <div class="dropdown-menu">
                                 {% for category in categories %}
-                                    <a href="{% url 'topics:category_detail' category.slug %}" class="dropdown-item">
+                                    <a href="{% url 'topics:category_detail' category.get_slug %}" class="dropdown-item">
                                         {% if category.thumbnail %}
-                                            <img src="{{ category.thumbnail.url }}" alt="{{ category.name }}" class="dropdown-thumbnail">
+                                            <img src="{{ category.thumbnail.url }}" alt="{{ category.get_name }}" class="dropdown-thumbnail">
                                         {% endif %}
-                                        <span>{{ category.name }}</span>
+                                        <span>{{ category.get_name }}</span>
                                     </a>
                                 {% endfor %}
                             </div>
                         {% endif %}
                     </div>
-                    <a href="{% url 'core:about' %}" class="nav-item">O nama</a>
-                    <a href="{% url 'core:contact' %}" class="nav-item">Kontakt</a>
+                    <a href="{% url 'core:about' %}" class="nav-item">{% trans 'O nama' %}</a>
+                    <a href="{% url 'core:contact' %}" class="nav-item">{% trans 'Kontakt' %}</a>
                 </nav>
 
                 <div class="header-actions">
                     {% if user.is_authenticated %}
-                        <a href="{% url 'accounts:account' %}" class="header-link">Moj nalog</a>
-                        <a href="{% url 'accounts:logout' %}" class="header-link">Odjava</a>
+                        <a href="{% url 'accounts:account' %}" class="header-link">{% trans 'Moj nalog' %}</a>
+                        <a href="{% url 'accounts:logout' %}" class="header-link">{% trans 'Odjava' %}</a>
                     {% else %}
-                        <a href="{% url 'accounts:login' %}" class="header-link">Prijava</a>
-                        <a href="{% url 'accounts:register' %}" class="header-link">Registracija</a>
+                        <a href="{% url 'accounts:login' %}" class="header-link">{% trans 'Prijava' %}</a>
+                        <a href="{% url 'accounts:register' %}" class="header-link">{% trans 'Registracija' %}</a>
                     {% endif %}
                     
                     <button class="search-icon-btn" id="searchBtn" aria-label="Pretraga">
@@ -79,21 +117,54 @@
                             <path d="m21 21-4.35-4.35"></path>
                         </svg>
                     </button>
+                    
+                    <!-- Language Switcher Desktop -->
+                    <div class="language-switcher language-switcher-desktop">
+                        <button class="language-switcher-btn" id="languageSwitcherBtn" aria-label="{% trans 'Izmeni jezik' %}" aria-expanded="false">
+                            {% get_current_language as CURRENT_LANGUAGE %}
+                            {% if CURRENT_LANGUAGE == 'sr-latn' %}
+                                <span class="language-text">Srpski</span>
+                            {% elif CURRENT_LANGUAGE == 'sr-cyrl' %}
+                                <span class="language-text">Српски</span>
+                            {% elif CURRENT_LANGUAGE == 'en' %}
+                                <span class="language-text">English</span>
+                            {% endif %}
+                            <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 4l4 4 4-4"/>
+                            </svg>
+                        </button>
+                        <form action="{% url 'set_language' %}" method="post" class="language-dropdown-menu" id="languageDropdownMenu">
+                            {% csrf_token %}
+                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                            {% get_available_languages as LANGUAGES_LIST %}
+                            {% for lang_code, lang_name in LANGUAGES_LIST %}
+                                <button type="submit" name="language" value="{{ lang_code }}" class="language-dropdown-item {% if lang_code == CURRENT_LANGUAGE %}active{% endif %}">
+                                    {% if lang_code == 'sr-latn' %}
+                                        <span class="language-text">Srpski</span>
+                                    {% elif lang_code == 'sr-cyrl' %}
+                                        <span class="language-text">Српски</span>
+                                    {% elif lang_code == 'en' %}
+                                        <span class="language-text">English</span>
+                                    {% endif %}
+                                </button>
+                            {% endfor %}
+                        </form>
+                    </div>
                 </div>
 
                 <!-- Mobile Menu Button and Search Icon -->
                 <div class="mobile-menu-wrapper">
                     <div class="mobile-menu-item">
-                        <span class="mobile-menu-label" id="mobileMenuLabel">Meni</span>
-                        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Meni">
+                        <span class="mobile-menu-label" id="mobileMenuLabel">{% trans 'Meni' %}</span>
+                        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="{% trans 'Meni' %}">
                             <span></span>
                             <span></span>
                             <span></span>
                         </button>
                     </div>
                     <div class="mobile-search-item">
-                        <span class="mobile-search-label" id="mobileSearchLabel">Pretraži</span>
-                        <button class="search-icon-btn mobile-search-icon" id="searchBtnMobile" aria-label="Pretraga">
+                        <span class="mobile-search-label" id="mobileSearchLabel">{% trans 'Pretraži' %}</span>
+                        <button class="search-icon-btn mobile-search-icon" id="searchBtnMobile" aria-label="{% trans 'Pretraga' %}">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <path d="m21 21-4.35-4.35"></path>
@@ -140,7 +211,7 @@
                 </div>
                 <div class="info-bar-item">
                     <div class="info-bar-text">
-                        <span>Istraživanje savremenih geopolitičkih procesa</span>
+                        <span>{% trans 'Istraživanje savremenih geopolitičkih procesa' %}</span>
                     </div>
                 </div>
                 <div class="info-bar-item">
@@ -202,7 +273,7 @@
                 </div>
                 <div class="info-bar-section">
                     <div class="info-bar-text">
-                        <span>Istraživanje savremenih geopolitičkih procesa</span>
+                        <span>{% trans 'Istraživanje savremenih geopolitičkih procesa' %}</span>
                     </div>
                 </div>
                 <div class="info-bar-section">
@@ -246,11 +317,11 @@
                 </a>
             </div>
             <ul class="offcanvas-menu-list">
-                <li><a href="{% url 'core:home' %}" class="offcanvas-item">Početna</a></li>
+                <li><a href="{% url 'core:home' %}" class="offcanvas-item">{% trans 'Početna' %}</a></li>
                             <li class="offcanvas-item-dropdown">
                                 <div class="offcanvas-item-wrapper">
-                                    <a href="{% url 'topics:category_list' %}" class="offcanvas-item">Teme</a>
-                                    <button class="offcanvas-dropdown-toggle" aria-label="Otvori kategorije">
+                                    <a href="{% url 'topics:category_list' %}" class="offcanvas-item">{% trans 'Teme' %}</a>
+                                    <button class="offcanvas-dropdown-toggle" aria-label="{% trans 'Otvori kategorije' %}">
                                         <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M2 4l4 4 4-4"/>
                                         </svg>
@@ -271,8 +342,8 @@
                                     </ul>
                                 {% endif %}
                             </li>
-                <li><a href="{% url 'core:about' %}" class="offcanvas-item">O nama</a></li>
-                <li><a href="{% url 'core:contact' %}" class="offcanvas-item">Kontakt</a></li>
+                <li><a href="{% url 'core:about' %}" class="offcanvas-item">{% trans 'O nama' %}</a></li>
+                <li><a href="{% url 'core:contact' %}" class="offcanvas-item">{% trans 'Kontakt' %}</a></li>
             </ul>
         </nav>
     </div>
@@ -281,7 +352,7 @@
     <div class="search-overlay" id="searchOverlay">
         <button class="search-close" id="searchClose">&times;</button>
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Pretraži teme..." autocomplete="off">
+            <input type="text" id="searchInput" placeholder="{% trans 'Pretraži teme...' %}" autocomplete="off">
             <div class="search-results" id="searchResults"></div>
         </div>
     </div>
@@ -306,10 +377,10 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>Kontakt</h3>
-                    <p>Adresa: Beograd, Srbija</p>
-                    <p>Email: <a href="mailto:info@geopolitickaistrazivanja.com">info@geopolitickaistrazivanja.com</a></p>
-                    <p>Telefon: <a href="tel:+381601234567">+381 60 123 4567</a></p>
+                    <h3>{% trans 'Kontakt' %}</h3>
+                    <p>{% trans 'Adresa' %}: {% trans 'Beograd, Srbija' %}</p>
+                    <p>{% trans 'Email' %}: <a href="mailto:info@geopolitickaistrazivanja.com">info@geopolitickaistrazivanja.com</a></p>
+                    <p>{% trans 'Telefon' %}: <a href="tel:+381601234567">+381 60 123 4567</a></p>
                     <div class="footer-social">
                         <a href="https://instagram.com" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -339,15 +410,15 @@
                     </div>
                 </div>
                 <div class="footer-section footer-center">
-                    <p class="footer-tagline">Centar za geopolitička istraživanja</p>
-                    <p class="footer-copyright">Sva prava zadržavana | {% now "Y" %}</p>
+                    <p class="footer-tagline">{% trans 'Centar za geopolitička istraživanja' %}</p>
+                    <p class="footer-copyright">{% trans 'Sva prava zadržavana' %} | {% now "Y" %}</p>
                 </div>
             </div>
         </div>
     </footer>
 
     <!-- Back to Top Button -->
-    <button class="back-to-top" id="backToTop" aria-label="Nazad na vrh">
+    <button class="back-to-top" id="backToTop" aria-label="{% trans 'Nazad na vrh' %}">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 15l-6-6-6 6"/>
         </svg>

@@ -9,8 +9,7 @@ python manage.py migrate
 
 Prevodjenje:
 
-# Only Croatian translation needed - source strings are in English
-python manage.py makemessages -l hr --ignore=venv --ignore=env --ignore=.venv
+python manage.py makemessages -l sr -l en -l sr@cyrillic --ignore=venv --ignore=.venv --ignore=node_modules
 python manage.py compilemessages
 
 

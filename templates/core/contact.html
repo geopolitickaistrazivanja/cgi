@@ -1,45 +1,46 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load i18n %}
 
-{% block title %}Kontakt - CGI{% endblock %}
+{% block title %}{% trans 'Kontakt' %} - CGI{% endblock %}
 {% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'core:contact' %}">{% endblock %}
 
 {% block content %}
 <div class="contact-page">
     <div class="container">
-        <h1>Kontaktirajte nas</h1>
+        <h1>{% trans 'Kontaktirajte nas' %}</h1>
         <div class="contact-content">
             <div class="contact-form-wrapper">
                 <form method="post" class="contact-form">
                     {% csrf_token %}
                     <div class="form-group">
-                        <label for="name">Ime *</label>
+                        <label for="name">{% trans 'Ime' %} *</label>
                         <input type="text" id="name" name="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="surname">Prezime *</label>
+                        <label for="surname">{% trans 'Prezime' %} *</label>
                         <input type="text" id="surname" name="surname" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Telefon *</label>
+                        <label for="phone">{% trans 'Telefon' %} *</label>
                         <input type="tel" id="phone" name="phone" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email *</label>
+                        <label for="email">{% trans 'Email' %} *</label>
                         <input type="email" id="email" name="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="message">Poruka *</label>
+                        <label for="message">{% trans 'Poruka' %} *</label>
                         <textarea id="message" name="message" rows="6" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary">Pošalji poruku</button>
+                    <button type="submit" class="btn btn-primary">{% trans 'Pošalji poruku' %}</button>
                 </form>
             </div>
             <div class="contact-info">
-                <h2>Kontakt informacije</h2>
-                <p><strong>Email:</strong> <a href="mailto:info@geopolitickaistrazivanja.com">info@geopolitickaistrazivanja.com</a></p>
-                <p><strong>Telefon:</strong> <a href="tel:+381601234567">+381 60 123 4567</a></p>
-                <p><strong>Adresa:</strong> Novi Sad, Srbija</p>
+                <h2>{% trans 'Kontakt informacije' %}</h2>
+                <p><strong>{% trans 'Email' %}:</strong> <a href="mailto:info@geopolitickaistrazivanja.com">info@geopolitickaistrazivanja.com</a></p>
+                <p><strong>{% trans 'Telefon' %}:</strong> <a href="tel:+381601234567">+381 60 123 4567</a></p>
+                <p><strong>{% trans 'Adresa' %}:</strong> {% trans 'Novi Sad, Srbija' %}</p>
             </div>
         </div>
     </div>

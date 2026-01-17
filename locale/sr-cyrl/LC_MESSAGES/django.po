@@ -1,0 +1,655 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-17 22:09+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: .\accounts\admin.py:11
+msgid "Profil"
+msgstr "Профил"
+
+#: .\accounts\admin.py:26
+msgid "Korisnik"
+msgstr "Корисник"
+
+#: .\accounts\admin.py:29 .\templates\core\contact.html:40
+msgid "Kontakt informacije"
+msgstr "Контакт информације"
+
+#: .\accounts\admin.py:32
+msgid "Datumi"
+msgstr "Датуми"
+
+#: .\accounts\models.py:10 .\templates\base.html:397
+#: .\templates\core\contact.html:25 .\templates\core\contact.html:42
+msgid "Telefon"
+msgstr "Телефон"
+
+#: .\accounts\models.py:11 .\templates\base.html:395
+#: .\templates\core\contact.html:43
+msgid "Adresa"
+msgstr "Адреса"
+
+#: .\accounts\models.py:12 .\core\admin.py:21 .\core\admin.py:32
+#: .\core\models.py:12 .\topics\models.py:19 .\topics\models.py:63
+msgid "Kreirano"
+msgstr "Креирано"
+
+#: .\accounts\models.py:13 .\topics\models.py:20 .\topics\models.py:64
+msgid "Ažurirano"
+msgstr "Ажурирано"
+
+#: .\accounts\models.py:16
+msgid "Profil korisnika"
+msgstr "Профил корисника"
+
+#: .\accounts\models.py:17
+msgid "Profili korisnika"
+msgstr "Профили корисника"
+
+#: .\accounts\views.py:13 .\core\admin.py:21 .\core\admin.py:32
+#: .\core\models.py:7 .\templates\accounts\account.html:16
+#: .\templates\accounts\register.html:19 .\templates\base.html:396
+#: .\templates\core\contact.html:29 .\templates\core\contact.html:41
+msgid "Email"
+msgstr "Email"
+
+#: .\accounts\views.py:49
+msgid "Uspešno ste se registrovali."
+msgstr "Успешно сте се регистровали."
+
+#: .\accounts\views.py:72
+msgid "Molimo unesite korisničko ime i lozinku."
+msgstr "Молимо унесите корисничко име и лозинку."
+
+#: .\accounts\views.py:77
+msgid "Uspešno ste se prijavili."
+msgstr "Успешно сте се пријавили."
+
+#: .\accounts\views.py:83
+msgid "Pogrešno korisničko ime ili lozinka. Molimo pokušajte ponovo."
+msgstr "Погрешно корисничко име или лозинка. Молимо покушајте поново."
+
+#: .\accounts\views.py:96
+msgid "Uspešno ste se odjavili. <a href=\"{}\">Prijavite se ponovo</a>"
+msgstr ""
+
+#: .\cgi\admin.py:5 .\cgi\admin.py:6 .\cgi\admin.py:7
+msgid "CGI administracija"
+msgstr "CGI администрација"
+
+#: .\core\admin.py:21 .\core\admin.py:32 .\core\models.py:8
+msgid "Izvor"
+msgstr "Извор"
+
+#: .\core\admin.py:25
+msgid "Izvezi izabrane emailove u CSV"
+msgstr "Извези изабране емаилове у CSV"
+
+#: .\core\admin.py:36
+msgid "Izvezi sve emailove u CSV"
+msgstr "Извези све емаилове у CSV"
+
+#: .\core\models.py:9
+msgid "Kontakt forma"
+msgstr "Контакт форма"
+
+#: .\core\models.py:10 .\templates\accounts\register.html:5
+#: .\templates\accounts\register.html:11 .\templates\base.html:29
+#: .\templates\base.html:74
+msgid "Registracija"
+msgstr "Регистрација"
+
+#: .\core\models.py:15
+msgid "Email korisnika"
+msgstr "Email корисника"
+
+#: .\core\models.py:16
+msgid "Emailovi korisnika"
+msgstr "Emailови корисника"
+
+#: .\core\models.py:30
+msgid "Putanja fajla"
+msgstr "Путња фајла"
+
+#: .\core\models.py:32
+msgid "Uploadovano"
+msgstr "Uploadовано"
+
+#: .\core\models.py:33
+msgid "Korišćeno"
+msgstr "Коришћено"
+
+#: .\core\models.py:34
+msgid "Korišćeno u"
+msgstr "Коришћено у"
+
+#: .\core\models.py:35
+msgid "ID instance"
+msgstr "ID инстанце"
+
+#: .\core\models.py:38
+msgid "CKEditor upload"
+msgstr "CKEditor upload"
+
+#: .\core\models.py:39
+msgid "CKEditor uploadi"
+msgstr "CKEditor uploadи"
+
+#: .\core\views.py:42
+msgid "Ime je obavezno."
+msgstr "Име је обавезно."
+
+#: .\core\views.py:44
+msgid "Prezime je obavezno."
+msgstr "Презиме је обавезно."
+
+#: .\core\views.py:46
+msgid "Telefon je obavezan."
+msgstr "Телефон је обавезан."
+
+#: .\core\views.py:48
+msgid "Email je obavezan."
+msgstr "Email је обавезан."
+
+#: .\core\views.py:50
+msgid "Email nije validan."
+msgstr "Email није валидан."
+
+#: .\core\views.py:52
+msgid "Poruka je obavezna."
+msgstr "Порука је обавезна."
+
+#: .\core\views.py:56
+msgid "Poruka je prekratka."
+msgstr "Порука је прекратка."
+
+#: .\core\views.py:91
+msgid "Poruka je uspešno poslata. Kontaktiraćemo vas uskoro."
+msgstr "Порука је успешно послата. Контактираћемо вас ускоро."
+
+#: .\core\views.py:94
+msgid "Došlo je do greške pri slanju poruke. Molimo pokušajte ponovo."
+msgstr "Дошло је до грешке при слању поруке. Молимо покушајте поново."
+
+#: .\templates\accounts\account.html:5 .\templates\accounts\account.html:11
+#: .\templates\base.html:25 .\templates\base.html:70
+msgid "Moj nalog"
+msgstr "Мој налог"
+
+#: .\templates\accounts\account.html:14
+msgid "Korisnički podaci"
+msgstr "Кориснички подаци"
+
+#: .\templates\accounts\account.html:15 .\templates\accounts\login.html:24
+#: .\templates\accounts\register.html:15
+msgid "Korisničko ime"
+msgstr "Корисничко име"
+
+#: .\templates\accounts\account.html:16
+msgid "Nije unet"
+msgstr "Није унет"
+
+#: .\templates\accounts\login.html:5 .\templates\accounts\login.html:11
+#: .\templates\base.html:28 .\templates\base.html:73
+msgid "Prijava"
+msgstr "Пријава"
+
+#: .\templates\accounts\login.html:28 .\templates\accounts\register.html:23
+msgid "Lozinka"
+msgstr "Лозинка"
+
+#: .\templates\accounts\login.html:31
+msgid "Prijavi se"
+msgstr "Пријави се"
+
+#: .\templates\accounts\login.html:32
+msgid "Nemate nalog?"
+msgstr "Немате налог?"
+
+#: .\templates\accounts\login.html:32
+msgid "Registrujte se"
+msgstr "Региструјте се"
+
+#: .\templates\accounts\register.html:27
+msgid "Potvrdite lozinku"
+msgstr "Потврдите лозинку"
+
+#: .\templates\accounts\register.html:30
+msgid "Registruj se"
+msgstr "Региструј се"
+
+#: .\templates\accounts\register.html:31
+msgid "Već imate nalog?"
+msgstr "Већ имате налог?"
+
+#: .\templates\accounts\register.html:31
+msgid "Prijavite se"
+msgstr "Пријавите се"
+
+#: .\templates\admin\actions.html:14
+msgid "Run the selected action"
+msgstr "Покрени изабрану акцију"
+
+#: .\templates\admin\actions.html:22
+#, python-format
+msgid "Izaberi sve %(total_count)s %(module_name)s"
+msgstr "Изабери све %(total_count)s %(module_name)s"
+
+#: .\templates\admin\actions.html:24
+msgid "Clear selection"
+msgstr "Обриши избор"
+
+#: .\templates\admin\base_site.html:30
+msgid "Documentation"
+msgstr "Документација"
+
+#: .\templates\base.html:8 .\templates\topics\topic_detail.html:6
+msgid "CGI - Centar za geopolitička istraživanja"
+msgstr "CGI - Центар за геополитичка истраживања"
+
+#: .\templates\base.html:26 .\templates\base.html:71
+msgid "Odjava"
+msgstr "Одјава"
+
+#: .\templates\base.html:64 .\templates\core\about.html:5
+msgid "O nama"
+msgstr "О нама"
+
+#: .\templates\base.html:65 .\templates\base.html:394
+#: .\templates\core\contact.html:5
+msgid "Kontakt"
+msgstr "Контакт"
+
+#: .\templates\base.html:86 .\templates\base.html:322
+msgid "Izmeni jezik"
+msgstr "Измени језик"
+
+#: .\templates\base.html:127 .\templates\base.html:128
+msgid "Meni"
+msgstr "Мени"
+
+#: .\templates\base.html:135
+msgid "Pretraži"
+msgstr "Претражи"
+
+#: .\templates\base.html:136
+msgid "Pretraga"
+msgstr "Претрага"
+
+#: .\templates\base.html:289
+msgid "Početna"
+msgstr "Почетна"
+
+#: .\templates\base.html:292
+msgid "Teme"
+msgstr "Теме"
+
+#: .\templates\base.html:293
+msgid "Otvori kategorije"
+msgstr "Отвори категорије"
+
+#: .\templates\base.html:335
+msgid "Otvori izbor jezika"
+msgstr "Отвори избор језика"
+
+#: .\templates\base.html:369
+msgid "Pretraži teme..."
+msgstr "Претражи теме..."
+
+#: .\templates\base.html:395
+msgid "Beograd, Srbija"
+msgstr "Београд, Србија"
+
+#: .\templates\base.html:435
+msgid "Nazad na vrh"
+msgstr "Назад на врх"
+
+#: .\templates\core\about.html:14
+msgid "Reč unapred: Zašto centar za geopolitička istraživanja?"
+msgstr "Реч унапред: Зашто центар за геополитичка истраживања?"
+
+#: .\templates\core\about.html:16
+msgid ""
+"Geopolitika je dugo bila zanemarivana i negirana. Diskvalifikujuće je "
+"svođena na „prevaziđen pristup\", „arhaičan način mišljenja\", „ideološku "
+"dogmu\", „doktrinarno zastranjivanje\"…, i tako poricana njena naučna i "
+"upotrebna vrednost. Uprkos tome, geopolitika je od naučne discipline dosegla "
+"nivo samostalne nauke, a svet uporedo postajao sve više geopolitičan. Balkan "
+"je sinonim geopolitike i nikada nije prestao da se suočava sa tom "
+"činjenicom. Ma koliko „bežao\" od geopolitike, geopolitika ga je uvek "
+"„sustizala\". Ta njegova prošlost, sadašnjost, a izvesno je i budućnost "
+"naročito važi za Srbiju, srpski narod i srpske zemlje u celini. Pokazalo se "
+"da je misliti i delati geopolitički za Srbe od životne važnosti."
+msgstr ""
+"Геополитика је дуго била занемаривана и негирана. Дисквалификујуће је "
+"сведена на „превазиђен приступ\", „архаичан начин мишљења\", „идеолошку "
+"догму\", „доктринарно застрањивање\"…, и тако порицана њена научна и "
+"употребна вредност. Упркос томе, геополитика је од научне дисциплине достигла "
+"ниво самосталне науке, а свет упаредо постајао све више геополитичан. Балкан "
+"је синоним геополитике и никада није престао да се суочава са том "
+"чињеницом. Ма колико „бежао\" од геополитике, геополитика га је увек "
+"„сустизала\". Та његова прошлост, садашњост, а извесно је и будућност "
+"нарочито важи за Србију, српски народ и српске земље у целини. Показало се "
+"да је мислити и делати геополитички за Србе од животне важности."
+
+#: .\templates\core\about.html:17
+msgid ""
+"Danas se srpska naučna, prosvetna, kulturna, medijska i javna scena uopšte "
+"suočavaju sa reafirmacijom geopolitike. To je „eho\" burnih procesa "
+"preraspodele moći i političko-teritorijalnog restrukturisanja od globalnog "
+"do regionalnog nivoa. Uzroci i posledice se najadekватније objašnjavaju na "
+"geopolitički način, i to širom sveta bez izuzetka – od Pekinga i Tokija, do "
+"Vašingtona i Buenos Ajresa, i od Moskve i Berlina, do Nju Delhija i "
+"Pretorije. Paradoksalno – s jedne strane, geopolitika je zahvaćena pravom "
+"poplavom senzacionalističkih analiza „estradnih\" novinskih, podkast i TV "
+"analitičara od kojih joj preti opasnost da postane „sve i ništa\". S druge "
+"strane, sporo i nedovoljno se pozicionira u visokoškolskim i naučno-"
+"istraživačkim institucijama, gde tzv. stare nauke žele da je i dalje zadrže "
+"u stanju hibernacije."
+msgstr ""
+"Данас се српска научна, просветна, културна, медијска и јавна сцена уопште "
+"суочавају са реафирмацијом геополитике. То је „ехо\" бурних процеса "
+"перасподеле моћи и политичко-територијалног реструктурисања од глобалног "
+"до регионалног нивоа. Узроци и последице се најадекватније објашњавају на "
+"геополитички начин, и то широм света без изузетка – од Пекинга и Токија, до "
+"Вашингтона и Буенос Ајреса, и од Москве и Берлина, до Њу Делхија и "
+"Преторије. Парадоксално – с једне стране, геополитика је захваћена правом "
+"поплавом сензационалистичких анализа „естрадних\" новинских, подкаст и ТВ "
+"аналитичара од којих јој прети опасност да постане „све и ништа\". С друге "
+"стране, споро и недовољно се позиционира у високошколским и научно-"
+"истраживачким институцијама, где тзв. старе науке желе да је и даље задрже "
+"у стању хибернације."
+
+#: .\templates\core\about.html:18
+msgid ""
+"Stoga je formiranje Centra za geopolitička istraživanja ne samo akademska, "
+"već i praktična potreba. On bi trebalo da bude centar gravitacije za već "
+"geopolitički obrazovane i istraživački dokazane autore gde će raspravljati o "
+"aktuelnim pojavama i procesima, preispitivati stereotipe i dekonstruisati "
+"predrasude, te strategološki razmatrati scenarije za vreme koje dolazi, "
+"prvenstveno u balkanskom i srpskom ključu. Uporedo, sabiraće mlade i pružiti "
+"im nedostajuće geopolitičko znanje, motivišući ih da svoju kreativnu "
+"energiju usmere na razmišljanje u smislu „oprostorenja političkog\". Jer "
+"samo u tom slučaju neće budućnost iznenaditi njih, već će oni iznenaditi i "
+"kreirati budućnost. Na „polzu\" svoju, svoga naroda i države."
+msgstr ""
+"Стога је формирање Центра за геополитичка истраживања не само академска, "
+"већ и практична потреба. Он би требало да буде центар гравитације за већ "
+"геополитички образоване и истраживачки доказане ауторе где ће расправљати о "
+"атуелним појавама и процесима, преиспитивати стереотипе и деконструисати "
+"предрасуде, те стратеголошки разматрати сценарије за време које долази, "
+"првенствено у балканском и српском кључу. Упаредо, сабираће младе и пружити "
+"им недостајуће геополитичко знање, мотивишући их да своју креативну "
+"енергију усмере на размишљање у смислу „опросторења политичког\". Јер "
+"само у том случају неће будућност изненадити њих, већ ће они изненадити и "
+"креирати будућност. На „ползу\" своју, свога народа и државе."
+
+#: .\templates\core\about.html:24
+msgid "O autoru - Milomir Stepić"
+msgstr "О аутору - Миломир Степић"
+
+#: .\templates\core\contact.html:11
+msgid "Kontaktirajte nas"
+msgstr "Контактирајте нас"
+
+#: .\templates\core\contact.html:17
+msgid "Ime"
+msgstr "Име"
+
+#: .\templates\core\contact.html:21
+msgid "Prezime"
+msgstr "Презиме"
+
+#: .\templates\core\contact.html:33
+msgid "Poruka"
+msgstr "Порука"
+
+#: .\templates\core\contact.html:36
+msgid "Pošalji poruku"
+msgstr "Пошаљи поруку"
+
+#: .\templates\core\contact.html:43
+msgid "Novi Sad, Srbija"
+msgstr "Нови Сад, Србија"
+
+#: .\templates\core\home.html:14
+msgid "Svrha"
+msgstr "Сврха"
+
+#: .\templates\core\home.html:16
+msgid ""
+"Postojanje i rad CGI usmereni su na proučavanje geopolitičkih pojava i "
+"procesa u svetu, posebno na Balkanu. Geopolitika, ranije marginalizovana kao "
+"način mišljenja i nauka, kod nas je na mukotrpan način obnavljana tokom "
+"razgradnje SFRJ, a na globalnom planu, mada nikada nije zanemarivana u "
+"praksi, pravi preporod doživela je sa multipolarizacijom poretka i "
+"rasplamsavanjem oružanih konflikata širom sveta."
+msgstr ""
+"Постојање и рад CGI усмерени су на проучавање геополитичких појава и процеса"
+"у свету, посебно на Балкану. Геополитика, раније маргинализована као начин"
+"мишљења и наука, код нас је на mukотрпан начин обнављана током разградње"
+"СФРЈ, а на глобалном плану, мада никада није занемаривана у пракси, прави"
+"препород доживела је са мултиполаризацијом поретка и распламсавањем оружаних"
+"конфликата широм света."
+
+#: .\templates\core\home.html:17
+msgid ""
+"U tom kontekstu, veliku, često životnu važnost ima objektivno poimanje, "
+"proučavanje i objašnjavanje ne samo recentnih događaja, već njihovih uzroka "
+"i posledica, te predviđanje daljih dinamičnih tokova i transformacija."
+msgstr ""
+"У том контексту, велику, често животну важност има објективно поимање,"
+"проучавање и објашњавање не само рецентних догађаја, већ њихових узрока и"
+"последица, те предвиђање даљих динамичних токова и трансформација."
+
+#: .\templates\core\home.html:23
+msgid "Geopolitička istraživanja"
+msgstr "Геополитичка истраживања"
+
+#: .\templates\core\home.html:30
+msgid "Obrazovanje i razvoj"
+msgstr "Образовање и развој"
+
+#: .\templates\core\home.html:34
+msgid "Polazište"
+msgstr "Полазиште"
+
+#: .\templates\core\home.html:36
+msgid ""
+"Ideja-vodilja CGI jeste okupljanje priznatih stručnjaka u oblasti "
+"geopolitike u najširem smislu – u prvom redu naučnika, ali i diplomata, "
+"privrednika, oficira, novinara, kulturnih poslenika… – kako bi objektivno "
+"analizirali stvarnost sve oštrijeg nadmetanja za vladanje prostorom u "
+"njegovom kvantitativnom i kvalitativnom smislu."
+msgstr ""
+"Идеја-водиља CGI јесте окупљање признатих стручњака у области геополитике у"
+"најширем смислу – у првом реду научника, али и дипломата, привредника,"
+"официра, новинара, културних посленика… – како би објективно анализирали"
+"стварност све оштријег надметања за владање простором у његовом"
+"квантитативном и квалитативном смислу."
+
+#: .\templates\core\home.html:37
+msgid ""
+"Namera CGI je da privuče sve zainteresovane za geopolitiku, naročito mlade "
+"ljude, da njihovo obrazovanje proširi nedostajućim geopolitičkim znanjima i "
+"tako doprinese stvaranju nove nacionalne elite koja će u turbulentnim "
+"vremenima koja dolaze biti spremna da se suoči sa svim izazovima."
+msgstr ""
+"Намера CGI је да привуче све заинтересоване за геополитику, нарочито младе"
+"људе, да њихово образовање прошири недостајућим геополитичким знањима и тако"
+"допринесе стварању нове националне елите која ће у турбулентним временима"
+"која долазе бити спремна да се суочи са свим изазовима."
+
+#: .\templates\core\home.html:44
+msgid "Ciljna grupa"
+msgstr "Циљна група"
+
+#: .\templates\core\home.html:46
+msgid ""
+"Ciljna grupa su studenti osnovnih, master i doktorskih studija geografije, "
+"istorije, politikologije, prava, ekonomije, sociologije, bezbednosti, vojne "
+"i policijske akademije državnih i privatnih fakulteta i strukovnih studija, "
+"kao i mlađi novinari, državni službenici, urednici portala…"
+msgstr ""
+"Циљна група су студенти основних, мастер и докторских студија географије,"
+"историје, политикологије, права, економије, социологије, безбедности, војне"
+"и полицијске академије државних и приватних факултета и струковних студија,"
+"као и млађи новинари, државни службеници, уредници портала…"
+
+#: .\templates\core\home.html:52
+msgid "Studenti i obrazovanje"
+msgstr "Студенти и образовање"
+
+#: .\templates\core\home.html:57
+msgid "Delatnost"
+msgstr "Делатност"
+
+#: .\templates\core\home.html:59
+msgid ""
+"Rad CGI zasniva se na spoljnim saradnicima i njihovom učešću na tematskim "
+"predavanjima, naučnim konferencijama, okruglim stolovima, istraživačkim "
+"projektima, ad hoc debatama, medijskim nastupima, podkast digitalnim "
+"serijama…"
+msgstr ""
+"Рад CGI заснива се на спољним сарадницима и њиховом учешћу на тематским"
+"предавањима, научним конференцијама, округлим столовима, истраживачким"
+"пројектима, ad hoc дебатама, медијским наступима, подкаст дигиталним"
+"серијама…"
+
+#: .\templates\core\home.html:60
+msgid ""
+"CGI ima sopstvenu izdavačku delatnost, koja obuhvata objavljivanje mahom "
+"naučnih monografija i zbornika, strogo vodeći računa o kvalitetu radova i "
+"kompetentnosti autora."
+msgstr ""
+"CGI има сопствену издавачку делатност, која обухвата објављивање махом"
+"научних монографија и зборника, строго водећи рачуна о квалитету радова и"
+"компетентности аутора."
+
+#: .\templates\core\home.html:61
+msgid ""
+"Jedna od ključnih aktivnosti CGI jeste organizovanje seminara i škola "
+"geopolitike, savremenog, interaktivnog karaktera. Način rada je kabinetski, "
+"a nekada kombinovanog, odnosno kabinetskog i terenskog tipa, te na kraju "
+"podrazumeva da polaznici dobiju sertifikat o uspešnom završetku."
+msgstr ""
+"Једна од кључних активности CGI јесте организовање семинара и школа "
+"геополитике, савременог, интерактивног карактера. Начин рада је кабинetsки, "
+"а некада комбинованог, односно кабинetsког и теренског типа, те на крају "
+"подразумева да полазници добију сертификат о успешном завршетку."
+
+#: .\templates\core\home.html:68
+msgid "Izdavačka delatnost"
+msgstr "Издавачка делатност"
+
+#: .\templates\core\home.html:71
+msgid "Seminari i škole"
+msgstr "Семинари и школе"
+
+#: .\templates\topics\category_detail.html:19
+#: .\templates\topics\category_list.html:18
+msgid "Nema slike"
+msgstr "Нема слике"
+
+#: .\templates\topics\category_detail.html:31
+msgid "Nema tema u ovoj kategoriji."
+msgstr "Нема тема у овој категорији."
+
+#: .\templates\topics\category_list.html:5
+msgid "Kategorije"
+msgstr "Категорије"
+
+#: .\templates\topics\category_list.html:26
+msgid "Nema kategorija."
+msgstr "Нема категорија."
+
+#: .\templates\topics\topic_detail.html:25
+msgid "Najnovije teme"
+msgstr "Најновије теме"
+
+#: .\topics\admin.py:19 .\topics\admin.py:36
+msgid "Osnovne informacije"
+msgstr "Основне информације"
+
+#: .\topics\admin.py:39
+msgid "SEO"
+msgstr "SEO"
+
+#: .\topics\admin.py:42
+msgid "Opis"
+msgstr "Опис"
+
+#: .\topics\models.py:15
+msgid "Naziv"
+msgstr "Назив"
+
+#: .\topics\models.py:16 .\topics\models.py:56
+msgid "Slug"
+msgstr "Slug"
+
+#: .\topics\models.py:17 .\topics\models.py:60
+msgid "Thumbnail"
+msgstr "Thumbnail"
+
+#: .\topics\models.py:18
+msgid "Redosled"
+msgstr "Редослед"
+
+#: .\topics\models.py:18
+msgid "Koristi se za sortiranje kategorija u padajućem meniju"
+msgstr "Користи се за сортирање категорија у падајућем менију"
+
+#: .\topics\models.py:23
+msgid "Category"
+msgstr "Категорија"
+
+#: .\topics\models.py:24
+msgid "Categories"
+msgstr "Категорије"
+
+#: .\topics\models.py:55
+msgid "Naslov"
+msgstr "Наслов"
+
+#: .\topics\models.py:57
+msgid "Kategorija"
+msgstr "Категорија"
+
+#: .\topics\models.py:58
+msgid "Meta naslov"
+msgstr "Meta наслов"
+
+#: .\topics\models.py:59
+msgid "Meta opis"
+msgstr "Meta опис"
+
+#: .\topics\models.py:61
+msgid "Kratak opis"
+msgstr "Short Description"
+
+#: .\topics\models.py:62
+msgid "Pun opis"
+msgstr "Full Description"
+
+#: .\topics\models.py:67
+msgid "Topic"
+msgstr "Тема"
+
+#: .\topics\models.py:68
+msgid "Topics"
+msgstr "Теме"

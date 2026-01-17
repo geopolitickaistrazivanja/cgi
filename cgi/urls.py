@@ -19,22 +19,31 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
+from django.conf.urls.i18n import i18n_patterns
 
 # Import admin customization
 import cgi.admin
 # Import custom CKEditor views
 import core.ckeditor_views
 
+# URLs that should not have language prefix
 urlpatterns = [
     path('admin/', admin.site.urls),
     # Custom CKEditor upload view with tracking (must come before default ckeditor URLs)
     # This overrides the default upload view to track uploads
     path('ckeditor/upload/', core.ckeditor_views.TrackedImageUploadView.as_view(), name='ckeditor_upload'),
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    # Language switcher (set_language view)
+    path('i18n/setlang/', include('django.conf.urls.i18n')),
+]
+
+# URLs with language prefix
+urlpatterns += i18n_patterns(
     path('', include('core.urls')),
     path('teme/', include('topics.urls')),
     path('korisnici/', include('accounts.urls')),
-]
+    prefix_default_language=True,
+)
 
 if settings.DEBUG:
     # Serve media files in development

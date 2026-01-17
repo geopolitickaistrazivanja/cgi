@@ -5,6 +5,26 @@ from .models import Topic, Category
 
 
 def category_list(request):
+    """Category list view with language-aware base path handling"""
+    from django.utils import translation
+    from django.shortcuts import redirect
+    from django.urls import reverse
+    
+    lang = translation.get_language()
+    # Check if wrong base path was accessed
+    current_path = request.path
+    
+    # If on English and accessing /teme/ base, redirect to /topics/
+    if lang == 'en' and '/teme/' in current_path:
+        # Construct URL with correct base path
+        correct_url = current_path.replace('/teme/', '/topics/', 1)
+        return redirect(correct_url)
+    # If on Serbian (Latin/Cyrillic) and accessing /topics/ base, redirect to /teme/
+    elif lang in ('sr-latn', 'sr-cyrl') and '/topics/' in current_path:
+        # Construct URL with correct base path
+        correct_url = current_path.replace('/topics/', '/teme/', 1)
+        return redirect(correct_url)
+    
     categories = Category.objects.all().order_by('order', 'name')
     context = {
         'categories': categories,

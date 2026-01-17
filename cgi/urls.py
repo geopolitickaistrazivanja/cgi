@@ -38,10 +38,15 @@ urlpatterns = [
 ]
 
 # URLs with language prefix
+# Serbian (Latin and Cyrillic) use Serbian slugs, English uses English slugs
 urlpatterns += i18n_patterns(
     path('', include('core.urls')),
+    # Serbian slugs (for sr-latn and sr-cyrl)
     path('teme/', include('topics.urls')),
     path('korisnici/', include('accounts.urls')),
+    # English slugs
+    path('topics/', include('topics.urls')),
+    path('users/', include('accounts.urls')),
     prefix_default_language=True,
 )
 

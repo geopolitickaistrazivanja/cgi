@@ -9,15 +9,69 @@ register = template.Library()
 
 
 @register.simple_tag(takes_context=True)
-def lang_url(context, view_name):
+def lang_url(context, view_name, *args):
     """
     Generate URL based on current language.
     For Serbian (Latin/Cyrillic): use Serbian URL names (about, contact)
     For English: use English URL names (about_en, contact_en)
+    For topics URLs: use 'teme' base for Serbian, 'topics' base for English
     """
+    from django.urls import resolve
     lang = get_language()
     
-    # Map URL names based on language
+    # Handle topics URLs specially - need to manually construct with correct base path
+    if view_name.startswith('topics:'):
+        try:
+            # Reverse the URL - Django will return path with one of the base paths
+            url_path = reverse(view_name, args=args)
+            
+            # Replace base path based on language
+            if lang == 'en':
+                # For English, ensure /topics/ base (replace /teme/ if present)
+                url_path = url_path.replace('/teme/', '/topics/', 1)
+                url_path = url_path.replace('/en/teme/', '/en/topics/', 1)
+            else:
+                # For Serbian (Latin/Cyrillic), ensure /teme/ base (replace /topics/ if present)
+                url_path = url_path.replace('/topics/', '/teme/', 1)
+                url_path = url_path.replace('/en/topics/', '/en/teme/', 1)
+                url_path = url_path.replace('/sr-latn/topics/', '/sr-latn/teme/', 1)
+                url_path = url_path.replace('/sr-cyrl/topics/', '/sr-cyrl/teme/', 1)
+            
+            return url_path
+        except NoReverseMatch:
+            return '#'
+    
+    # Handle accounts URLs specially - need to manually construct with correct base path
+    if view_name.startswith('accounts:'):
+        try:
+            # Reverse the URL - Django will return path with one of the base paths
+            url_path = reverse(view_name, args=args)
+            
+            # Replace base path and slugs based on language
+            if lang == 'en':
+                # For English, ensure /users/ base and English slugs
+                url_path = url_path.replace('/korisnici/', '/users/', 1)
+                url_path = url_path.replace('/en/korisnici/', '/en/users/', 1)
+                url_path = url_path.replace('/registracija/', '/register/', 1)
+                url_path = url_path.replace('/prijava/', '/login/', 1)
+                url_path = url_path.replace('/odjava/', '/logout/', 1)
+                url_path = url_path.replace('/nalog/', '/account/', 1)
+            else:
+                # For Serbian (Latin/Cyrillic), ensure /korisnici/ base and Serbian slugs
+                url_path = url_path.replace('/users/', '/korisnici/', 1)
+                url_path = url_path.replace('/en/users/', '/en/korisnici/', 1)
+                url_path = url_path.replace('/sr-latn/users/', '/sr-latn/korisnici/', 1)
+                url_path = url_path.replace('/sr-cyrl/users/', '/sr-cyrl/korisnici/', 1)
+                url_path = url_path.replace('/register/', '/registracija/', 1)
+                url_path = url_path.replace('/login/', '/prijava/', 1)
+                url_path = url_path.replace('/logout/', '/odjava/', 1)
+                url_path = url_path.replace('/account/', '/nalog/', 1)
+            
+            return url_path
+        except NoReverseMatch:
+            return '#'
+    
+    # Map URL names based on language for core URLs
     url_map = {
         'core:about': 'core:about_en' if lang == 'en' else 'core:about',
         'core:contact': 'core:contact_en' if lang == 'en' else 'core:contact',
@@ -27,10 +81,10 @@ def lang_url(context, view_name):
     mapped_name = url_map.get(view_name, view_name)
     
     try:
-        return reverse(mapped_name)
+        return reverse(mapped_name, args=args)
     except NoReverseMatch:
         # Fallback to original if mapped fails
         try:
-            return reverse(view_name)
+            return reverse(view_name, args=args)
         except NoReverseMatch:
             return '#'

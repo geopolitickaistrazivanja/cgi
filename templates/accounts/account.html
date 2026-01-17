@@ -1,9 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load i18n %}
+{% load core_urls %}
 
 {% block title %}{% trans 'Moj nalog' %} - CGI{% endblock %}
-{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:account' %}">{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% lang_url 'accounts:account' %}">{% endblock %}
 
 {% block content %}
 <div class="account-page">

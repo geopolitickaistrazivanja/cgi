@@ -62,8 +62,8 @@
                         <a href="{% url 'accounts:account' %}" class="mobile-header-link">{% trans 'Moj nalog' %}</a>
                         <a href="{% url 'accounts:logout' %}" class="mobile-header-link">{% trans 'Odjava' %}</a>
                     {% else %}
-                        <a href="{% url 'accounts:login' %}" class="mobile-header-link">{% trans 'Prijava' %}</a>
-                        <a href="{% url 'accounts:register' %}" class="mobile-header-link">{% trans 'Registracija' %}</a>
+                        <a href="{% lang_url 'accounts:login' %}" class="mobile-header-link">{% trans 'Prijava' %}</a>
+                        <a href="{% lang_url 'accounts:register' %}" class="mobile-header-link">{% trans 'Registracija' %}</a>
                     {% endif %}
                 </div>
             </div>
@@ -79,7 +79,7 @@
                 <nav class="desktop-nav">
                     <a href="{% url 'core:home' %}" class="nav-item">{% trans 'Početna' %}</a>
                     <div class="nav-item-dropdown">
-                        <a href="{% url 'topics:category_list' %}" class="nav-item-link">
+                        <a href="{% lang_url 'topics:category_list' %}" class="nav-item-link">
                             {% trans 'Teme' %}
                             <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M2 4l4 4 4-4"/>
@@ -88,7 +88,7 @@
                         {% if categories %}
                             <div class="dropdown-menu">
                                 {% for category in categories %}
-                                    <a href="{% url 'topics:category_detail' category.get_slug %}" class="dropdown-item">
+                                    <a href="{% lang_url 'topics:category_detail' category.get_slug %}" class="dropdown-item">
                                         {% if category.thumbnail %}
                                             <img src="{{ category.thumbnail.url }}" alt="{{ category.get_name }}" class="dropdown-thumbnail">
                                         {% endif %}
@@ -107,8 +107,8 @@
                         <a href="{% url 'accounts:account' %}" class="header-link">{% trans 'Moj nalog' %}</a>
                         <a href="{% url 'accounts:logout' %}" class="header-link">{% trans 'Odjava' %}</a>
                     {% else %}
-                        <a href="{% url 'accounts:login' %}" class="header-link">{% trans 'Prijava' %}</a>
-                        <a href="{% url 'accounts:register' %}" class="header-link">{% trans 'Registracija' %}</a>
+                        <a href="{% lang_url 'accounts:login' %}" class="header-link">{% trans 'Prijava' %}</a>
+                        <a href="{% lang_url 'accounts:register' %}" class="header-link">{% trans 'Registracija' %}</a>
                     {% endif %}
                     
                     <button class="search-icon-btn" id="searchBtn" aria-label="Pretraga">
@@ -331,7 +331,7 @@
                                     <ul class="offcanvas-dropdown-menu">
                                         {% for category in categories %}
                                             <li>
-                                                <a href="{% url 'topics:category_detail' category.slug %}" class="offcanvas-dropdown-item">
+                                                <a href="{% lang_url 'topics:category_detail' category.slug %}" class="offcanvas-dropdown-item">
                                                     {% if category.thumbnail %}
                                                         <img src="{{ category.thumbnail.url }}" alt="{{ category.name }}" class="dropdown-thumbnail">
                                                     {% endif %}

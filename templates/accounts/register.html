@@ -28,7 +28,7 @@
                 <input type="password" id="password2" name="password2" required>
             </div>
             <button type="submit" class="btn btn-primary">{% trans 'Registruj se' %}</button>
-            <p>{% trans 'Već imate nalog?' %} <a href="{% url 'accounts:login' %}">{% trans 'Prijavite se' %}</a></p>
+            <p>{% trans 'Već imate nalog?' %} <a href="{% lang_url 'accounts:login' %}">{% trans 'Prijavite se' %}</a></p>
         </form>
     </div>
 </div>

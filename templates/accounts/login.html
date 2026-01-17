@@ -3,7 +3,7 @@
 {% load i18n %}
 
 {% block title %}{% trans 'Prijava' %} - CGI{% endblock %}
-{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% url 'accounts:login' %}">{% endblock %}
+{% block canonical_url %}<link rel="canonical" href="{{ request.scheme }}://{{ request.get_host }}{% lang_url 'accounts:login' %}">{% endblock %}
 
 {% block content %}
 <div class="auth-page">

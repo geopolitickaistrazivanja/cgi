@@ -61,33 +61,44 @@ def lang_url(context, view_name, *args):
                 url_path = reverse(view_name, args=args)
             
             # Replace base path and slugs based on language to ensure correctness
-            # Important: Replace language-prefixed paths FIRST, then non-prefixed
+            # Use regex-like replacements: handle all variations systematically
             if lang == 'en':
                 # For English, ensure /users/ base and English slugs
-                # Replace language-prefixed base paths first
-                url_path = url_path.replace('/en/korisnici/', '/en/users/', 1)
-                url_path = url_path.replace('/sr-latn/users/', '/sr-latn/korisnici/', 1)
-                url_path = url_path.replace('/sr-cyrl/users/', '/sr-cyrl/korisnici/', 1)
-                # Then replace non-prefixed base paths
-                url_path = url_path.replace('/korisnici/', '/users/', 1)
-                # Replace Serbian slugs with English slugs
-                url_path = url_path.replace('/registracija/', '/register/', 1)
-                url_path = url_path.replace('/prijava/', '/login/', 1)
-                url_path = url_path.replace('/odjava/', '/logout/', 1)
-                url_path = url_path.replace('/nalog/', '/account/', 1)
+                # Replace ALL occurrences systematically - handle all language prefix variations
+                replacements = [
+                    # Language-prefixed base paths (must come first)
+                    ('/en/korisnici/', '/en/users/'),
+                    ('/sr-latn/korisnici/', '/sr-latn/korisnici/'),  # Shouldn't happen but safety
+                    ('/sr-cyrl/korisnici/', '/sr-cyrl/korisnici/'),  # Shouldn't happen but safety
+                    # Non-prefixed base paths
+                    ('/korisnici/', '/users/'),
+                    # Serbian slugs to English slugs
+                    ('/registracija/', '/register/'),
+                    ('/prijava/', '/login/'),
+                    ('/odjava/', '/logout/'),
+                    ('/nalog/', '/account/'),
+                ]
             else:
                 # For Serbian (Latin/Cyrillic), ensure /korisnici/ base and Serbian slugs
-                # Replace language-prefixed base paths first
-                url_path = url_path.replace('/en/users/', '/en/korisnici/', 1)
-                url_path = url_path.replace('/sr-latn/users/', '/sr-latn/korisnici/', 1)
-                url_path = url_path.replace('/sr-cyrl/users/', '/sr-cyrl/korisnici/', 1)
-                # Then replace non-prefixed base paths
-                url_path = url_path.replace('/users/', '/korisnici/', 1)
-                # Replace English slugs with Serbian slugs
-                url_path = url_path.replace('/register/', '/registracija/', 1)
-                url_path = url_path.replace('/login/', '/prijava/', 1)
-                url_path = url_path.replace('/logout/', '/odjava/', 1)
-                url_path = url_path.replace('/account/', '/nalog/', 1)
+                # Replace ALL occurrences systematically
+                replacements = [
+                    # Language-prefixed base paths (must come first)
+                    ('/en/users/', '/en/korisnici/'),
+                    ('/sr-latn/users/', '/sr-latn/korisnici/'),
+                    ('/sr-cyrl/users/', '/sr-cyrl/korisnici/'),
+                    # Non-prefixed base paths
+                    ('/users/', '/korisnici/'),
+                    # English slugs to Serbian slugs
+                    ('/register/', '/registracija/'),
+                    ('/login/', '/prijava/'),
+                    ('/logout/', '/odjava/'),
+                    ('/account/', '/nalog/'),
+                ]
+            
+            # Apply all replacements
+            for old, new in replacements:
+                if old in url_path:
+                    url_path = url_path.replace(old, new, 1)  # Replace only first occurrence
             
             return url_path
         except NoReverseMatch:

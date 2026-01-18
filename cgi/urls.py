@@ -39,14 +39,16 @@ urlpatterns = [
 
 # URLs with language prefix
 # Serbian (Latin and Cyrillic) use Serbian slugs, English uses English slugs
+# Note: We include the same URLconfs twice with different paths for language-specific slugs
+# We use different instance namespaces to avoid namespace conflicts
 urlpatterns += i18n_patterns(
     path('', include('core.urls')),
     # Serbian slugs (for sr-latn and sr-cyrl)
-    path('teme/', include('topics.urls')),
-    path('korisnici/', include('accounts.urls')),
+    path('teme/', include(('topics.urls', 'topics'), namespace='topics-serbian')),
+    path('korisnici/', include(('accounts.urls', 'accounts'), namespace='accounts-serbian')),
     # English slugs
-    path('topics/', include('topics.urls')),
-    path('users/', include('accounts.urls')),
+    path('topics/', include(('topics.urls', 'topics'), namespace='topics-english')),
+    path('users/', include(('accounts.urls', 'accounts'), namespace='accounts-english')),
     prefix_default_language=True,
 )
 

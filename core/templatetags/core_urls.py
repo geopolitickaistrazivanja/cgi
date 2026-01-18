@@ -22,8 +22,16 @@ def lang_url(context, view_name, *args):
     # Handle topics URLs specially - need to manually construct with correct base path
     if view_name.startswith('topics:'):
         try:
-            # Reverse the URL - Django will return path with one of the base paths
-            url_path = reverse(view_name, args=args)
+            # Use correct namespace based on language
+            namespace = 'topics-english' if lang == 'en' else 'topics-serbian'
+            # Extract the URL name without namespace
+            url_name = view_name.split(':', 1)[1]
+            # Try to reverse with the correct namespace
+            try:
+                url_path = reverse(f'{namespace}:{url_name}', args=args)
+            except NoReverseMatch:
+                # Fallback to original namespace
+                url_path = reverse(view_name, args=args)
             
             # Replace base path based on language
             if lang == 'en':
@@ -44,21 +52,29 @@ def lang_url(context, view_name, *args):
     # Handle accounts URLs specially - need to manually construct with correct base path
     if view_name.startswith('accounts:'):
         try:
+            # Use correct namespace based on language
+            namespace = 'accounts-english' if lang == 'en' else 'accounts-serbian'
             # Map to correct URL name based on language (similar to core URLs)
             url_name_map = {
-                'accounts:register': 'accounts:register_en' if lang == 'en' else 'accounts:register',
-                'accounts:login': 'accounts:login_en' if lang == 'en' else 'accounts:login',
-                'accounts:logout': 'accounts:logout_en' if lang == 'en' else 'accounts:logout',
-                'accounts:account': 'accounts:account_en' if lang == 'en' else 'accounts:account',
+                'accounts:register': 'register_en' if lang == 'en' else 'register',
+                'accounts:login': 'login_en' if lang == 'en' else 'login',
+                'accounts:logout': 'logout_en' if lang == 'en' else 'logout',
+                'accounts:account': 'account_en' if lang == 'en' else 'account',
             }
-            mapped_view_name = url_name_map.get(view_name, view_name)
+            # Extract the URL name without namespace
+            base_view_name = view_name.split(':', 1)[1]
+            mapped_view_name = url_name_map.get(view_name, base_view_name)
             
-            # Try to reverse with the mapped name first
+            # Try to reverse with the correct namespace and mapped name
             try:
-                url_path = reverse(mapped_view_name, args=args)
+                url_path = reverse(f'{namespace}:{mapped_view_name}', args=args)
             except NoReverseMatch:
-                # Fallback to original view name
-                url_path = reverse(view_name, args=args)
+                # Fallback: try with original view name in correct namespace
+                try:
+                    url_path = reverse(f'{namespace}:{base_view_name}', args=args)
+                except NoReverseMatch:
+                    # Final fallback: try original view name with original namespace
+                    url_path = reverse(view_name, args=args)
             
             # Replace base path and slugs based on language to ensure correctness
             # Use regex-like replacements: handle all variations systematically

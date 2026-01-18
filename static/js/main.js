@@ -194,6 +194,118 @@
             });
         }
         
+        // Handle language switching - convert URL paths correctly
+        function convertPathForLanguage(path, targetLang) {
+            let converted = path;
+            
+            // First, remove the language prefix (Django will add it back, but we need correct structure)
+            // Remove current language prefixes to get base path - handle with or without leading slash
+            converted = converted.replace(/^\/(en|sr-latn|sr-cyrl)\//, '/');
+            // Also handle if path starts directly with language code (shouldn't happen but safety)
+            if (converted.match(/^\/?(en|sr-latn|sr-cyrl)\//)) {
+                converted = converted.replace(/^\/(en|sr-latn|sr-cyrl)\//, '/');
+            }
+            
+            // Handle accounts URLs
+            if (converted.includes('/korisnici/') || converted.includes('/users/')) {
+                if (targetLang === 'en') {
+                    // Convert to English structure
+                    converted = converted.replace(/\/korisnici\//g, '/users/');
+                    converted = converted.replace(/\/registracija\//g, '/register/');
+                    converted = converted.replace(/\/prijava\//g, '/login/');
+                    converted = converted.replace(/\/odjava\//g, '/logout/');
+                    converted = converted.replace(/\/nalog\//g, '/account/');
+                } else {
+                    // Convert to Serbian structure
+                    converted = converted.replace(/\/users\//g, '/korisnici/');
+                    converted = converted.replace(/\/register\//g, '/registracija/');
+                    converted = converted.replace(/\/login\//g, '/prijava/');
+                    converted = converted.replace(/\/logout\//g, '/odjava/');
+                    converted = converted.replace(/\/account\//g, '/nalog/');
+                }
+            }
+            
+            // Handle topics URLs
+            if (converted.includes('/teme/') || converted.includes('/topics/')) {
+                if (targetLang === 'en') {
+                    converted = converted.replace(/\/teme\//g, '/topics/');
+                } else {
+                    converted = converted.replace(/\/topics\//g, '/teme/');
+                }
+            }
+            
+            // Handle core URLs (about, contact)
+            if (converted.includes('/o-nama/') || converted.includes('/about/')) {
+                if (targetLang === 'en') {
+                    converted = converted.replace(/\/o-nama\//g, '/about/');
+                } else {
+                    converted = converted.replace(/\/about\//g, '/o-nama/');
+                }
+            }
+            
+            if (converted.includes('/kontakt/') || converted.includes('/contact/')) {
+                if (targetLang === 'en') {
+                    converted = converted.replace(/\/kontakt\//g, '/contact/');
+                } else {
+                    converted = converted.replace(/\/contact\//g, '/kontakt/');
+                }
+            }
+            
+            return converted;
+        }
+        
+        // Set up language switcher buttons to update next URL
+        const languageNextDesktop = document.getElementById('languageNextDesktop');
+        const languageNextMobile = document.getElementById('languageNextMobile');
+        
+        // Update language switcher forms to convert paths before submit
+        // Use mousedown to ensure we capture the language code before form submits
+        if (desktopLangMenu) {
+            const desktopButtons = desktopLangMenu.querySelectorAll('button[type="submit"][data-lang-code]');
+            desktopButtons.forEach(function(button) {
+                button.addEventListener('mousedown', function(e) {
+                    const targetLang = this.getAttribute('data-lang-code');
+                    if (targetLang && languageNextDesktop) {
+                        const currentPath = languageNextDesktop.value || window.location.pathname;
+                        languageNextDesktop.value = convertPathForLanguage(currentPath, targetLang);
+                    }
+                });
+            });
+            // Also handle submit event as fallback
+            desktopLangMenu.addEventListener('submit', function(e) {
+                if (e.submitter) {
+                    const targetLang = e.submitter.getAttribute('data-lang-code');
+                    if (targetLang && languageNextDesktop) {
+                        const currentPath = languageNextDesktop.value || window.location.pathname;
+                        languageNextDesktop.value = convertPathForLanguage(currentPath, targetLang);
+                    }
+                }
+            });
+        }
+        
+        if (mobileLangMenu) {
+            const mobileButtons = mobileLangMenu.querySelectorAll('button[type="submit"][data-lang-code]');
+            mobileButtons.forEach(function(button) {
+                button.addEventListener('mousedown', function(e) {
+                    const targetLang = this.getAttribute('data-lang-code');
+                    if (targetLang && languageNextMobile) {
+                        const currentPath = languageNextMobile.value || window.location.pathname;
+                        languageNextMobile.value = convertPathForLanguage(currentPath, targetLang);
+                    }
+                });
+            });
+            // Also handle submit event as fallback
+            mobileLangMenu.addEventListener('submit', function(e) {
+                if (e.submitter) {
+                    const targetLang = e.submitter.getAttribute('data-lang-code');
+                    if (targetLang && languageNextMobile) {
+                        const currentPath = languageNextMobile.value || window.location.pathname;
+                        languageNextMobile.value = convertPathForLanguage(currentPath, targetLang);
+                    }
+                }
+            });
+        }
+        
         // Close language dropdowns when clicking outside
         document.addEventListener('click', function(e) {
             if (desktopLangSwitcher && !desktopLangSwitcher.contains(e.target)) {

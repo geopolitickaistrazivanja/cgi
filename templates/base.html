@@ -41,10 +41,10 @@
                     </button>
                     <form action="{% url 'set_language' %}" method="post" class="language-dropdown-menu language-dropdown-menu-mobile" id="languageDropdownMenuMobile">
                         {% csrf_token %}
-                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}" id="languageNextMobile">
                         {% get_available_languages as LANGUAGES_LIST %}
                         {% for lang_code, lang_name in LANGUAGES_LIST %}
-                            <button type="submit" name="language" value="{{ lang_code }}" class="language-dropdown-item {% if lang_code == CURRENT_LANGUAGE %}active{% endif %}">
+                            <button type="submit" name="language" value="{{ lang_code }}" class="language-dropdown-item {% if lang_code == CURRENT_LANGUAGE %}active{% endif %}" data-lang-code="{{ lang_code }}">
                                 {% if lang_code == 'sr-latn' %}
                                     <span class="language-text">Srpski</span>
                                 {% elif lang_code == 'sr-cyrl' %}
@@ -135,10 +135,10 @@
                         </button>
                         <form action="{% url 'set_language' %}" method="post" class="language-dropdown-menu" id="languageDropdownMenu">
                             {% csrf_token %}
-                            <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                            <input name="next" type="hidden" value="{{ request.get_full_path }}" id="languageNextDesktop">
                             {% get_available_languages as LANGUAGES_LIST %}
                             {% for lang_code, lang_name in LANGUAGES_LIST %}
-                                <button type="submit" name="language" value="{{ lang_code }}" class="language-dropdown-item {% if lang_code == CURRENT_LANGUAGE %}active{% endif %}">
+                                <button type="submit" name="language" value="{{ lang_code }}" class="language-dropdown-item {% if lang_code == CURRENT_LANGUAGE %}active{% endif %}" data-lang-code="{{ lang_code }}">
                                     {% if lang_code == 'sr-latn' %}
                                         <span class="language-text">Srpski</span>
                                     {% elif lang_code == 'sr-cyrl' %}

@@ -2,7 +2,7 @@
 Template tags for language-aware URL generation
 """
 from django import template
-from django.urls import reverse, NoReverseMatch
+from django.urls import reverse, NoReverseMatch, resolve, Resolver404
 from django.utils.translation import get_language
 
 register = template.Library()
@@ -103,6 +103,72 @@ def lang_url(context, view_name, *args):
             return url_path
         except NoReverseMatch:
             return '#'
+
+
+@register.simple_tag(takes_context=True)
+def convert_path_for_language(context, target_lang, current_path=None):
+    """
+    Convert the current URL path to the correct language-specific path.
+    Used by language switcher to ensure URLs are correctly translated when switching languages.
+    """
+    if current_path is None:
+        current_path = context['request'].path
+    
+    # Convert path based on target language
+    converted_path = current_path
+    
+    # Handle accounts URLs
+    if '/korisnici/' in current_path or '/users/' in current_path:
+        if target_lang == 'en':
+            # Convert to English
+            converted_path = converted_path.replace('/korisnici/', '/users/', 1)
+            converted_path = converted_path.replace('/en/korisnici/', '/en/users/', 1)
+            converted_path = converted_path.replace('/sr-latn/korisnici/', '/sr-latn/korisnici/', 1)
+            converted_path = converted_path.replace('/sr-cyrl/korisnici/', '/sr-cyrl/korisnici/', 1)
+            converted_path = converted_path.replace('/registracija/', '/register/', 1)
+            converted_path = converted_path.replace('/prijava/', '/login/', 1)
+            converted_path = converted_path.replace('/odjava/', '/logout/', 1)
+            converted_path = converted_path.replace('/nalog/', '/account/', 1)
+        else:
+            # Convert to Serbian
+            converted_path = converted_path.replace('/users/', '/korisnici/', 1)
+            converted_path = converted_path.replace('/en/users/', '/en/korisnici/', 1)
+            converted_path = converted_path.replace('/sr-latn/users/', '/sr-latn/korisnici/', 1)
+            converted_path = converted_path.replace('/sr-cyrl/users/', '/sr-cyrl/korisnici/', 1)
+            converted_path = converted_path.replace('/register/', '/registracija/', 1)
+            converted_path = converted_path.replace('/login/', '/prijava/', 1)
+            converted_path = converted_path.replace('/logout/', '/odjava/', 1)
+            converted_path = converted_path.replace('/account/', '/nalog/', 1)
+    
+    # Handle topics URLs
+    if '/teme/' in current_path or '/topics/' in current_path:
+        if target_lang == 'en':
+            converted_path = converted_path.replace('/teme/', '/topics/', 1)
+            converted_path = converted_path.replace('/en/teme/', '/en/topics/', 1)
+        else:
+            converted_path = converted_path.replace('/topics/', '/teme/', 1)
+            converted_path = converted_path.replace('/en/topics/', '/en/teme/', 1)
+            converted_path = converted_path.replace('/sr-latn/topics/', '/sr-latn/teme/', 1)
+            converted_path = converted_path.replace('/sr-cyrl/topics/', '/sr-cyrl/teme/', 1)
+    
+    # Handle core URLs (about, contact)
+    if '/o-nama/' in current_path or '/about/' in current_path:
+        if target_lang == 'en':
+            converted_path = converted_path.replace('/o-nama/', '/about/', 1)
+            converted_path = converted_path.replace('/en/o-nama/', '/en/about/', 1)
+        else:
+            converted_path = converted_path.replace('/about/', '/o-nama/', 1)
+            converted_path = converted_path.replace('/en/about/', '/en/o-nama/', 1)
+    
+    if '/kontakt/' in current_path or '/contact/' in current_path:
+        if target_lang == 'en':
+            converted_path = converted_path.replace('/kontakt/', '/contact/', 1)
+            converted_path = converted_path.replace('/en/kontakt/', '/en/contact/', 1)
+        else:
+            converted_path = converted_path.replace('/contact/', '/kontakt/', 1)
+            converted_path = converted_path.replace('/en/contact/', '/en/kontakt/', 1)
+    
+    return converted_path
     
     # Map URL names based on language for core URLs
     url_map = {

@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
+from django.core.exceptions import PermissionDenied
 from .models import UserProfile
 
 
@@ -13,6 +14,21 @@ class UserProfileInline(admin.StackedInline):
 
 class UserAdmin(BaseUserAdmin):
     inlines = (UserProfileInline,)
+    
+    def has_delete_permission(self, request, obj=None):
+        """Prevent deletion of superusers in admin UI"""
+        if obj is not None and obj.is_superuser:
+            return False
+        return super().has_delete_permission(request, obj)
+    
+    def delete_queryset(self, request, queryset):
+        """Prevent bulk deletion of superusers"""
+        superusers = queryset.filter(is_superuser=True)
+        if superusers.exists():
+            from django.contrib import messages
+            messages.error(request, _('Ne možete obrisati superkorisnike.'))
+            queryset = queryset.exclude(is_superuser=True)
+        super().delete_queryset(request, queryset)
 
 
 @admin.register(UserProfile)

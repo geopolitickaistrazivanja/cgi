@@ -36,13 +36,23 @@ def register(request):
     
     # If on English and accessing Serbian slug, redirect to English slug
     if lang == 'en' and request.resolver_match.url_name == 'register':
-        return redirect('accounts:register_en')
+        from django.urls import reverse
+        register_url = reverse('accounts-english:register_en')
+        return redirect(register_url)
     # If on Serbian (Latin/Cyrillic) and accessing English slug, redirect to Serbian slug
     elif lang in ('sr-latn', 'sr-cyrl') and request.resolver_match.url_name == 'register_en':
-        return redirect('accounts:register')
+        from django.urls import reverse
+        register_url = reverse('accounts-serbian:register')
+        return redirect(register_url)
     
     if request.user.is_authenticated:
-        return redirect('accounts:account')
+        # Redirect to correct account URL based on language using proper namespace
+        from django.urls import reverse
+        lang = translation.get_language()
+        namespace = 'accounts-english' if lang == 'en' else 'accounts-serbian'
+        url_name = 'account_en' if lang == 'en' else 'account'
+        account_url = reverse(f'{namespace}:{url_name}')
+        return redirect(account_url)
     
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
@@ -60,10 +70,13 @@ def register(request):
             if user:
                 login(request, user)
                 messages.success(request, _('Uspešno ste se registrovali.'))
-                # Redirect to correct account URL based on language
+                # Redirect to correct account URL based on language using proper namespace
+                from django.urls import reverse
                 lang = translation.get_language()
-                account_redirect = 'accounts:account_en' if lang == 'en' else 'accounts:account'
-                return redirect(account_redirect)
+                namespace = 'accounts-english' if lang == 'en' else 'accounts-serbian'
+                url_name = 'account_en' if lang == 'en' else 'account'
+                account_url = reverse(f'{namespace}:{url_name}')
+                return redirect(account_url)
         else:
             for field, errors in form.errors.items():
                 for error in errors:
@@ -85,15 +98,22 @@ def login_view(request):
     
     # If on English and accessing Serbian slug, redirect to English slug
     if lang == 'en' and request.resolver_match.url_name == 'login':
-        return redirect('accounts:login_en')
+        from django.urls import reverse
+        login_url = reverse('accounts-english:login_en')
+        return redirect(login_url)
     # If on Serbian (Latin/Cyrillic) and accessing English slug, redirect to Serbian slug
     elif lang in ('sr-latn', 'sr-cyrl') and request.resolver_match.url_name == 'login_en':
-        return redirect('accounts:login')
+        from django.urls import reverse
+        login_url = reverse('accounts-serbian:login')
+        return redirect(login_url)
     
     if request.user.is_authenticated:
-        # Redirect to correct account URL based on language
-        account_redirect = 'accounts:account_en' if lang == 'en' else 'accounts:account'
-        return redirect(account_redirect)
+        # Redirect to correct account URL based on language using proper namespace
+        from django.urls import reverse
+        namespace = 'accounts-english' if lang == 'en' else 'accounts-serbian'
+        url_name = 'account_en' if lang == 'en' else 'account'
+        account_url = reverse(f'{namespace}:{url_name}')
+        return redirect(account_url)
     
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
@@ -109,10 +129,12 @@ def login_view(request):
                 next_url = request.GET.get('next')
                 if next_url:
                     return redirect(next_url)
-                # Redirect to correct account URL based on language
-                lang = translation.get_language()
-                account_redirect = 'accounts:account_en' if lang == 'en' else 'accounts:account'
-                return redirect(account_redirect)
+                # Redirect to correct account URL based on language using proper namespace
+                from django.urls import reverse
+                namespace = 'accounts-english' if lang == 'en' else 'accounts-serbian'
+                url_name = 'account_en' if lang == 'en' else 'account'
+                account_url = reverse(f'{namespace}:{url_name}')
+                return redirect(account_url)
             else:
                 messages.error(request, _('Pogrešno korisničko ime ili lozinka. Molimo pokušajte ponovo.'))
     
@@ -128,26 +150,19 @@ def logout_view(request):
     
     # If on English and accessing Serbian slug, redirect to English slug
     if lang == 'en' and request.resolver_match.url_name == 'logout':
-        return redirect('accounts:logout_en')
+        from django.urls import reverse
+        logout_url = reverse('accounts-english:logout_en')
+        return redirect(logout_url)
     # If on Serbian (Latin/Cyrillic) and accessing English slug, redirect to Serbian slug
     elif lang in ('sr-latn', 'sr-cyrl') and request.resolver_match.url_name == 'logout_en':
-        return redirect('accounts:logout')
+        from django.urls import reverse
+        logout_url = reverse('accounts-serbian:logout')
+        return redirect(logout_url)
     
     if request.user.is_authenticated:
         logout(request)
-        # Create a success message with a link to login
-        from django.utils.safestring import mark_safe
-        from django.urls import reverse
-        # Use correct login URL based on language
-        login_url_name = 'accounts:login_en' if lang == 'en' else 'accounts:login'
-        login_url = reverse(login_url_name)
-        # Fix base path if needed (reverse might return wrong base)
-        if lang == 'en':
-            login_url = login_url.replace('/korisnici/', '/users/', 1).replace('/prijava/', '/login/', 1)
-        else:
-            login_url = login_url.replace('/users/', '/korisnici/', 1).replace('/login/', '/prijava/', 1)
-        message = mark_safe(_('Uspešno ste se odjavili. <a href="{}">Prijavite se ponovo</a>').format(login_url))
-        messages.success(request, message)
+        # Simple success message without link (link removed to avoid duplicate messages)
+        messages.success(request, _('Uspešno ste se odjavili.'))
     
     # Redirect to the page user was on, or home page
     next_url = request.GET.get('next') or request.META.get('HTTP_REFERER', '/')
@@ -166,15 +181,22 @@ def account(request):
     
     # If on English and accessing Serbian slug, redirect to English slug
     if lang == 'en' and request.resolver_match.url_name == 'account':
-        return redirect('accounts:account_en')
+        from django.urls import reverse
+        account_url = reverse('accounts-english:account_en')
+        return redirect(account_url)
     # If on Serbian (Latin/Cyrillic) and accessing English slug, redirect to Serbian slug
     elif lang in ('sr-latn', 'sr-cyrl') and request.resolver_match.url_name == 'account_en':
-        return redirect('accounts:account')
+        from django.urls import reverse
+        account_url = reverse('accounts-serbian:account')
+        return redirect(account_url)
     
     if not request.user.is_authenticated:
-        # Redirect to correct login URL based on language
-        login_redirect = 'accounts:login_en' if lang == 'en' else 'accounts:login'
-        return redirect(login_redirect)
+        # Redirect to correct login URL based on language using proper namespace
+        from django.urls import reverse
+        namespace = 'accounts-english' if lang == 'en' else 'accounts-serbian'
+        url_name = 'login_en' if lang == 'en' else 'login'
+        login_url = reverse(f'{namespace}:{url_name}')
+        return redirect(login_url)
     
     context = {}
     return render(request, 'accounts/account.html', context)

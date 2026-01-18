@@ -119,6 +119,24 @@ def lang_url(context, view_name, *args):
             return url_path
         except NoReverseMatch:
             return '#'
+    
+    # Map URL names based on language for core URLs
+    url_map = {
+        'core:about': 'core:about_en' if lang == 'en' else 'core:about',
+        'core:contact': 'core:contact_en' if lang == 'en' else 'core:contact',
+    }
+    
+    # Use mapped URL name if available, otherwise use the original
+    mapped_name = url_map.get(view_name, view_name)
+    
+    try:
+        return reverse(mapped_name, args=args)
+    except NoReverseMatch:
+        # Fallback to original if mapped fails
+        try:
+            return reverse(view_name, args=args)
+        except NoReverseMatch:
+            return '#'
 
 
 @register.simple_tag(takes_context=True)
@@ -185,21 +203,3 @@ def convert_path_for_language(context, target_lang, current_path=None):
             converted_path = converted_path.replace('/en/contact/', '/en/kontakt/', 1)
     
     return converted_path
-    
-    # Map URL names based on language for core URLs
-    url_map = {
-        'core:about': 'core:about_en' if lang == 'en' else 'core:about',
-        'core:contact': 'core:contact_en' if lang == 'en' else 'core:contact',
-    }
-    
-    # Use mapped URL name if available, otherwise use the original
-    mapped_name = url_map.get(view_name, view_name)
-    
-    try:
-        return reverse(mapped_name, args=args)
-    except NoReverseMatch:
-        # Fallback to original if mapped fails
-        try:
-            return reverse(view_name, args=args)
-        except NoReverseMatch:
-            return '#'
